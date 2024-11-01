@@ -1,10 +1,11 @@
+import groovy.json.JsonOutput
+
 pipeline {
     agent any
 
     environment {
-        API_URL = credentials('api_url') // Замените 'api_url' на ID вашего секрета
-        // BACKEND_API_URL = credentials('backend_api')
-        // BACKEND_API_URL = credentials('web_backend_api')
+        API_URL = credentials('api_url')
+        GITHUB_TOKEN = credentials('github_token')
     }
 
     stages {
@@ -12,12 +13,9 @@ pipeline {
             steps {
                 script {
                     echo 'Starting Docker Compose...'
-                    // Проверка установленных версий
                     sh 'docker --version'
                     sh 'docker-compose --version'
-                    
-                    // Запуск сервисов в фоновом режиме
-                    sh 'docker-compose up --build -d' 
+                    sh 'docker-compose up --build -d'
                 }
             }
         }
@@ -26,17 +24,13 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests with Newman...'
-                    // Убедитесь, что Newman установлен
                     sh 'newman -v'
+                    echo "Using API URL: " //$API_URL
+                    
+                    // Запуск тестов с использованием API_URL
+                    sh ('newman run $API_URL --reporters cli,allure --reporter-allure-export ./allure-results-frontend')
 
-                    // Вывод используемого URL для проверки
-                    echo "Using API URL: ${API_URL}"
-
-                    // Запуск тестов с выводом в формат Allure, используя catchError
-                    // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        sh "newman run ${API_URL} --reporters cli,allure --reporter-allure-export ./allure-results-frontend"
-                        // sh "newman run ${BACKEND_API_URL} --reporters cli,allure --reporter-allure-export ./allure-results-backend"
-                    // }
+                    error("Force failure for testing purposes")
                 }
             }
         }
@@ -44,13 +38,9 @@ pipeline {
         stage('Generate Allure Report') {
             steps {
                 script {
-                    echo 'Generating Allure report V2...'
-                    // Проверка установленной версии Allure
+                    echo 'Generating Allure report...'
                     sh 'allure --version'
-
-                    // Генерация отчета Allure
-                    sh 'allure generate ./allure-results-frontend -o ./allure-report-frontend --clean' // Создание статического отчета
-                    // sh 'allure generate ./allure-results-backend -o ./allure-report-backend --clean' // Создание статического отчета
+                    sh 'allure generate ./allure-results-frontend -o ./allure-report-frontend --clean'
                 }
             }
         }
@@ -59,9 +49,8 @@ pipeline {
             steps {
                 script {
                     echo 'Publishing Allure report...'
-                    // Публикация отчета Allure в Jenkins 
                     allure([
-                        results: [[path: './allure-results-frontend']] // [, [path: './allure-results-backend']]
+                        results: [[path: './allure-results-frontend']]
                     ])
                 }
             }
@@ -70,9 +59,53 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up...'
-            // Остановка и удаление контейнеров
-            sh 'docker-compose down'
+            script {
+                echo 'Cleaning up...'
+                sh 'docker-compose down'
+            }
+        }
+
+        success {
+            script {
+                echo 'Build succeeded!'
+                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
+
+                def body = JsonOutput.toJson([
+                    state: 'success',
+                    target_url: env.BUILD_URL,
+                    description: "Build succeeded",
+                    context: "continuous-integration/jenkins"
+                ])
+
+                writeFile file: 'body.json', text: body
+                
+                sh("""
+                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    -d @body.json ${commitStatusUrl}
+                """)
+            }
+        }
+
+        failure {
+            script {
+                echo 'Build failed!'
+
+                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
+
+                def body = JsonOutput.toJson([
+                    state: 'failure',
+                    target_url: env.BUILD_URL,
+                    description: "Build failed",
+                    context: "continuous-integration/jenkins"
+                ])
+
+                writeFile file: 'body.json', text: body
+                
+                sh("""
+                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    -d @body.json ${commitStatusUrl}
+                """)
+            }
         }
     }
 }
