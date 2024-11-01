@@ -6,8 +6,8 @@ pipeline {
     environment {
         API_URL = credentials('api_url')
         //GITHUB_TOKEN = credentials('github_token')
-        REACT_APP_API_URL='https://andriidovhal.tech/api/users'
-        DOMAIN_NAME = 'andriidovhal.tech'
+        REACT_APP_API_URL = credentials('react_app_api_url')
+        DOMAIN_NAME = credentials('domain_name')
 
     }
 
