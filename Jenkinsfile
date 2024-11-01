@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         API_URL = credentials('api_url')
-        GITHUB_TOKEN = credentials('github_token')
+        //GITHUB_TOKEN = credentials('github_token')
     }
 
     stages {
@@ -68,21 +68,21 @@ pipeline {
         success {
             script {
                 echo 'Build succeeded!'
-                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
+                // def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
 
-                def body = JsonOutput.toJson([
-                    state: 'success',
-                    target_url: env.BUILD_URL,
-                    description: "Build succeeded",
-                    context: "continuous-integration/jenkins"
-                ])
+                // def body = JsonOutput.toJson([
+                //     state: 'success',
+                //     target_url: env.BUILD_URL,
+                //     description: "Build succeeded",
+                //     context: "continuous-integration/jenkins"
+                // ])
 
-                writeFile file: 'body.json', text: body
+                // writeFile file: 'body.json', text: body
                 
-                sh("""
-                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-                    -d @body.json ${commitStatusUrl}
-                """)
+                // sh("""
+                //     curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                //     -d @body.json ${commitStatusUrl}
+                // """)
             }
         }
 
@@ -90,21 +90,21 @@ pipeline {
             script {
                 echo 'Build failed!'
 
-                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
+                // def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
 
-                def body = JsonOutput.toJson([
-                    state: 'failure',
-                    target_url: env.BUILD_URL,
-                    description: "Build failed",
-                    context: "continuous-integration/jenkins"
-                ])
+                // def body = JsonOutput.toJson([
+                //     state: 'failure',
+                //     target_url: env.BUILD_URL,
+                //     description: "Build failed",
+                //     context: "continuous-integration/jenkins"
+                // ])
 
-                writeFile file: 'body.json', text: body
+                // writeFile file: 'body.json', text: body
                 
-                sh("""
-                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-                    -d @body.json ${commitStatusUrl}
-                """)
+                // sh("""
+                //     curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                //     -d @body.json ${commitStatusUrl}
+                // """)
             }
         }
     }
