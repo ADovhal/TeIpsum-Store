@@ -47,7 +47,7 @@ pipeline {
                     // Запуск тестов с использованием API_URL
                     sh ('newman run $API_URL --reporters cli,allure --reporter-allure-export ./allure-results-frontend')
 
-                    error("Force failure for testing purposes")
+                    //error("Force failure for testing purposes")
                 }
             }
         }
