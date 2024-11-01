@@ -6,6 +6,8 @@ services:
       context: ./frontend/webform
       dockerfile: Dockerfile
     ports:
-        - '9000:80'
+      - '9000:80'
+    env_file:
+      - .env
         # networks:
         #     - webapp-network
