@@ -2,8 +2,9 @@ version: '3'
 
 services:
   frontend:
-    context: ./frontend/webform
-    build: ./frontend/webform
+    build:
+      context: ./frontend/webform
+      dockerfile: Dockerfile
     ports:
         - '9000:80'
         # networks:
