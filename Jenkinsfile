@@ -6,9 +6,26 @@ pipeline {
     environment {
         API_URL = credentials('api_url')
         //GITHUB_TOKEN = credentials('github_token')
+        REACT_APP_API_URL='https://andriidovhal.tech/api/users'
+        DOMAIN_NAME = 'andriidovhal.tech'
+
     }
 
     stages {
+        stage('Create .env File') {
+            steps {
+                script {
+                    echo 'Creating .env file...'
+                    // Создаём файл .env с несколькими переменными окружения
+                    def envContent = """
+                    DOMAIN_NAME=${DOMAIN_NAME}
+                    API_URL=${API_URL}
+                    """
+                    writeFile file: '.env', text: envContent.stripIndent()
+                }
+            }
+        }
+
         stage('Build and Run') {
             steps {
                 script {
