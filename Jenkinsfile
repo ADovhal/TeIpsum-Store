@@ -6,10 +6,11 @@ pipeline {
     environment {
         DOMAIN_NAME = credentials('domain_name')  // Если используете Jenkins Credentials
         //API_URL = credentials('your_api_url')
-        DB_URL = 'jdbc:postgresql://db:5432/postgres'  // Другие необходимые переменные
+        DB_URL = credentials('test_db_url')  // Другие необходимые переменные
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
+        REACT_APP_API_URL = credentials('react_app_api_url_test_env')
         // CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
     }
 
@@ -33,15 +34,18 @@ pipeline {
         stage('Stop Old Containers') {
             steps {
                 script {
-                    echo 'Stopping old containers...'
-                    sh '''
-                    docker stop test_env_test_frontend || true
-                    docker stop test_env_test_backend || true
-                    '''
-                    sh '''
-                    docker rm test_env_test_frontend || true
-                    docker rm test_env_test_backend || true
-                    '''
+                    // Останавливаем и удаляем только если контейнер существует
+                    def containers = ["test_env_test_frontend", "test_env_test_backend"]
+                    containers.each { container ->
+                        sh """
+                            if [ \$(docker ps -a -q -f name=${container}) ]; then
+                                docker stop ${container} || true
+                                docker rm ${container} || true
+                            else
+                                echo "Container ${container} does not exist, skipping..."
+                            fi
+                        """
+                    }
                 }
             }
         }
@@ -52,6 +56,7 @@ pipeline {
                     echo 'Creating .env file...'
                     
                     def envContent = """
+                    REACT_APP_API_URL=${REACT_APP_API_URL}
                     DOMAIN_NAME=${DOMAIN_NAME}
                     DB_URL=${DB_URL}
                     DB_USER=${DB_USER}
