@@ -21,7 +21,6 @@ pipeline {
         //         checkout scm
         //     }
         // }
-
         stage('Create .env File') {
             steps {
                 script {
