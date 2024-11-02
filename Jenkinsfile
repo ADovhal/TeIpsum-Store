@@ -11,7 +11,7 @@ pipeline {
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
         // REACT_APP_API_URL = credentials('react_app_api_url_test_env')
-        REACT_APP_API_URL_TEST = 'api/users'
+        //REACT_APP_API_URL_TEST = 'api/users'
         // CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
     }
 
@@ -27,8 +27,8 @@ pipeline {
             steps {
                 script {
                     // Используем Groovy для задания переменной с динамическим значением
-                    // env.REACT_APP_API_URL_TEST = 
-                    env.CORS_ALLOWED_ORIGINS = "https://${env.DOMAIN_NAME}"
+                    env.REACT_APP_API_URL_TEST = "https://app.andriidovhal.tech/api/users"
+                    env.CORS_ALLOWED_ORIGINS = "https://app.andriidovhal.tech/"
                 }
             }
         }
