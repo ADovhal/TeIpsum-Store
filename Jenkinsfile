@@ -34,19 +34,19 @@ pipeline {
         stage('Stop Old Containers') {
             steps {
                 script {
-                    // Останавливаем и удаляем только если контейнер существует
-                    // def containers = ["test_env_test_frontend", "test_env_test_backend"]
-                    // containers.each { container ->
-                    //     sh """
-                    //         if [ \$(docker ps -a -q -f name=${container}) ]; then
-                    //             docker stop ${container} || true
-                    //             docker rm ${container} || true
-                    //         else
-                    //             echo "Container ${container} does not exist, skipping..."
-                    //         fi
-                    //     """
-                    // }
-                    sh 'docker-compose -f docker-compose.dev.yml down'
+                    Останавливаем и удаляем только если контейнер существует
+                    def containers = ["test_env_test_frontend_1", "test_env_test_backend_1"]
+                    containers.each { container ->
+                        sh """
+                            if [ \$(docker ps -a -q -f name=${container}) ]; then
+                                docker stop ${container} || true
+                                docker rm ${container} || true
+                            else
+                                echo "Container ${container} does not exist, skipping..."
+                            fi
+                        """
+                    }
+                    // sh 'docker-compose -f docker-compose.dev.yml down'
                 }
             }
         }
