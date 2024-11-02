@@ -34,7 +34,7 @@ pipeline {
         stage('Stop Old Containers') {
             steps {
                 script {
-                    Останавливаем и удаляем только если контейнер существует
+                    //Останавливаем и удаляем только если контейнер существует
                     def containers = ["test_env_test_frontend_1", "test_env_test_backend_1"]
                     containers.each { container ->
                         sh """
