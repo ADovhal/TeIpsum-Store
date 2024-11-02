@@ -1,8 +1,7 @@
 services:
   frontend:
-    build:
-      # build: ./frontend/webform
-      dockerfile: Dockerfile
+    build: ./frontend/webform
+    dockerfile: Dockerfile
     ports:
       - '9001:80'  # Порт изменён для тестовой среды
     env_file:
