@@ -10,7 +10,7 @@ pipeline {
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
-        CORS_ALLOWED_ORIGINS = 'https://' + DOMAIN_NAME
+        CORS_ALLOWED_ORIGINS = 'https://'
     }
 
     stages {
@@ -33,7 +33,7 @@ pipeline {
                     DB_USER=${DB_USER}
                     DB_PASSWORD=${DB_PASSWORD}
                     JWT_SECRET=${JWT_SECRET}
-                    CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+                    CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}+${DOMAIN_NAME}
                     """
                     writeFile file: 'frontend/webform/.env', text: envContent.stripIndent()
                 }
