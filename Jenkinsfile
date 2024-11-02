@@ -4,7 +4,7 @@ pipeline {
     agent any
 
     environment {
-        //DOMAIN_NAME = credentials('your_domain_name')  // Если используете Jenkins Credentials
+        DOMAIN_NAME = credentials('test_domain_name')  // Если используете Jenkins Credentials
         //API_URL = credentials('your_api_url')
         DB_URL = 'jdbc:postgresql://db:5432/postgres'  // Другие необходимые переменные
         DB_USER = 'postgres'
