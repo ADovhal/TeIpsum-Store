@@ -3,7 +3,7 @@ version: '3'
 services:
   frontend:
     build:
-      context: ./WebShopOnline/frontend/webform
+      context: ./frontend/webform
       dockerfile: Dockerfile
     ports:
       - '9000:80'  # Порт изменён для тестовой среды
@@ -11,7 +11,7 @@ services:
       - ./frontend/webform/.env       # Конфигурационный файл среды
 
   backend:
-    build: ./WebShopOnline/backend/spring-server-v1
+    build: ./backend/spring-server-v1
     ports:
       - '9091:9090'  # Изменён порт для тестирования, чтобы не пересекаться с продакшеном
     depends_on:
