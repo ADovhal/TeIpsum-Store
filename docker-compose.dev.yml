@@ -13,7 +13,7 @@ services:
     ports:
       - '9091:9090'  # Изменён порт для тестирования, чтобы не пересекаться с продакшеном
     depends_on:
-      - test_db
+      - db
     environment:
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
