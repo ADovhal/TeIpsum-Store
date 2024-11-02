@@ -10,7 +10,8 @@ pipeline {
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
-        REACT_APP_API_URL = credentials('react_app_api_url_test_env')
+        // REACT_APP_API_URL = credentials('react_app_api_url_test_env')
+        REACT_APP_API_URL = 'api/users'
         // CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
     }
 
