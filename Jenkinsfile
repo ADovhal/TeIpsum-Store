@@ -41,11 +41,11 @@ pipeline {
                 }
             }
         }
-        stage('List Files') {
-            steps {
-                    // sh 'ls -la frontend/webform/'
-            }
-        }
+        // stage('List Files') {
+        //     steps {
+        //             // sh 'ls -la frontend/webform/'
+        //     }
+        // }
 
         stage('Build and Run') {
             steps {
