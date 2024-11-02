@@ -10,7 +10,7 @@ pipeline {
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
-        CORS_ALLOWED_ORIGINS = 'http://localhost:3000'
+        CORS_ALLOWED_ORIGINS = 'https://' + DOMAIN_NAME
     }
 
     stages {
