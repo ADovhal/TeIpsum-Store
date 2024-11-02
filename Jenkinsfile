@@ -4,10 +4,10 @@ pipeline {
     agent any
 
     environment {
-        API_URL = credentials('api_url')
-        GITHUB_TOKEN = credentials('github_token')
-        REACT_APP_API_URL = credentials('react_app_api_url')
-        DOMAIN_NAME = credentials('domain_name')
+        // API_URL = credentials('api_url')
+        // GITHUB_TOKEN = credentials('github_token')
+        // REACT_APP_API_URL = credentials('react_app_api_url')
+        // DOMAIN_NAME = credentials('domain_name')
 
     }
 
@@ -21,19 +21,19 @@ pipeline {
             }
         }
 
-        stage('Create .env File') {
-            steps {
-                script {
-                    echo 'Creating .env file...'
+        // stage('Create .env File') {
+        //     steps {
+        //         script {
+        //             echo 'Creating .env file...'
                     
-                    def envContent = """
-                    DOMAIN_NAME=${DOMAIN_NAME}
-                    API_URL=${API_URL}
-                    """
-                    writeFile file: '.env', text: envContent.stripIndent()
-                }
-            }
-        }
+        //             def envContent = """
+        //             DOMAIN_NAME=${DOMAIN_NAME}
+        //             API_URL=${API_URL}
+        //             """
+        //             writeFile file: '.env', text: envContent.stripIndent()
+        //         }
+        //     }
+        // }
 
         stage('Build and Run') {
             steps {
@@ -44,12 +44,13 @@ pipeline {
                     sh 'docker --version'
                     sh 'docker-compose --version'
                     // sh 'docker-compose up --build -d'
-                    sh 'docker-compose -f docker-compose.dev.yml up -d --build'
+                    
                 }
+                sh 'docker-compose --env-file frontend/webform/.env -f docker-compose.dev.yml up -d --build'
             }
         }
 
-        stage('Run Tests with Newman') {
+        stage('Run Tests') {
             steps {
                 script {
 
@@ -70,8 +71,8 @@ pipeline {
             steps {
                 script {
                     echo 'Generating Allure report...'
-                    sh 'allure --version'
-                    sh 'allure generate ./allure-results-frontend -o ./allure-report-frontend --clean'
+                    // sh 'allure --version'
+                    // sh 'allure generate ./allure-results-frontend -o ./allure-report-frontend --clean'
                 }
             }
         }
