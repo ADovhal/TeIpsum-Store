@@ -10,7 +10,7 @@ pipeline {
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
-        CORS_ALLOWED_ORIGINS = 'https://'
+        CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
     }
 
     stages {
@@ -21,7 +21,22 @@ pipeline {
         //         checkout scm
         //     }
         // }
-        
+        stage('Stop Old Containers') {
+            steps {
+                script {
+                    echo 'Stopping old containers...'
+                    sh '''
+                    docker stop test_env_test_frontend || true
+                    docker stop test_env_test_backend || true
+                    '''
+                    sh '''
+                    docker rm test_env_test_frontend || true
+                    docker rm test_env_test_backend || true
+                    '''
+                }
+            }
+        }
+
         stage('Create .env File') {
             steps {
                 script {
