@@ -27,6 +27,7 @@ pipeline {
             steps {
                 script {
                     // Используем Groovy для задания переменной с динамическим значением
+                    // env.REACT_APP_API_URL_TEST = 
                     env.CORS_ALLOWED_ORIGINS = "https://${env.DOMAIN_NAME}"
                 }
             }
@@ -66,7 +67,7 @@ pipeline {
                     JWT_SECRET=${JWT_SECRET}
                     CORS_ALLOWED_ORIGINS=${env.CORS_ALLOWED_ORIGINS}
                     """
-                    
+
                     writeFile file: 'frontend/webform/.env', text: envContent.stripIndent()
                 }
             }
