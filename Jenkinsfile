@@ -6,9 +6,9 @@ pipeline {
     environment {
         //DOMAIN_NAME = credentials('your_domain_name')  // Если используете Jenkins Credentials
         //API_URL = credentials('your_api_url')
-        DB_URL = 'db_url'  // Другие необходимые переменные
-        DB_USER = 'db_user'
-        DB_PASSWORD = 'db_password'
+        DB_URL = 'jdbc:postgresql://db:5432/postgres'  // Другие необходимые переменные
+        DB_USER = 'postgres'
+        DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
         CORS_ALLOWED_ORIGINS = 'http://localhost:3000'
 
