@@ -28,7 +28,6 @@ pipeline {
                     echo 'Creating .env file...'
                     
                     def envContent = """
-                    
                     DB_URL=${DB_URL}
                     DB_USER=${DB_USER}
                     DB_PASSWORD=${DB_PASSWORD}
