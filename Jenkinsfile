@@ -3,13 +3,16 @@ import groovy.json.JsonOutput
 pipeline {
     agent any
 
-    // environment {
-        // API_URL = credentials('api_url')
-        // GITHUB_TOKEN = credentials('github_token')
-        // REACT_APP_API_URL = credentials('react_app_api_url')
-        // DOMAIN_NAME = credentials('domain_name')
+    environment {
+        //DOMAIN_NAME = credentials('your_domain_name')  // Если используете Jenkins Credentials
+        //API_URL = credentials('your_api_url')
+        DB_URL = 'db_url'  // Другие необходимые переменные
+        DB_USER = 'db_user'
+        DB_PASSWORD = 'db_password'
+        JWT_SECRET = 'jwt_secret'
+        CORS_ALLOWED_ORIGINS = 'http://localhost:3000'
 
-    // }
+    }
 
 
     stages {
@@ -21,19 +24,24 @@ pipeline {
         //     }
         // }
 
-        // stage('Create .env File') {
-        //     steps {
-        //         script {
-        //             echo 'Creating .env file...'
+        stage('Create .env File') {
+            steps {
+                script {
+                    echo 'Creating .env file...'
                     
-        //             def envContent = """
-        //             DOMAIN_NAME=${DOMAIN_NAME}
-        //             API_URL=${API_URL}
-        //             """
-        //             writeFile file: '.env', text: envContent.stripIndent()
-        //         }
-        //     }
-        // }
+                    def envContent = """
+                    DOMAIN_NAME=${DOMAIN_NAME}
+                    API_URL=${API_URL}
+                    DB_URL=${DB_URL}
+                    DB_USER=${DB_USER}
+                    DB_PASSWORD=${DB_PASSWORD}
+                    JWT_SECRET=${JWT_SECRET}
+                    CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+                    """
+                    writeFile file: '.env', text: envContent.stripIndent()
+                }
+            }
+        }
         stage('List Files') {
             steps {
                     sh 'ls -la frontend/webform/'
@@ -51,7 +59,7 @@ pipeline {
                     // sh 'docker-compose up --build -d'
                     
                 }
-                sh 'docker-compose --env-file ./.env -f docker-compose.dev.yml up -d --build'
+                sh 'docker-compose --env-file /.env -f docker-compose.dev.yml up -d --build'
             }
         }
 
