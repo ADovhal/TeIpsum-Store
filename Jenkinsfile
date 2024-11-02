@@ -43,7 +43,7 @@ pipeline {
         }
         stage('List Files') {
             steps {
-                    sh 'ls -la frontend/webform/'
+                    // sh 'ls -la frontend/webform/'
             }
         }
 
