@@ -30,5 +30,5 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - ./webform_data_dev:/var/lib/postgresql/data  # Отдельный volume для тестовой базы данных
+    # volumes:
+    #   - ./webform_data_dev:/var/lib/postgresql/data  # Отдельный volume для тестовой базы данных
