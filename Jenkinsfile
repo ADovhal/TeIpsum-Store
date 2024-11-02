@@ -59,7 +59,7 @@ pipeline {
                     echo 'Creating .env file...'
                     
                     def envContent = """
-                    REACT_APP_API_URL=${REACT_APP_API_URL_TEST}
+                    REACT_APP_API_URL_TEST=${env.REACT_APP_API_URL_TEST}
                     DOMAIN_NAME=${DOMAIN_NAME}
                     DB_URL=${DB_URL}
                     DB_USER=${DB_USER}
