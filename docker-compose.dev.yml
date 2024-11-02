@@ -1,7 +1,7 @@
 services:
   frontend:
     build:
-      context: ./frontend/webform
+      #context: ./frontend/webform
       dockerfile: Dockerfile
     ports:
       - '9001:80'  # Порт изменён для тестовой среды
