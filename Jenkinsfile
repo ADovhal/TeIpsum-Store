@@ -56,7 +56,7 @@ pipeline {
                     sh 'docker --version'
                     sh 'docker-compose --version'
                     // sh 'docker-compose up --build -d'
-                    sh 'docker-compose -f docker-compose.dev.yml up -d --build'
+                    sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
                 }
                 
             }
