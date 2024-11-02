@@ -11,7 +11,7 @@ pipeline {
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
         // REACT_APP_API_URL = credentials('react_app_api_url_test_env')
-        REACT_APP_API_URL = 'api/users'
+        REACT_APP_API_URL_TEST = 'api/users'
         // CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
     }
 
@@ -58,7 +58,7 @@ pipeline {
                     echo 'Creating .env file...'
                     
                     def envContent = """
-                    REACT_APP_API_URL=${REACT_APP_API_URL}
+                    REACT_APP_API_URL=${REACT_APP_API_URL_TEST}
                     DOMAIN_NAME=${DOMAIN_NAME}
                     DB_URL=${DB_URL}
                     DB_USER=${DB_USER}
