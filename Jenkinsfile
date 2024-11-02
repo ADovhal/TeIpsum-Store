@@ -20,7 +20,7 @@ pipeline {
         // stage('Checkout') {
         //     steps {
         //         echo 'Checking out SCM.'
-        //         checkout scm
+        //         checkout scm 
         //     }
         // }
         stage('Setup Environment Variables') {
