@@ -37,7 +37,7 @@ pipeline {
                     JWT_SECRET=${JWT_SECRET}
                     CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
                     """
-                    writeFile file: '.env', text: envContent.stripIndent()
+                    writeFile file: 'frontend/webform/.env', text: envContent.stripIndent()
                 }
             }
         }
