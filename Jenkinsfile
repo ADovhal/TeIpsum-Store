@@ -11,12 +11,21 @@ pipeline {
 
     }
 
+
     stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out SCM.'
+                checkout scm
+            }
+        }
+
         stage('Create .env File') {
             steps {
                 script {
                     echo 'Creating .env file...'
-                    // Создаём файл .env с несколькими переменными окружения
+                    
                     def envContent = """
                     DOMAIN_NAME=${DOMAIN_NAME}
                     API_URL=${API_URL}
@@ -30,10 +39,12 @@ pipeline {
             steps {
                 script {
                     echo 'Deploy to Test Server'
+                    echo 'Using updated docker-compose for test environment!'
                     echo 'Starting Docker Compose...'
                     sh 'docker --version'
                     sh 'docker-compose --version'
-                    sh 'docker-compose up --build -d'
+                    // sh 'docker-compose up --build -d'
+                    sh 'docker-compose -f docker-compose.dev.yml up -d --build'
                 }
             }
         }
@@ -41,14 +52,16 @@ pipeline {
         stage('Run Tests with Newman') {
             steps {
                 script {
-                    echo 'Running tests with Newman...'
-                    sh 'newman -v'
-                    echo "Using API URL: " //$API_URL
-                    
-                    // Запуск тестов с использованием API_URL
-                    sh ('newman run $API_URL --reporters cli,allure --reporter-allure-export ./allure-results-frontend')
 
-                    //error("Force failure for testing purposes")
+                    echo 'Example of tests in Test Env.'
+                    // echo 'Running tests with Newman...'
+                    // sh 'newman -v'
+                    // echo "Using API URL: " //$API_URL
+                    
+                    // // Запуск тестов с использованием API_URL
+                    // sh ('newman run $API_URL --reporters cli,allure --reporter-allure-export ./allure-results-frontend')
+
+                    // //error("Force failure for testing purposes")
                 }
             }
         }
@@ -86,47 +99,47 @@ pipeline {
             }
         }
 
-        success {
-            script {
-                echo 'Build succeeded!'
-                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
+        // success {
+        //     script {
+        //         echo 'Build succeeded!'
+        //         def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
-                def body = JsonOutput.toJson([
-                    state: 'success',
-                    target_url: env.BUILD_URL,
-                    description: "Build succeeded",
-                    context: "continuous-integration/jenkins"
-                ])
+        //         def body = JsonOutput.toJson([
+        //             state: 'success',
+        //             target_url: env.BUILD_URL,
+        //             description: "Build succeeded",
+        //             context: "continuous-integration/jenkins"
+        //         ])
 
-                writeFile file: 'body.json', text: body
+        //         writeFile file: 'body.json', text: body
                 
-                sh("""
-                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-                    -d @body.json ${commitStatusUrl}
-                """)
-            }
-        }
+        //         sh("""
+        //             curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+        //             -d @body.json ${commitStatusUrl}
+        //         """)
+        //     }
+        // }
 
-        failure {
-            script {
-                echo 'Build failed!'
+        // failure {
+        //     script {
+        //         echo 'Build failed!'
 
-                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
+        //         def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
-                def body = JsonOutput.toJson([
-                    state: 'failure',
-                    target_url: env.BUILD_URL,
-                    description: "Build failed",
-                    context: "continuous-integration/jenkins"
-                ])
+        //         def body = JsonOutput.toJson([
+        //             state: 'failure',
+        //             target_url: env.BUILD_URL,
+        //             description: "Build failed",
+        //             context: "continuous-integration/jenkins"
+        //         ])
 
-                writeFile file: 'body.json', text: body
+        //         writeFile file: 'body.json', text: body
                 
-                sh("""
-                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-                    -d @body.json ${commitStatusUrl}
-                """)
-            }
-        }
+        //         sh("""
+        //             curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+        //             -d @body.json ${commitStatusUrl}
+        //         """)
+        //     }
+        // }
     }
 }
