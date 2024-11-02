@@ -14,12 +14,12 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                echo 'Checking out SCM.'
-                checkout scm
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         echo 'Checking out SCM.'
+        //         checkout scm
+        //     }
+        // }
 
         // stage('Create .env File') {
         //     steps {
@@ -34,6 +34,11 @@ pipeline {
         //         }
         //     }
         // }
+        stage('List Files') {
+            steps {
+                    sh 'ls -la frontend/webform/'
+            }
+        }
 
         stage('Build and Run') {
             steps {
@@ -46,7 +51,7 @@ pipeline {
                     // sh 'docker-compose up --build -d'
                     
                 }
-                sh 'docker-compose --env-file /.env -f docker-compose.dev.yml up -d --build'
+                sh 'docker-compose --env-file ./.env -f docker-compose.dev.yml up -d --build'
             }
         }
 
