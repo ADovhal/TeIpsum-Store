@@ -46,7 +46,7 @@ pipeline {
                                 echo "Container ${container} does not exist, skipping..."
                             fi
                         """
-                    }
+                    } 
                     // sh 'docker-compose -f docker-compose.dev.yml down'
                 }
             }
