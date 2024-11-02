@@ -3,13 +3,13 @@ import groovy.json.JsonOutput
 pipeline {
     agent any
 
-    environment {
+    // environment {
         // API_URL = credentials('api_url')
         // GITHUB_TOKEN = credentials('github_token')
         // REACT_APP_API_URL = credentials('react_app_api_url')
         // DOMAIN_NAME = credentials('domain_name')
 
-    }
+    // }
 
 
     stages {
