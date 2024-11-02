@@ -10,7 +10,7 @@ pipeline {
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
-        CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
+        // CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
     }
 
     stages {
@@ -21,6 +21,15 @@ pipeline {
         //         checkout scm
         //     }
         // }
+        stage('Setup Environment Variables') {
+            steps {
+                script {
+                    // Используем Groovy для задания переменной с динамическим значением
+                    env.CORS_ALLOWED_ORIGINS = "https://${env.DOMAIN_NAME}"
+                }
+            }
+        }
+
         stage('Stop Old Containers') {
             steps {
                 script {
@@ -48,7 +57,7 @@ pipeline {
                     DB_USER=${DB_USER}
                     DB_PASSWORD=${DB_PASSWORD}
                     JWT_SECRET=${JWT_SECRET}
-                    CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}+${DOMAIN_NAME}
+                    CORS_ALLOWED_ORIGINS=${env.CORS_ALLOWED_ORIGINS}
                     """
                     writeFile file: 'frontend/webform/.env', text: envContent.stripIndent()
                 }
