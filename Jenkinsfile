@@ -135,12 +135,10 @@ pipeline {
 
                 writeFile file: 'body.json', text: body
 
-                withEnv(["COMMIT_STATUS_URL=${commitStatusUrl}"]) {
-                    sh """
-                        curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-                        -d @body.json \$COMMIT_STATUS_URL
-                    """
-                }
+                sh """
+                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    -d @body.json ${commitStatusUrl}
+                """
             }
         }
 
@@ -148,7 +146,7 @@ pipeline {
             script {
                 echo 'Build failed!'
 
-                def commitStatusUrl = "\${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
+                def commitStatusUrl = "${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'failure',
@@ -158,12 +156,10 @@ pipeline {
                 ])
 
                 writeFile file: 'body.json', text: body
-                withEnv(["COMMIT_STATUS_URL=${commitStatusUrl}"]) {
-                    sh("""
-                        curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
-                        -d @body.json \${COMMIT_STATUS_URL}
-                    """)
-                }
+                sh """
+                    curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
+                    -d @body.json ${commitStatusUrl}
+                """
             }
         }
     }
