@@ -64,6 +64,8 @@ pipeline {
                     sh 'docker --version'
                     sh 'docker-compose --version'
                     sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
+                    sh 'docker nerwork test-net server-webserver-1'
+                    sh 'docker nerwork test-net wg-easy'
                 }
                 
             }
