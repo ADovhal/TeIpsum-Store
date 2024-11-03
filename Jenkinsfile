@@ -135,7 +135,7 @@ pipeline {
                 
                 sh("""
                     curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
-                    -d @body.json \${commitStatusUrl}
+                    -d @body.json ${commitStatusUrl}
                 """)
             }
         }
@@ -157,7 +157,7 @@ pipeline {
                 
                 sh("""
                     curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
-                    -d @body.json \${commitStatusUrl}
+                    -d @body.json ${commitStatusUrl}
                 """)
             }
         }
