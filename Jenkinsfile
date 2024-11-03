@@ -119,10 +119,11 @@ pipeline {
             }
         }
 
-        success {
-            script {
+        script {
                 echo 'Build succeeded!'
-                def commitStatusUrl = "\${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
+
+                // Создаем commitStatusUrl напрямую с использованием переменной окружения
+                def commitStatusUrl = "${env.GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'success',
@@ -132,13 +133,13 @@ pipeline {
                 ])
 
                 writeFile file: 'body.json', text: body
-                withEnv(["COMMIT_STATUS_URL=${commitStatusUrl}"]) {
-                    sh("""
-                        curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
-                        -d @body.json \${COMMIT_STATUS_URL}
-                    """)
+
+                withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
+                    sh """
+                        curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/json" \
+                        -d @body.json '${commitStatusUrl}'
+                    """
                 }
-            }
         }
 
         failure {
