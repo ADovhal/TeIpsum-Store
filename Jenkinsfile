@@ -134,7 +134,7 @@ pipeline {
                 writeFile file: 'body.json', text: body
                 
                 sh("""
-                    curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" \
+                    curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
                     -d @body.json ${commitStatusUrl}
                 """)
             }
@@ -156,7 +156,7 @@ pipeline {
                 writeFile file: 'body.json', text: body
                 
                 sh("""
-                    curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" \
+                    curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
                     -d @body.json ${commitStatusUrl}
                 """)
             }
