@@ -113,7 +113,6 @@ pipeline {
             script {
                 // echo 'Cleaning up...'
                 // sh 'docker-compose down'
-
                 echo 'Trying to save current version available for testers.'
                 echo 'Test deliverables will help to decide when to make Pull Request to main branch.'
             }
