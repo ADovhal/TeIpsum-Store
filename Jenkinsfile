@@ -4,6 +4,7 @@ pipeline {
     agent any
 
     environment {
+        GITHUB_TOKEN = credentials('github_token')
         REACT_APP_API_URL_TEST = credentials('react_app_api_url_test_env')
         DOMAIN_NAME = credentials('domain_name')
         GIT_COMMIT_MAIN_REPO = credentials('git_commit_main_repo')
@@ -15,20 +16,9 @@ pipeline {
     }
 
     stages {
-        stage('Setup Environment Variables') {
-            steps {
-                script {
-                    // Используем Groovy для задания переменной с динамическим значением
-                    env.REACT_APP_API_URL_TEST = "https://app.andriidovhal.tech/api/users"
-                    env.CORS_ALLOWED_ORIGINS = "https://app.andriidovhal.tech/"
-                }
-            }
-        }
-
         stage('Stop Old Containers') {
             steps {
                 script {
-                    //Останавливаем и удаляем только если контейнер существует
                     def containers = ["test_env_test_frontend_1", "test_env_test_backend_1"]
                     containers.each { container ->
                         sh """
@@ -64,12 +54,7 @@ pipeline {
                 }
             }
         }
-        // stage('List Files') {
-        //     steps {
-        //             // sh 'ls -la frontend/webform/'
-        //     }
-        // }
-
+        
         stage('Build and Run') {
             steps {
                 script {
@@ -78,7 +63,6 @@ pipeline {
                     echo 'Starting Docker Compose...'
                     sh 'docker --version'
                     sh 'docker-compose --version'
-                    // sh 'docker-compose up --build -d'
                     sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
                 }
                 
@@ -138,7 +122,6 @@ pipeline {
         success {
             script {
                 echo 'Build succeeded!'
-                // def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
                 def commitStatusUrl = "${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
@@ -151,7 +134,7 @@ pipeline {
                 writeFile file: 'body.json', text: body
                 
                 sh("""
-                    curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" \
                     -d @body.json ${commitStatusUrl}
                 """)
             }
@@ -173,7 +156,7 @@ pipeline {
                 writeFile file: 'body.json', text: body
                 
                 sh("""
-                    curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" \
                     -d @body.json ${commitStatusUrl}
                 """)
             }
