@@ -37,7 +37,9 @@ services:
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_PASSWORD=${DB_PASSWORD}
         networks:
-            - test-net
+            test-net:
+                ipv4_address: 172.19.0.3
+
 
 networks:
     test-net:
