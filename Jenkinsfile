@@ -135,10 +135,10 @@ pipeline {
 
                 writeFile file: 'body.json', text: body
 
-                withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
+                withEnv(["COMMIT_STATUS_URL=${commitStatusUrl}", "GITHUB_TOKEN=${env.GITHUB_TOKEN}"]) {
                     sh """
-                        curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/json" \
-                        -d @body.json '${commitStatusUrl}'
+                        curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                        -d @body.json \$COMMIT_STATUS_URL
                     """
                 }
             }
