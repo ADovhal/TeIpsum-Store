@@ -7,7 +7,7 @@ pipeline {
         GITHUB_TOKEN = credentials('github_token')
         REACT_APP_API_URL_TEST = credentials('react_app_api_url_test_env')
         DOMAIN_NAME = credentials('domain_name')
-        GIT_COMMIT_MAIN_REPO = credentials('git_commit_main_repo')
+        //GIT_COMMIT_MAIN_REPO = credentials('git_commit_main_repo')
         DB_URL = credentials('test_db_url')
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
