@@ -68,7 +68,7 @@ pipeline {
         success {
             script {
                 echo 'Build succeeded!'
-                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
+                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'success',
@@ -90,7 +90,7 @@ pipeline {
             script {
                 echo 'Build failed!'
 
-                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebForm/statuses/${env.GIT_COMMIT}"
+                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'failure',
