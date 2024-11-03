@@ -1,5 +1,9 @@
 import groovy.json.JsonOutput
 
+boolean isContainerConnected(network, container) {
+    def result = sh(script: "docker network inspect ${network} --format '{{range .Containers}}{{if eq .Name \"${container}\"}}connected{{end}}{{end}}'", returnStdout: true).trim()
+    return result == 'connected'
+}
 pipeline {
     agent any
 
@@ -64,8 +68,10 @@ pipeline {
                     sh 'docker --version'
                     sh 'docker-compose --version'
                     sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
-                    sh 'docker network connect test_env_test-net server-webserver-1'
-                    sh 'docker network connect test_env_test-net wg-easy'
+                    if (!isContainerConnected('test-net', 'server-webserver-1')) {
+                    sh 'docker network connect test-net server-webserver-1'}
+                    if (!isContainerConnected('test-net', 'wg-easy')) {
+                    sh 'docker network connect test-net wg-easy'  }
                 }
                 
             }
@@ -163,3 +169,5 @@ pipeline {
         }
     }
 }
+
+
