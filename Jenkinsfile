@@ -119,7 +119,8 @@ pipeline {
             }
         }
 
-        script {
+        success {
+            script {
                 echo 'Build succeeded!'
 
                 // Создаем commitStatusUrl напрямую с использованием переменной окружения
@@ -140,6 +141,7 @@ pipeline {
                         -d @body.json '${commitStatusUrl}'
                     """
                 }
+            }
         }
 
         failure {
