@@ -64,8 +64,8 @@ pipeline {
                     sh 'docker --version'
                     sh 'docker-compose --version'
                     sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
-                    sh 'docker network connect test-net server-webserver-1'
-                    sh 'docker network connect test-net wg-easy'
+                    sh 'docker network connect test_env_test-net server-webserver-1'
+                    sh 'docker network connect test_env_test-net wg-easy'
                 }
                 
             }
