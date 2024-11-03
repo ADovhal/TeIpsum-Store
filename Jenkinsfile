@@ -124,7 +124,7 @@ pipeline {
                 echo 'Build succeeded!'
 
                 // Создаем commitStatusUrl напрямую с использованием переменной окружения
-                def commitStatusUrl = "${env.GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
+                def commitStatusUrl = GIT_COMMIT_MAIN_REPO + env.GIT_COMMIT
 
                 def body = JsonOutput.toJson([
                     state: 'success',
