@@ -37,7 +37,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     networks:
-      - test_env_default
+      - default
         
 networks:
   default:
