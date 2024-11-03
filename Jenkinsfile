@@ -4,25 +4,17 @@ pipeline {
     agent any
 
     environment {
-        DOMAIN_NAME = credentials('domain_name')  // Если используете Jenkins Credentials
-        //API_URL = credentials('your_api_url')
-        DB_URL = credentials('test_db_url')  // Другие необходимые переменные
+        REACT_APP_API_URL_TEST = credentials('react_app_api_url_test_env')
+        DOMAIN_NAME = credentials('domain_name')
+        GIT_COMMIT_MAIN_REPO = credentials('git_commit_main_repo')
+        DB_URL = credentials('test_db_url')
         DB_USER = 'postgres'
         DB_PASSWORD = 'admin'
         JWT_SECRET = 'jwt_secret'
-        // REACT_APP_API_URL = credentials('react_app_api_url_test_env')
-        //REACT_APP_API_URL_TEST = 'api/users'
-        // CORS_ALLOWED_ORIGINS = 'https://\${DOMAIN_NAME}'
+        CORS_ALLOWED_ORIGINS = credentials('cors_allowed_origins_test_env')
     }
 
     stages {
-
-        // stage('Checkout') {
-        //     steps {
-        //         echo 'Checking out SCM.'
-        //         checkout scm 
-        //     }
-        // }
         stage('Setup Environment Variables') {
             steps {
                 script {
@@ -59,13 +51,13 @@ pipeline {
                     echo 'Creating .env file...'
                     
                     def envContent = """
-                    REACT_APP_API_URL_TEST=${env.REACT_APP_API_URL_TEST}
+                    REACT_APP_API_URL_TEST=${REACT_APP_API_URL_TEST}
                     DOMAIN_NAME=app.${DOMAIN_NAME}
                     DB_URL=${DB_URL}
                     DB_USER=${DB_USER}
                     DB_PASSWORD=${DB_PASSWORD}
                     JWT_SECRET=${JWT_SECRET}
-                    CORS_ALLOWED_ORIGINS=${env.CORS_ALLOWED_ORIGINS}
+                    CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
                     """
 
                     writeFile file: 'frontend/webform/.env', text: envContent.stripIndent()
@@ -143,47 +135,48 @@ pipeline {
             }
         }
 
-        // success {
-        //     script {
-        //         echo 'Build succeeded!'
-        //         def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
+        success {
+            script {
+                echo 'Build succeeded!'
+                // def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
+                def commitStatusUrl = "${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
 
-        //         def body = JsonOutput.toJson([
-        //             state: 'success',
-        //             target_url: env.BUILD_URL,
-        //             description: "Build succeeded",
-        //             context: "continuous-integration/jenkins"
-        //         ])
+                def body = JsonOutput.toJson([
+                    state: 'success',
+                    target_url: env.BUILD_URL,
+                    description: "Build succeeded",
+                    context: "continuous-integration/jenkins"
+                ])
 
-        //         writeFile file: 'body.json', text: body
+                writeFile file: 'body.json', text: body
                 
-        //         sh("""
-        //             curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-        //             -d @body.json ${commitStatusUrl}
-        //         """)
-        //     }
-        // }
+                sh("""
+                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    -d @body.json ${commitStatusUrl}
+                """)
+            }
+        }
 
-        // failure {
-        //     script {
-        //         echo 'Build failed!'
+        failure {
+            script {
+                echo 'Build failed!'
 
-        //         def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
+                def commitStatusUrl = "${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
 
-        //         def body = JsonOutput.toJson([
-        //             state: 'failure',
-        //             target_url: env.BUILD_URL,
-        //             description: "Build failed",
-        //             context: "continuous-integration/jenkins"
-        //         ])
+                def body = JsonOutput.toJson([
+                    state: 'failure',
+                    target_url: env.BUILD_URL,
+                    description: "Build failed",
+                    context: "continuous-integration/jenkins"
+                ])
 
-        //         writeFile file: 'body.json', text: body
+                writeFile file: 'body.json', text: body
                 
-        //         sh("""
-        //             curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-        //             -d @body.json ${commitStatusUrl}
-        //         """)
-        //     }
-        // }
+                sh("""
+                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
+                    -d @body.json ${commitStatusUrl}
+                """)
+            }
+        }
     }
 }
