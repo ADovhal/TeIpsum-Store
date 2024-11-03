@@ -122,9 +122,7 @@ pipeline {
         success {
             script {
                 echo 'Build succeeded!'
-
-                // Создаем commitStatusUrl напрямую с использованием переменной окружения
-                def commitStatusUrl = GIT_COMMIT_MAIN_REPO + env.GIT_COMMIT
+                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'success',
@@ -135,18 +133,17 @@ pipeline {
 
                 writeFile file: 'body.json', text: body
 
-                sh """
+                sh("""
                     curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
-                    -d @body.json \$commitStatusUrl
-                """
+                    -d @body.json ${commitStatusUrl}
+                """)
             }
         }
 
         failure {
             script {
                 echo 'Build failed!'
-
-                def commitStatusUrl = "${GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
+                def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'failure',
@@ -156,10 +153,11 @@ pipeline {
                 ])
 
                 writeFile file: 'body.json', text: body
-                sh """
-                    curl -X POST -H "Authorization: token \${GITHUB_TOKEN}" -H "Content-Type: application/json" \
+
+                sh("""
+                    curl -X POST -H "Authorization: token \$GITHUB_TOKEN" -H "Content-Type: application/json" \
                     -d @body.json ${commitStatusUrl}
-                """
+                """)
             }
         }
     }
