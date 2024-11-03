@@ -122,7 +122,7 @@ pipeline {
         success {
             script {
                 echo 'Build succeeded!'
-                def commitStatusUrl = env.GIT_COMMIT_MAIN_REPO + env.GIT_COMMIT
+                def commitStatusUrl = "${env.GIT_COMMIT_MAIN_REPO}${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
                     state: 'success',
