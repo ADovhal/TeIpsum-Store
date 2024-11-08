@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,8 +39,13 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody RegistryUserRequest request) {
         User user = new User();
-        user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setName(request.getName());
+        user.setSurname(request.getSurname());
+        user.setDob(request.getDob());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setJoinDate(LocalDate.now()); // Опционально, можно убрать, если joinDate инициализируется автоматически
 
         User createdUser = userService.registerUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -52,21 +58,24 @@ public class UserController {
         String requestURI = httpServletRequest.getRequestURI();
         System.out.println("Received login request from IP: " + clientIP + " for URI: " + requestURI);
 
-        User foundUser = userService.findUserByUsername(request.getUsername());
+        // Ищем пользователя по email
+        User foundUser = userService.findUserByEmail(request.getEmail());
 
         if (foundUser != null) {
-            System.out.println("User found: " + foundUser.getUsername());
+            System.out.println("User found: " + foundUser.getId());
             System.out.println("Stored password: " + foundUser.getPassword());
             System.out.println("Received password: " + request.getPassword());
-            //passwordEncoder.encode()
+
+            // Сравниваем пароли
             boolean passwordMatches = passwordEncoder.matches(request.getPassword(), foundUser.getPassword());
             System.out.println("Password matches: " + passwordMatches);
 
             if (passwordMatches) {
-                String token = jwtUtil.createToken(foundUser.getUsername());
+                // Генерация токена
+                String token = jwtUtil.createToken(foundUser.getEmail());  // Используем email для токена
                 Map<String, Object> response = new HashMap<>();
                 response.put("id", foundUser.getId());
-                response.put("username", foundUser.getUsername());
+                response.put("email", foundUser.getEmail());  // Отдаем email вместо username
                 response.put("token", token);
                 System.out.println(response);
                 return ResponseEntity.ok(response);
@@ -74,8 +83,10 @@ public class UserController {
         } else {
             System.out.println("User not found");
         }
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
     }
+
 
 
     @GetMapping("/protected")
@@ -98,7 +109,7 @@ public class UserController {
         if (user != null) {
             Map<String, Object> response = new HashMap<>();
             response.put("id", user.getId());
-            response.put("username", user.getUsername());
+            response.put("email", user.getEmail());
 
             return ResponseEntity.ok(response);
         } else {

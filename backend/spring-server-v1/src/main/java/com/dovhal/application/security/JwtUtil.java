@@ -20,7 +20,7 @@ public class JwtUtil {
 
     private final long EXPIRATION_TIME = 3600000; // 1 час
 
-    public String createToken(String username) {
+    public String createToken(String email) {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("typ", "JWT");
@@ -28,7 +28,7 @@ public class JwtUtil {
 
         return JWT.create()
                 .withHeader(headerClaims)
-                .withSubject(username)
+                .withSubject(email)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(algorithm);
@@ -49,8 +49,8 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public boolean validateToken(String token, String username) {
+    public boolean validateToken(String token, String email) {
         String extractedUsername = extractUsername(token);
-        return (extractedUsername != null && extractedUsername.equals(username) && !isTokenExpired(token));
+        return (extractedUsername != null && extractedUsername.equals(email) && !isTokenExpired(token));
     }
 }

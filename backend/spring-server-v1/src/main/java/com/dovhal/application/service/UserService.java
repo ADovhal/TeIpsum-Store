@@ -15,22 +15,21 @@ public class UserService {
     private UserRepository userRepository;
 
     public User registerUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username is already taken.");
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("This email is already in use");
         }
-        //user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            return userRepository.findByUsername(username);
+            String email = authentication.getName();
+            return userRepository.findByEmail(email);
         }
         return null;
     }
