@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard/ProductCard';
+import ProductBlock from '../components/ProductCard/ProductBlock';
 import FilterSidebar from '../components/store/FilterSidebar';
 import SearchBar from '../components/store/SearchBar';
 import { getProductsFiltered } from '../services/productService';
 
 const StorePage = () => {
-    const [products, setProducts] = useState([]);  // Продукты на текущей странице
+    const [products, setProducts] = useState([]);
     const [filters, setFilters] = useState({
         name: '',
         category: '',
@@ -14,13 +15,11 @@ const StorePage = () => {
         rating: 0,
     });
     const [searchQuery, setSearchQuery] = useState('');
-    
-    const [page, setPage] = useState(0); // Номер текущей страницы
-    const [totalPages, setTotalPages] = useState(0); // Общее количество страниц
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const size = 12;
+    const [viewMode, setViewMode] = useState('grid');
 
-    const size = 10; // Размер страницы
-
-    // Функция для получения продуктов с учетом фильтров и пагинации
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -35,15 +34,12 @@ const StorePage = () => {
                     size
                 });
 
-                console.log('Fetched products:', fetchedProducts); // Логируем ответ от сервера
-
                 if (Array.isArray(fetchedProducts)) {
-                    setProducts(fetchedProducts); // Обновляем состояние продуктами
+                    setProducts(fetchedProducts);
                 } else {
-                    setProducts([]); // Если данных нет, очищаем продукты
+                    setProducts([]);
                 }
 
-                // Устанавливаем общее количество страниц
                 setTotalPages(totalPages);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -51,50 +47,76 @@ const StorePage = () => {
         };
 
         fetchProducts();
-    }, [filters, searchQuery, page]); // Следим за изменениями фильтров и поисковым запросом
+    }, [filters, searchQuery, page]);
 
-    // Обработчик изменений фильтров
     const handleFilterChange = (updatedFilters) => {
         setFilters((prevFilters) => ({ ...prevFilters, ...updatedFilters }));
-        setPage(0); // Сбрасываем на первую страницу при изменении фильтров
+        setPage(0);
     };
 
-    // Обработчик изменения поискового запроса
     const handleSearchChange = (query) => {
         setSearchQuery(query);
         setFilters((prevFilters) => ({ ...prevFilters, name: query }));
-        setPage(0); // Сбрасываем на первую страницу при изменении поиска
+        setPage(0);
     };
 
-    // Переход на следующую страницу
     const handleNextPage = () => {
         if (page < totalPages - 1) {
             setPage((prevPage) => prevPage + 1);
         }
     };
 
-    // Переход на предыдущую страницу
     const handlePreviousPage = () => {
         if (page > 0) setPage((prevPage) => prevPage - 1);
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', position: 'relative' }}>
             <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+            
             <div style={{ flex: 1, marginLeft: '20px' }}>
-                <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', marginTop: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: '20px', paddingLeft: '80px', paddingTop: '20px'}}>
+                    <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+                    
+                    {/* Переключатель вида рядом с SearchBar */}
+                    <div style={{paddingBottom: '20px'}}>
+                        <button onClick={() => setViewMode('grid')} style={{ marginRight: '20px' }}>Карточки</button>
+                        <button onClick={() => setViewMode('list')}>Блоки</button>
+                    </div>
+                </div>
+
+                {/* Отображение товаров в зависимости от выбранного вида */}
+                <div style={{
+                    display: viewMode === 'grid' ? 'flex' : 'block',
+                    flexWrap: viewMode === 'grid' ? 'wrap' : 'none',
+                    justifyContent: viewMode === 'grid' ? 'flex-start' : 'center',
+                    marginTop: viewMode === 'grid' ? '0px' : '30px',
+                    marginBottom: viewMode === 'grid' ? '30px' : '40px',
+                    paddingLeft: '20px'
+                }}>
                     {Array.isArray(products) && products.length > 0 ? (
                         products.map((product) => (
-                            <ProductCard key={product.id} product={product} />
+                            viewMode === 'grid' ? (
+                                <ProductCard key={product.id} product={product} />
+                            ) : (
+                                <ProductBlock key={product.id} product={product} />
+                            )
                         ))
                     ) : (
                         <p>No products found.</p>
                     )}
                 </div>
 
-                {/* Элементы управления пагинацией */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                {/* Центрирование переключателя страниц по центру внизу */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%'
+                }}>
                     <button onClick={handlePreviousPage} disabled={page === 0}>
                         Previous
                     </button>

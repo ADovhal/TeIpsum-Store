@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
 
         String email = null;
-        String jwt = null;
+        String jwt;
 
         // Проверка наличия JWT в заголовках
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

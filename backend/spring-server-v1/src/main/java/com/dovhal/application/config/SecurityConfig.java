@@ -26,37 +26,11 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
     }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/users/register").permitAll()
-//                        .requestMatchers("/api/users/login").permitAll()
-//                        .requestMatchers("/api/users/protected").permitAll()
-//                        .requestMatchers("/api/users/profile").permitAll()
-//                        .requestMatchers("/api/users/delete").permitAll()
-//                        .requestMatchers("/api/products/all").permitAll()
-//                        .requestMatchers("/api/products/{id}").permitAll()
-//                        .requestMatchers("/api/products/category/{category}").permitAll()
-//                        .requestMatchers("/api/products/search").permitAll()
-//                        .requestMatchers("/api/products/price").permitAll()
-//                        .requestMatchers("/api/products/rating").permitAll()
-//                        .requestMatchers("/api/products/create").permitAll()
-//                        .requestMatchers("/api/products/delete/{id}").permitAll()
-//                        .anyRequest().authenticated())
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless session
-//
-//        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Отключаем CSRF
-                .authorizeRequests(auth -> auth
+                .csrf(AbstractHttpConfigurer::disable) // Отключаем CSRF
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/register",
                                          "/api/users/profile",
                                          "/api/users/login",

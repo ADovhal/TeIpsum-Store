@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 
 export const Card = styled.div`
-    background-color: #fff;
+    background-color: #ffe7d0;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;

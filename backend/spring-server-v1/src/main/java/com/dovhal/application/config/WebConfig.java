@@ -10,9 +10,6 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @EnableSpringDataWebSupport
 public class WebConfig implements WebMvcConfigurer {
 
-//    @Value("${cors.allowed.origins}") // Читаем значение из application.properties
-//    private String allowedOrigins;
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
