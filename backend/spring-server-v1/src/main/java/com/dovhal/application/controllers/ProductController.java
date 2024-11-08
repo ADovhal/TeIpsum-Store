@@ -3,88 +3,51 @@ package com.dovhal.application.controllers;
 import com.dovhal.application.model.Product;
 import com.dovhal.application.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
+import org.springframework.hateoas.PagedModel;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
+
     private final ProductService productService;
+    private final PagedResourcesAssembler<Product> pagedResourcesAssembler;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, PagedResourcesAssembler<Product> pagedResourcesAssembler) {
         this.productService = productService;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getFilteredProducts(
+    public ResponseEntity<?> getFilteredProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) Double rating) {
+            @RequestParam(required = false) Double rating,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        List<Product> products;
+        // Получаем страницу продуктов
+        Page<Product> products = productService.getFilteredProducts(name, category, minPrice, maxPrice, rating, page, size);
 
-        if (name == null && category == null && minPrice == null && maxPrice == null && rating == null) {
-            products = productService.getAllProducts();
-        } else {
-            products = productService.getFilteredProducts(name, category, minPrice, maxPrice, rating);
-        }
-
-        return ResponseEntity.ok(products);
+        PagedModel<EntityModel<Product>> pagedModel = pagedResourcesAssembler.toModel(products, product -> {
+            // Преобразуем каждый продукт в EntityModel с добавлением ссылок
+            EntityModel<Product> productEntityModel = EntityModel.of(product);
+            // Можно добавить ссылки на продукт, например:
+            productEntityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).getFilteredProducts(name, category, minPrice, maxPrice, rating, page, size)).withSelfRel());
+            return productEntityModel;
+        });
+        return ResponseEntity.ok(pagedModel);
     }
 }
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-//        Product product = productService.getProductById(id);
-//        if (product != null) {
-//            return ResponseEntity.ok(product);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
-//    @GetMapping("/category/{category}")
-//    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String category) {
-//        List<Product> products = productService.getProductsByCategory(category);
-//        return ResponseEntity.ok(products);
-//    }
-
-//    @GetMapping("/search")
-//    public ResponseEntity<List<Product>> getProductsByName(@RequestParam String name) {
-//        List<Product> products = productService.getProductsByName(name);
-//        return ResponseEntity.ok(products);
-//    }
-
-//    @GetMapping("/price")
-//    public ResponseEntity<List<Product>> getProductsByPriceRange(@RequestParam BigDecimal minPrice,
-//                                                                 @RequestParam BigDecimal maxPrice) {
-//        List<Product> products = productService.getProductsByPriceRange(minPrice, maxPrice);
-//        return ResponseEntity.ok(products);
-//    }
-
-//    @GetMapping("/rating")
-//    public ResponseEntity<List<Product>> getProductsByRating(@RequestParam Double rating) {
-//        List<Product> products = productService.getProductsByRating(rating);
-//        return ResponseEntity.ok(products);
-//    }
-
-//    @PostMapping("/create")
-//    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-//        Product createdProduct = productService.saveProduct(product);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-//    }
-//
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-//        productService.deleteProduct(id);
-//        return ResponseEntity.noContent().build();
-//    }
-//}
