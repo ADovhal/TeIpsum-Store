@@ -1,0 +1,142 @@
+/* src/components/auth/AuthForm.module.css */
+
+/* Общие стили для формы */
+.authForm {
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto; /* Центрируем форму */
+}
+
+/* Заголовок формы */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Стили для формы логина */
+.loginForm {
+  margin-top: 160px; /* Отступ сверху для формы логина */
+  margin-bottom: 20px;
+}
+
+/* Стили для формы регистрации */
+.registerForm {
+  margin-top: 20px; /* Отступ сверху для формы регистрации */
+  margin-bottom: 20px;
+}
+
+/* Отступы между полями ввода */
+.formGroup {
+  margin-bottom: 20px; /* Увеличиваем отступ между полями для лучшего восприятия */
+}
+
+/* Отступы для меток */
+label {
+  /* padding-left: 6px; */
+  display: block;
+  margin-bottom: 8px; /* Увеличиваем отступ снизу метки */
+  font-weight: 600;
+  color: #555;
+}
+
+.inputField {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  margin-top: 5px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+/* Убираем красные рамки, когда поля в фокусе */
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="date"]:focus {
+  outline: 1px solid #3498db;
+  border-color: #3498db !important;
+}
+
+/* Стили для полей с ошибкой (красная рамка) */
+.errorInput {
+  border: 2px solid #e74c3c; /* Красная рамка */
+  background-color: #f8d7da; /* Легкий розовый фон */
+}
+
+/* Стили для текста ошибки */
+.errorMessage {
+  color: #e74c3c; /* Красный цвет текста ошибки */
+  font-size: 14px; /* Уменьшаем размер шрифта */
+  margin-top: 5px; /* Отступ сверху */
+  margin-bottom: 10px; /* Отступ снизу */
+  line-height: 1.4; /* Чуть увеличиваем межстрочный интервал */
+}
+
+/* Стили для успешных сообщений */
+.successMessage {
+  color: #28a745; /* Зеленый цвет */
+  font-size: 1rem;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+/* Стили для кнопок */
+.submitButton, .otherButton {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px; /* Отступ сверху */
+}
+
+/* Стили для кнопки "Зарегистрироваться" */
+.submitButton {
+  background-color: #ff6f61;  /* Оранжевый цвет */
+  color: #fff;
+}
+
+.submitButton:hover {
+  background-color: #ff4d42; /* Темный оттенок для hover */
+}
+
+.submitButton:disabled {
+  background-color: #ccc; /* Бледный цвет для отключенной кнопки */
+}
+
+/* Стили для кнопки "Создать аккаунт" (или аналогичные кнопки) */
+.otherButton {
+  background-color: #3498db; /* Синий цвет */
+  color: #fff;
+}
+
+.otherButton:hover {
+  background-color: #2980b9; /* Более темный синий для hover */
+}
+
+.otherButton:disabled {
+  background-color: #ccc; /* Бледный цвет для отключенной кнопки */
+}
+
+/* Стили для ссылки на регистрацию или логин */
+.registerLink {
+  text-align: center;
+  margin-top: 20px; /* Увеличиваем отступ сверху */
+}
+
+.registerLink a {
+  color: #ff6f61; /* Оранжевая ссылка */
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.registerLink a:hover {
+  text-decoration: underline; /* Подчеркивание при наведении */
+}

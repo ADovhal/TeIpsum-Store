@@ -1,0 +1,74 @@
+/* src/components/Header/Header.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #3498db;  /* Синий цвет фона */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;  /* Белый цвет для текста логотипа */
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.nav {
+  display: flex;
+  gap: 6rem;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.navItem {
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  color: #fff;  /* Белый цвет текста навигационных ссылок */
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navItem:hover {
+  color: #f39c12;  /* Оранжевый цвет при наведении */
+  transform: scale(1.1);
+}
+
+.actions {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  margin-right: 30px;
+}
+
+.iconButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  font-size: 1.5rem;  /* Увеличиваем размер иконки */
+}
+
+.iconButton:hover {
+  transform: scale(1.2);  /* Легкое увеличение при наведении */
+}
+
+.iconButton i {
+  color: #fff;  /* Белый цвет иконки */
+  font-size: 2rem;  /* Размер иконки */
+  transition: color 0.3s ease;
+}
+
+.iconButton:hover i {
+  color: #f39c12;  /* Оранжевый цвет иконки при наведении */
+}

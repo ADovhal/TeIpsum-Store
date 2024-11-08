@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }) => {
         const storedUsername = localStorage.getItem('username');
         const storedProfileData = localStorage.getItem('profileData');
         console.log('Stored Token on reload:', storedToken);
-        console.log('Stored Username on reload:', storedUsername);
         console.log('Stored Profile Data on reload:', storedProfileData);
 
 
@@ -50,7 +49,6 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         setToken(token);
         localStorage.setItem('token', token);
-        localStorage.setItem('username', userData.username);
         localStorage.setItem('profileData',JSON.stringify(userData));
         loadProfileData(token);
         navigate('/profile');
@@ -60,7 +58,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setToken(null);
         setProfileData(null);
-        localStorage.removeItem('username');
         localStorage.removeItem('token');
         localStorage.removeItem('profileData');
         navigate('/login');
