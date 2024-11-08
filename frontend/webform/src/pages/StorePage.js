@@ -78,21 +78,19 @@ const StorePage = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: '20px', paddingLeft: '80px', paddingTop: '20px'}}>
                     <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
                     
-                    {/* Переключатель вида рядом с SearchBar */}
                     <div style={{paddingBottom: '20px'}}>
                         <button onClick={() => setViewMode('grid')} style={{ marginRight: '20px' }}>Карточки</button>
                         <button onClick={() => setViewMode('list')}>Блоки</button>
                     </div>
                 </div>
 
-                {/* Отображение товаров в зависимости от выбранного вида */}
                 <div style={{
                     display: viewMode === 'grid' ? 'flex' : 'block',
                     flexWrap: viewMode === 'grid' ? 'wrap' : 'none',
                     justifyContent: viewMode === 'grid' ? 'flex-start' : 'center',
                     marginTop: viewMode === 'grid' ? '0px' : '30px',
                     marginBottom: viewMode === 'grid' ? '30px' : '40px',
-                    paddingLeft: '20px'
+                    paddingLeft: viewMode === 'grid' ? '20px' : '80px'
                 }}>
                     {Array.isArray(products) && products.length > 0 ? (
                         products.map((product) => (
@@ -107,7 +105,6 @@ const StorePage = () => {
                     )}
                 </div>
 
-                {/* Центрирование переключателя страниц по центру внизу */}
                 <div style={{
                     position: 'absolute',
                     bottom: '20px',

@@ -2,6 +2,8 @@
 
 /* Стили для боковой панели фильтров */
 .filterSidebar {
+    position: sticky;
+    top: 80px;
     width: 230px;
     height: 400px;
     padding: 20px;

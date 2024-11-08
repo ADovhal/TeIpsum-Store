@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './Header.module.css';
+import logo from '../../assets/images/logo.png';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <Link to="/" className={styles.logo}>MyStore</Link>
+      <Link to="/" className={styles.logo}><img src={logo} alt="Logo" /></Link>
 
       <nav className={styles.nav}>
         <Link to="/" className={styles.navItem}>Home</Link>
