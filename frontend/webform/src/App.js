@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/profile/ProfilePage';
 import PrivateRoute from './routes/PrivateRoute';
+import {ViewTypeProvider} from './context/ViewTypeContext';
 
 const App = () => {
 
@@ -21,7 +22,7 @@ const App = () => {
                 <div style={{ flex: '1' }}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/store" element={<StorePage />} />
+                        <Route path="/store" element={<ViewTypeProvider> <StorePage /> </ViewTypeProvider>} />
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/profile" element={<PrivateRoute element={ProfilePage} />} />

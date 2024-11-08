@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+// src/pages/StorePage.js
+import React, { useState, useEffect, useContext } from 'react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import ProductBlock from '../components/ProductCard/ProductBlock';
 import FilterSidebar from '../components/store/FilterSidebar';
 import SearchBar from '../components/store/SearchBar';
 import { getProductsFiltered } from '../services/productService';
+import { ViewTypeContext } from '../context/ViewTypeContext'; // Импортируем контекст
 
 const StorePage = () => {
+    const { viewMode, setViewMode } = useContext(ViewTypeContext); // Используем контекст для доступа к viewMode и setViewMode
     const [products, setProducts] = useState([]);
     const [filters, setFilters] = useState({
         name: '',
@@ -18,7 +21,6 @@ const StorePage = () => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const size = 12;
-    const [viewMode, setViewMode] = useState('grid');
 
     useEffect(() => {
         const fetchProducts = async () => {
