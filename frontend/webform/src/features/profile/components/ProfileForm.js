@@ -1,24 +1,36 @@
-// src/pages/ProfilePage.js
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
-import { deleteAccount } from '../UserService';
+// src/pages/ProfileForm.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux'; // Импортируем useDispatch и useSelector
 import { useNavigate } from 'react-router-dom';
-import ProfileData from './ProfileData';
+import { logout, loadProfile } from '../../auth/authSlice'; // Импортируем экшены
+import { deleteAccount } from '../UserService'; // Ваша логика для удаления аккаунта
+import ProfileData from './ProfileData'; // Компонент для отображения данных профиля
 import styles from './ProfilePage.module.css';
 
-const ProfilePage = () => {
-    const { user, logout, profileData } = useContext(AuthContext);
-    const [error, setError] = useState(null);
+const ProfileForm = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    
+    // Используем useSelector для доступа к состоянию из Redux
+    const { user, profileData, token, isLoading, error } = useSelector(state => state.auth);
+    console.log(user, profileData, token, isLoading, error)
 
-    if (!user) {
-        logout();
-        navigate('/login');
-        return null;
-    }
+    useEffect(() => {
+        // Если пользователь не авторизован, редиректим на страницу входа
+        // if (!user) {
+        //     navigate('/login');
+        // } else {
+            // Загружаем профиль, если он не загружен
+            if (!profileData && token) {
+                dispatch(loadProfile(token)); // Загружаем профиль с API
+            } else if (!token) {
+                navigate('/login'); // Если нет токена, перенаправляем на страницу логина
+            }
+        // }
+    }, [user, profileData, token, dispatch, navigate]);
 
     const handleLogout = () => {
-        logout();
+        dispatch(logout()); // Вызов экшена для выхода
         navigate('/login');
     };
 
@@ -26,19 +38,25 @@ const ProfilePage = () => {
         if (window.confirm('Are you sure you want to delete your account? This action is irreversible.')) {
             try {
                 await deleteAccount();
-                logout();
+                dispatch(logout()); // Вызов экшена для выхода
                 navigate('/');
             } catch (error) {
-                setError(error.message);
+                console.error('Error deleting account:', error);
             }
         }
     };
 
+    if (isLoading) {
+        return <p>Loading profile data...</p>; // Показываем сообщение о загрузке, если данные еще загружаются
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>; // Если возникла ошибка, показываем ее
+    }
+
     return (
-        
         <div className={`${styles.profileContainer} ${styles.profileForm}`}>
             <h1 className={styles.title}>Welcome, {profileData?.name || 'User'}</h1>
-            {error && <p className={styles.errorMessage}>Error: {error}</p>}
             {profileData ? (
                 <div className={styles.profileContent}>
                     <h2 className={styles.subtitle}>Your Profile Information</h2>
@@ -53,11 +71,10 @@ const ProfilePage = () => {
                     </div>
                 </div>
             ) : (
-                <p>Loading profile data...</p>
+                <p>Loading profile data...</p> // Если профиль еще не загружен, показываем сообщение
             )}
         </div>
-        
     );
 };
 
-export default ProfilePage;
+export default ProfileForm;

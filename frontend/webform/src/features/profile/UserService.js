@@ -7,8 +7,8 @@ export const getToken = () => {
 };
 
 // Получаем данные профиля пользователя
-export const fetchProfileData = async () => {
-    const token = getToken(); // Получаем токен
+export const fetchProfileData = async (token) => {
+    //const token = getToken(); // Получаем токен
     if (!token) {
         throw new Error('No token found, please log in again.');
     }
