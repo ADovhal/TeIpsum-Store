@@ -23,6 +23,9 @@ const StorePage = () => {
     const size = 12;
 
     useEffect(() => {
+
+        document.title = 'Store';
+
         const fetchProducts = async () => {
             try {
                 const query = searchQuery.toLowerCase();

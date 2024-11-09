@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { registerUser } from '../AuthService';
@@ -6,6 +6,11 @@ import { validateEmail, validatePasswordLength } from '../../../utils/validation
 import styles from '../components/AuthForm.module.css';
 
 const RegisterForm = () => {
+
+  useEffect(() => {
+    document.title = "Sign Up";
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     surname: '',

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import { authLoginUser } from '../AuthService';
@@ -7,6 +7,11 @@ import { validateEmail, validatePasswordLength } from '../../../utils/validation
 import styles from './AuthForm.module.css';
 
 const LoginForm = () => {
+
+  useEffect(() => {
+    document.title = "Sign In";
+  }, []);
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''

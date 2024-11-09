@@ -1,10 +1,14 @@
 // src/pages/HomePage.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './HomePage.module.css';
 import { Link } from 'react-router-dom';
 import ProductCard from '../features/products/components/ProductCard'; // Допустим, у вас есть компонент для отображения товара
 
 const HomePage = () => {
+
+  useEffect(() => {
+    document.title = "My Store Home Page";
+  }, []);
 
   const popularProducts = [
     {
