@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
-import { registerUser } from '../../../services/authService';
+import { registerUser } from '../AuthService';
 import { validateEmail, validatePasswordLength } from '../../../utils/validation';
-import styles from '../AuthForm.module.css';
+import styles from '../components/AuthForm.module.css';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -69,31 +69,31 @@ const RegisterForm = () => {
 
     // Валидация имени
     if (!name.trim()) {
-      setErrors((prevState) => ({ ...prevState, name: 'Имя обязательно' }));
+      setErrors((prevState) => ({ ...prevState, name: 'Name is required!' }));
       formIsValid = false;
     }
 
     // Валидация фамилии
     if (!surname.trim()) {
-      setErrors((prevState) => ({ ...prevState, surname: 'Фамилия обязательна' }));
+      setErrors((prevState) => ({ ...prevState, surname: 'Surname is required!' }));
       formIsValid = false;
     }
 
     // Валидация email
     if (!validateEmail(email)) {
-      setErrors((prevState) => ({ ...prevState, email: 'Некорректный email.' }));
+      setErrors((prevState) => ({ ...prevState, email: 'Incorrect email!' }));
       formIsValid = false;
     }
 
     // Валидация пароля
     if (!validatePasswordLength(password)) {
-      setErrors((prevState) => ({ ...prevState, password: 'Пароль должен содержать минимум 8 символов.' }));
+      setErrors((prevState) => ({ ...prevState, password: 'Password should contain at least 8 characters!' }));
       formIsValid = false;
     }
 
     // Проверка совпадения пароля и подтверждения
     if (password !== confirmPassword) {
-      setErrors((prevState) => ({ ...prevState, confirmPassword: 'Пароли не совпадают' }));
+      setErrors((prevState) => ({ ...prevState, confirmPassword: 'Passwords don\'t match!' }));
       formIsValid = false;
     }
 
@@ -107,7 +107,7 @@ const RegisterForm = () => {
       // Регистрируем пользователя
       await registerUser({ name, surname, dob, email, phone, password });
 
-      setSuccessMessage('Регистрация прошла успешно!');
+      setSuccessMessage('Success!');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
@@ -124,7 +124,7 @@ const RegisterForm = () => {
       });
     } catch (err) {
       setErrors({ email: err.message }); // Показ ошибки регистрации
-      console.error('Ошибка регистрации:', err);
+      console.error('Registration error:', err);
     } finally {
       setLoading(false);
     }
@@ -133,15 +133,15 @@ const RegisterForm = () => {
   return (
 
       <div className={`${styles.authForm} ${styles.registerForm}`}>
-        <h2>Создать аккаунт</h2>
+        <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
 
           <div className={styles.formGroup}>
-            <label htmlFor="name">Имя</label>
+            <label htmlFor="name">Name</label>
             <input
               type="text"
               id="name"
-              placeholder="Введите ваше имя"
+              placeholder="Provide your name"
               value={formData.name}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.name && isSubmitted ? styles.errorInput : ''}`}
@@ -150,11 +150,11 @@ const RegisterForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="surname">Фамилия</label>
+            <label htmlFor="surname">Surname</label>
             <input
               type="text"
               id="surname"
-              placeholder="Введите вашу фамилию"
+              placeholder="Provide your surname"
               value={formData.surname}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.surname && isSubmitted ? styles.errorInput : ''}`}
@@ -163,7 +163,7 @@ const RegisterForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="dob">Дата рождения</label>
+            <label htmlFor="dob">Date of birth</label>
             <input
               type="date"
               id="dob"
@@ -175,11 +175,11 @@ const RegisterForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="email">Электронная почта</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
-              placeholder="Введите вашу почту"
+              placeholder="Provide your email"
               value={formData.email}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.email && isSubmitted ? styles.errorInput : ''}`}
@@ -188,11 +188,11 @@ const RegisterForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="phone">Телефон</label>
+            <label htmlFor="phone">Phone</label>
             <input
               type="text"
               id="phone"
-              placeholder="Введите ваш телефон"
+              placeholder="Provide your phone number"
               value={formData.phone}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.phone && isSubmitted ? styles.errorInput : ''}`}
@@ -201,11 +201,11 @@ const RegisterForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="password">Пароль</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
-              placeholder="Введите ваш пароль"
+              placeholder="Choose your password"
               value={formData.password}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.email && isSubmitted ? styles.errorInput : ''}`}
@@ -215,11 +215,11 @@ const RegisterForm = () => {
 
           {/* Поле для подтверждения пароля */}
           <div className={styles.formGroup}>
-            <label htmlFor="confirmPassword">Подтверждение пароля</label>
+            <label htmlFor="confirmPassword">Confirm password</label>
             <input
               type="password"
               id="confirmPassword"
-              placeholder="Подтвердите пароль"
+              placeholder="Confirm password"
               value={formData.confirmPassword}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.confirmPassword && isSubmitted ? styles.errorInput : ''}`}
@@ -228,14 +228,14 @@ const RegisterForm = () => {
           </div>
 
           <button type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? 'Загрузка...' : 'Зарегистрироваться'}
+            {loading ? 'Loading...' : 'Sign Up'}
           </button>
         </form>
 
         {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
 
         <p className={styles.registerLink}>
-          Уже есть аккаунт? <Link to="/login">Войти</Link>
+          Already have account? <Link to="/login">Sign In</Link>
         </p>
       </div>
   );

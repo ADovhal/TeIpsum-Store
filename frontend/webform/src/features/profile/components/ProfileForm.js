@@ -1,7 +1,7 @@
 // src/pages/ProfilePage.js
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
-import { deleteAccount } from '../../../services/userService';
+import { deleteAccount } from '../UserService';
 import { useNavigate } from 'react-router-dom';
 import ProfileData from './ProfileData';
 import styles from './ProfilePage.module.css';
@@ -37,7 +37,7 @@ const ProfilePage = () => {
     return (
         
         <div className={`${styles.profileContainer} ${styles.profileForm}`}>
-            <h1 className={styles.title}>Welcome, {user?.name || 'User'}</h1>
+            <h1 className={styles.title}>Welcome, {profileData?.name || 'User'}</h1>
             {error && <p className={styles.errorMessage}>Error: {error}</p>}
             {profileData ? (
                 <div className={styles.profileContent}>

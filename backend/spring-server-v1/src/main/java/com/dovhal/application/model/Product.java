@@ -24,7 +24,7 @@ public class Product {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "sku", nullable = false, unique = true)
     private String sku;  // Уникальный артикул для каждого товара
 
     @Column(name = "name", nullable = false, length = 100)

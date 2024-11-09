@@ -8,7 +8,7 @@ import HomePage from './pages/HomePage';
 import StorePage from './pages/StorePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import ProfilePage from './pages/profile/ProfilePage';
+import ProfilePage from './pages/ProfilePage';
 import PrivateRoute from './routes/PrivateRoute';
 import {ViewTypeProvider} from './context/ViewTypeContext';
 

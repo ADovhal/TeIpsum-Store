@@ -1,6 +1,6 @@
 /* src/pages/ProfilePage.js */
 import React from 'react';
-import ProfileForm from '../../components/auth/profile/ProfileForm';
+import ProfileForm from '../features/profile/components/ProfileForm';
 
 const ProfilePage = () => {
   return (

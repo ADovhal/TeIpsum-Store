@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
-import { authLoginUser } from '../../../services/authService';
+import { authLoginUser } from '../AuthService';
 import DOMPurify from 'dompurify';
 import { validateEmail, validatePasswordLength } from '../../../utils/validation';
-import styles from '../AuthForm.module.css';
+import styles from './AuthForm.module.css';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ const LoginForm = () => {
     email: '',
     password: ''
   });
-
+  
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -69,14 +69,14 @@ const LoginForm = () => {
 
   return (
       <div className={`${styles.authForm} ${styles.loginForm}`}>
-        <h2>Вход в аккаунт</h2>
+        <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label htmlFor="email">Электронная почта</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
-              placeholder="Введите вашу почту"
+              placeholder="Email"
               value={formData.email}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.email ? styles.errorInput : ''}`}
@@ -84,11 +84,11 @@ const LoginForm = () => {
             {errors.email && <p className={styles.errorMessage}>{errors.email}</p>}
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="password">Пароль</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
-              placeholder="Введите ваш пароль"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               // required
@@ -96,10 +96,10 @@ const LoginForm = () => {
             />
             {errors.password && <p className={styles.errorMessage}>{errors.password}</p>}
           </div>
-          <button type="submit" className={styles.submitButton}>Войти</button>
+          <button type="submit" className={styles.submitButton}>Sign In</button>
         </form>
         <p className={styles.registerLink}>
-          Нет аккаунта? <Link to="/register">Создать аккаунт</Link>
+          Don't have account? <Link to="/register">Create</Link>
         </p>
       </div>
   );

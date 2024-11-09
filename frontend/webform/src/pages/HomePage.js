@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from './HomePage.module.css';
 import { Link } from 'react-router-dom';
-import ProductCard from '../components/ProductCard/ProductCard'; // Допустим, у вас есть компонент для отображения товара
+import ProductCard from '../features/products/components/ProductCard'; // Допустим, у вас есть компонент для отображения товара
 
 const HomePage = () => {
 

@@ -1,10 +1,10 @@
 // src/pages/StorePage.js
 import React, { useState, useEffect, useContext } from 'react';
-import ProductCard from '../components/ProductCard/ProductCard';
-import ProductBlock from '../components/ProductCard/ProductBlock';
+import ProductCard from '../features/products/components/ProductCard';
+import ProductBlock from '../features/products/components/ProductBlock';
 import FilterSidebar from '../components/store/FilterSidebar';
 import SearchBar from '../components/store/SearchBar';
-import { getProductsFiltered } from '../services/productService';
+import { getProductsFiltered } from '../features/products/ProductService'
 import { ViewTypeContext } from '../context/ViewTypeContext'; // Импортируем контекст
 
 const StorePage = () => {

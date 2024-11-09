@@ -1,9 +1,10 @@
-import axios from 'axios';
+// src/features/products/ProductService.js
+import api from '../../services/api';
 
 // Функция для получения продуктов с фильтрацией и пагинацией
 export const getProductsFiltered = async ({ name, category, minPrice, maxPrice, rating, page, size }) => {
     try {
-        const response = await axios.get('http://localhost:9092/api/products', {
+        const response = await api.get('/products', {
             params: {
                 name,
                 category,
@@ -15,17 +16,11 @@ export const getProductsFiltered = async ({ name, category, minPrice, maxPrice, 
             }
         });
 
-        // Извлекаем список продуктов из _embedded.productList
+        // Извлекаем список продуктов и общее количество страниц
         const products = response.data._embedded?.productList || [];
-
-        // Получаем общее количество страниц из поля page
         const totalPages = response.data.page?.totalPages || 0;
 
-        // Возвращаем продукты и пагинацию
-        return {
-            products,
-            totalPages
-        };
+        return { products, totalPages };
     } catch (error) {
         console.error('Error fetching filtered products:', error);
         throw error;

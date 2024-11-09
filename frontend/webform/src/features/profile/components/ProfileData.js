@@ -6,7 +6,7 @@ const ProfileData = ({ data }) => (
     <div className={styles.profileDataContainer}>
         <p><strong>Email:</strong> {data.email}</p>
         <p><strong>Full Name:</strong> {data.fullName}</p>
-        <p><strong>Joined on:</strong> {new Date(data.joinDate).toLocaleDateString()}</p>
+        <p><strong>Joined on:</strong> {data.dob}</p>
     </div>
 );
 

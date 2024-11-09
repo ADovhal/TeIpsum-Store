@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchProfileData } from '../services/userService';
+import { fetchProfileData } from '../features/profile/UserService';
 
 export const AuthContext = createContext();
 
@@ -15,30 +15,24 @@ export const AuthProvider = ({ children }) => {
         try {
             const data = await fetchProfileData(storedToken);
             setProfileData(data);
-            //localStorage.setItem('profileData', JSON.stringify(data));
         } catch (error) {
             console.error('Failed to fetch profile data:', error.message);
+        } finally {
+            setIsLoading(false);
         }
     }, []);
     
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
-        const storedUsername = localStorage.getItem('username');
         const storedProfileData = localStorage.getItem('profileData');
         console.log('Stored Token on reload:', storedToken);
         console.log('Stored Profile Data on reload:', storedProfileData);
 
 
-        if (storedToken && storedUsername) {
-            setUser({ username: storedUsername });
+        if (storedToken) {
+            setUser(storedProfileData);
             setToken(storedToken);
-
-            // if (storedProfileData) {
-                
-            //     setProfileData(JSON.parse(storedProfileData));
-            // } else {
-                loadProfileData(storedToken);
-            // }
+            loadProfileData(storedToken);
         }
         setIsLoading(false);
     }, [ loadProfileData]);

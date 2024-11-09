@@ -85,20 +85,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
     }
 
-
-
-    @GetMapping("/protected")
-    public ResponseEntity<Map<String, String>> getProtectedData(Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String token = jwtUtil.createToken(authentication.getName());
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-    }
+//    @GetMapping("/protected")
+//    public ResponseEntity<Map<String, String>> getProtectedData(Authentication authentication) {
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            String token = jwtUtil.createToken(authentication.getName());
+//            Map<String, String> response = new HashMap<>();
+//            response.put("token", token);
+//
+//            return ResponseEntity.ok(response);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
+//    }
 
     @GetMapping("/profile")
     public ResponseEntity<Map<String, Object>> getUserProfile() {
@@ -108,6 +106,9 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("id", user.getId());
             response.put("email", user.getEmail());
+            response.put("dob", user.getDob());
+            response.put("name", user.getName());
+            response.put("fullName", user.getName() + " " + user.getSurname());
 
             return ResponseEntity.ok(response);
         } else {

@@ -1,6 +1,6 @@
 /* src/pages/LoginPage.js */
 import React from 'react';
-import LoginForm from '../components/auth/login/LoginForm';
+import LoginForm from '../features/auth/components/LoginForm';
 
 const LoginPage = () => {
   return (
