@@ -9,7 +9,7 @@ pipeline {
 
     environment {
 
-        API_URL = credentials('api_url') // NewMan allure-reports
+        // API_URL = credentials('api_url') // NewMan allure-reports
         GITHUB_TOKEN = credentials('github_token')
         REACT_APP_API_URL_TEST = credentials('react_app_api_url_test_env')
         DOMAIN_NAME = credentials('domain_name')
@@ -88,10 +88,10 @@ pipeline {
                     echo 'Example of tests in Test Env.'
                     echo 'Running tests with Newman...'
                     sh 'newman -v'
-                    echo "Using API URL: " //$API_URL
-                    
+                    // echo "Using API URL: " //$API_URL
+                    // 
                     // Запуск тестов с использованием API_URL
-                    sh ('newman run $API_URL --reporters cli,allure --reporter-allure-export ./allure-results-frontend')
+                    // sh ('newman run $API_URL --reporters cli,allure --reporter-allure-export ./allure-results-frontend')
 
                     //error("Force failure for testing purposes")
                 }
