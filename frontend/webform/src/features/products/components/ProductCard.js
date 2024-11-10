@@ -1,6 +1,6 @@
 // src/components/ProductCard/ProductCard.js
 import React from 'react';
-import { Card, CardImage, CardContent, CardTitle, CardPrice, AddToCartButton } from './ProductCardStyles'; // Импортируем стилизованные компоненты
+import { Card, CardImage, CardContent, CardTitle, CardPrice, AddToCartButton } from './ProductCardStyles';
 
 const ProductCard = ({ product }) => {
   return (
@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
       <CardContent>
         <CardTitle>{product.name}</CardTitle>
         <CardPrice>${product.price.toFixed(2)}</CardPrice>
-        <AddToCartButton>Добавить в корзину</AddToCartButton>
+        <AddToCartButton>Add to cart</AddToCartButton>
       </CardContent>
     </Card>
   );

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import styles from './HomePage.module.css';
 import { Link } from 'react-router-dom';
-import ProductCard from '../features/products/components/ProductCard'; // Допустим, у вас есть компонент для отображения товара
+import ProductCard from '../features/products/components/ProductCard';
 
 const HomePage = () => {
 
@@ -47,29 +47,25 @@ const HomePage = () => {
   
   return (
     <div className={styles.homePage}>
-      {/* Баннер с приветствием */}
       <section className={styles.heroSection}>
         <div className={styles.heroText}>
-          <h1>Добро пожаловать в MyStore!</h1>
-          <p>Лучшие товары по выгодным ценам!</p>
-          <Link to="/store" className={styles.shopNowButton}>Начать покупки</Link>
+          <h1>Welcome to MyStore!</h1>
+          <p>The best products at competitive prices!</p>
+          <Link to="/store" className={styles.shopNowButton}>Discover products</Link>
         </div>
       </section>
 
       {/* Описание магазина */}
       <section className={styles.aboutStore}>
-        <h2>О нашем магазине</h2>
+        <h2>About our shop</h2>
         <p>
-          Мы предлагаем широкий ассортимент товаров, от электроники до модных аксессуаров.
-          Наш магазин гарантирует качественное обслуживание и быструю доставку.
+        We offer a wide range of products, from electronics to fashion accessories.
+        Our store guarantees quality service and fast delivery.
         </p>
       </section>
-
-      {/* Популярные товары */}
       <section className={styles.popularProducts}>
-        <h2>Популярные товары</h2>
+        <h2>Popular products</h2>
         <div className={styles.productList}>
-          {/* Рендеринг карточек популярных продуктов */}
           {popularProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
