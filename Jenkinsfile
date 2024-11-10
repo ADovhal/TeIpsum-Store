@@ -58,7 +58,7 @@ pipeline {
                     CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
                     """
 
-                    writeFile file: './.env', text: envContent.stripIndent() //writeFile file: './frontend/webform/.env'
+                    writeFile file: './frontend/webform/.env', text: envContent.stripIndent() //writeFile file: './frontend/webform/.env'
                 }
             }
         }
@@ -71,7 +71,7 @@ pipeline {
                     echo 'Starting Docker Compose...'
                     sh 'docker --version'
                     sh 'docker-compose --version'
-                    sh 'docker-compose --env-file ./.env -f docker-compose.dev.yml up -d --build'
+                    sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
                     if (!isContainerConnected('test_env_test-net', 'server-webserver-1')) {
                     sh 'docker network connect test_env_test-net server-webserver-1'}
                     if (!isContainerConnected('test_env_test-net', 'wg-easy')) {
