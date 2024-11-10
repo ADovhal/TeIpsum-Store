@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:9092/api', // Устанавливаем базовый URL для всех запросов
+    baseURL: process.env.REACT_APP_API_BASE_URL, // Устанавливаем базовый URL для всех запросов
     headers: {
         'Content-Type': 'application/json',
     },
