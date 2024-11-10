@@ -10,7 +10,7 @@ const HomePage = () => {
     document.title = "My Store Home Page";
   }, []);
 
-  console.log(process.env.REACT_APP_API_BASE_URL);
+  console.log( 'API = ', process.env.REACT_APP_API_BASE_URL);
 
   const popularProducts = [
     {
