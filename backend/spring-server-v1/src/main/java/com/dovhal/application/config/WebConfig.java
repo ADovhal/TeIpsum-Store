@@ -10,11 +10,14 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @EnableSpringDataWebSupport
 public class WebConfig implements WebMvcConfigurer {
 
+    @Value("${cors.allowed.origins}") // Читаем значение из application.properties
+    private String allowedOriginsS;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 // .allowedOrigins("https://andriidovhal.tech/", "https://resume.vladyslavdobrovolskyi.tech/", "https://app.andriidovhal.tech/")
-                //.allowedOrigins(allowedOriginsS.split(","))
+                .allowedOrigins(allowedOriginsS.split(","))
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")

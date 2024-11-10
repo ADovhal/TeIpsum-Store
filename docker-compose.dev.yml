@@ -33,7 +33,7 @@ services:
         ports:
             - '5433:5432' # Порт для базы данных, не конфликтующий с `main`
         environment:
-            - POSTGRES_DB=postgres
+            - POSTGRES_DB=${DB_NAME}
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_PASSWORD=${DB_PASSWORD}
         networks:
