@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../../services/api';
 import styles from './Header.module.css';
 import logo from '../../assets/images/logo.png';
 
@@ -19,8 +20,8 @@ const Header = () => {
 
     try {
       // Отправляем запрос на сервер для валидации токена
-      const response = await axios.post(
-        'http://localhost:9092/api/validate-token',
+      const response = await api.post(
+        '/validate-token',
         {},  // Пустое тело, так как токен передается в заголовке
         {
           headers: {
