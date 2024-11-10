@@ -26,7 +26,7 @@ pipeline {
         stage('Stop Old Containers') {
             steps {
                 script {
-                    def containers = ["test_env_test_frontend_1", "test_env_test_backend_1"]
+                    def containers = ["test_env_frontend_1", "test_env_backend_1"]
                     containers.each { container ->
                         sh """
                             if [ \$(docker ps -a -q -f name=${container}) ]; then
