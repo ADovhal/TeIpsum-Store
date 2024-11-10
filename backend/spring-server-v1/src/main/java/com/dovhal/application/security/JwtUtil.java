@@ -18,17 +18,17 @@ public class JwtUtil {
     @Value("${jwt.secret}") // Внедрение значения из application.properties
     private String secretKey;
 
-    private final long EXPIRATION_TIME = 3600000; // 1 час
-
-    public String createToken(String username) {
+    public String createToken(String email) {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("typ", "JWT");
         headerClaims.put("alg", "HS256");
 
+        // 1 час
+        long EXPIRATION_TIME = 3600000;
         return JWT.create()
                 .withHeader(headerClaims)
-                .withSubject(username)
+                .withSubject(email)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(algorithm);
@@ -42,15 +42,15 @@ public class JwtUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        return JWT.require(Algorithm.HMAC256(SECRET_KEY))
+        return !JWT.require(Algorithm.HMAC256(SECRET_KEY))
                 .build()
                 .verify(token)
                 .getExpiresAt()
                 .before(new Date());
     }
 
-    public boolean validateToken(String token, String username) {
+    public boolean validateToken(String token, String email) {
         String extractedUsername = extractUsername(token);
-        return (extractedUsername != null && extractedUsername.equals(username) && !isTokenExpired(token));
+        return (extractedUsername != null && extractedUsername.equals(email) && isTokenExpired(token));
     }
 }

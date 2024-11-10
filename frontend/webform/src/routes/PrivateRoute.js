@@ -1,15 +1,17 @@
-import React, { useContext } from 'react';
+// src/routes/PrivateRoute.js
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
 const PrivateRoute = ({ element: Element }) => {
-    const { isAuthenticated, isLoading } = useContext(AuthContext);
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // получение состояния из authSlice
+    const isLoading = useSelector((state) => state.auth.isLoading);
 
     if (isLoading) {
-        return <div>Loading...</div>; // Пока идет загрузка, показываем индикатор
+        return <div>Loading...</div>; // Показать индикатор загрузки, если данные еще загружаются
     }
 
-    // Проверка на наличие аутентификации
+    // Проверка на аутентификацию
     return isAuthenticated ? <Element /> : <Navigate to="/login" />;
 };
 

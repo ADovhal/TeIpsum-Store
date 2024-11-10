@@ -14,10 +14,11 @@ pipeline {
         REACT_APP_API_URL_TEST = credentials('react_app_api_url_test_env')
         DOMAIN_NAME = credentials('domain_name')
         //GIT_COMMIT_MAIN_REPO = credentials('git_commit_main_repo')
-        DB_URL = credentials('test_db_url')
-        DB_USER = 'postgres'
-        DB_PASSWORD = 'admin'
-        JWT_SECRET = 'jwt_secret'
+        DB_URL = credentials('test_db_url')//
+        DB_NAME = credentials('db_name_shop_test_env')
+        DB_USER = credentials('db_user')
+        DB_PASSWORD = credentials('db_password_shop_test_env')
+        JWT_SECRET = credentials('jwt_secret')
         CORS_ALLOWED_ORIGINS = credentials('cors_allowed_origins_test_env')
     }
 
@@ -49,6 +50,7 @@ pipeline {
                     def envContent = """
                     REACT_APP_API_URL_TEST=${REACT_APP_API_URL_TEST}
                     DOMAIN_NAME=app.${DOMAIN_NAME}
+                    DB_NAME=${DB_NAME}
                     DB_URL=${DB_URL}
                     DB_USER=${DB_USER}
                     DB_PASSWORD=${DB_PASSWORD}
@@ -56,7 +58,7 @@ pipeline {
                     CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
                     """
 
-                    writeFile file: 'frontend/webform/.env', text: envContent.stripIndent()
+                    writeFile file: './.env', text: envContent.stripIndent() //writeFile file: './frontend/webform/.env'
                 }
             }
         }
@@ -69,7 +71,7 @@ pipeline {
                     echo 'Starting Docker Compose...'
                     sh 'docker --version'
                     sh 'docker-compose --version'
-                    sh 'docker-compose --env-file ./frontend/webform/.env -f docker-compose.dev.yml up -d --build'
+                    sh 'docker-compose --env-file ./.env -f docker-compose.dev.yml up -d --build'
                     if (!isContainerConnected('test_env_test-net', 'server-webserver-1')) {
                     sh 'docker network connect test_env_test-net server-webserver-1'}
                     if (!isContainerConnected('test_env_test-net', 'wg-easy')) {

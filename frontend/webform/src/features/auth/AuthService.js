@@ -1,11 +1,10 @@
-import axios from 'axios';
+// src/services/AuthService.js
+import api from '../../services/api';
 
-const API_URL = process.env.REACT_APP_API_URL_TEST;
 export const registerUser = async (userData) => {
     try {
-        const responsePost = await axios.post(`${API_URL}/register`, userData);
-
-        return responsePost.data;
+        const response = await api.post('/users/register', userData);
+        return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Registration failed');
     }
@@ -13,17 +12,17 @@ export const registerUser = async (userData) => {
 
 export const authLoginUser = async (credentials) => {
     try {
-        const responseLogin = await axios.post(`${API_URL}/login`, credentials);
-        const { id, username, token } = responseLogin.data;
-
-        console.log(responseLogin);
-
+        const response = await api.post('/users/login', credentials);
+        const { id, email, token } = response.data;
         if (!token) {
             throw new Error('No token returned from server');
         }
-
-        return { id, username, token }; 
+        return { id, email, token };
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Login failed');
     }
+};
+
+export const logoutUser = () => {
+    localStorage.removeItem('token');
 };
