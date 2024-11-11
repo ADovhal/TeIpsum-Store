@@ -146,8 +146,8 @@ body {
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: #7fb9e0;
-		width: 250px; /* Ширина меню слева */
+		background-color: #7fb9e0ed;
+		width: 225px; /* Ширина меню слева */
 		height: 100vh;
 		justify-content: center;
 		gap: 1rem;
