@@ -122,30 +122,24 @@ body {
 @media (max-width: 768px) {
 	.header {
 		padding: 1rem;
+		justify-content: center; /* Центрируем весь контент хедера */
 	}
 
-	.nav {
-		gap: 1rem;
-	}
-
-	.navItem {
-		font-size: 0.9rem;
-	}
-
-	.actions {
-		gap: 1rem;
-	}
-
-	.iconButton i {
-		font-size: 1.8rem;
-	}
-
-	/* Показываем гамбургер-меню на мобильных устройствах */
-	.hamburger {
+	.logoContainer {
+		flex-grow: 1; /* Даем логотипу возможность занимать доступное пространство */
 		display: flex;
+		justify-content: center; /* Центрируем логотип */
+		align-items: center;
+		width: 100%;
+	}
+	.logo {
+		display: flex;
+		justify-content: center;
+		margin-left: 60px;
 	}
 
 	.nav {
+		gap: 1rem;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -169,6 +163,19 @@ body {
 	.navItem {
 		font-size: 1.2rem;
 	}
+
+	.hamburger {
+		display: flex;
+	}
+
+	/* Изменения для логотипа */
+	.logo img {
+		max-width: 60px; /* Уменьшаем логотип для мобильных */
+	}
+
+	.actions {
+		gap: 0.8rem;
+	}
 }
 
 @media (max-width: 480px) {
@@ -176,9 +183,9 @@ body {
 		max-width: 60px;
 	}
 
-	.nav {
+	/* .nav {
 		display: none;
-	}
+	} */
 
 	.actions {
 		gap: 0.8rem;

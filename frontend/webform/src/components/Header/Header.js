@@ -55,9 +55,9 @@ const Header = () => {
 					<span className={styles.bar}></span>
 				</button>
 
-				{/* <Link to='/' className={styles.logo}>
+				<Link to='/' className={styles.logo}>
 					<img src={logo} alt='Logo' />
-				</Link> */}
+				</Link>
 			</div>
 
 			<nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`}>
