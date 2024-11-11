@@ -1,7 +1,6 @@
 // src/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authLoginUser, registerUser } from './AuthService';
-import { fetchProfileData } from '../profile/UserService';
 
 // Асинхронное действие для логина
 export const login = createAsyncThunk(
@@ -29,20 +28,6 @@ export const register = createAsyncThunk(
     }
   }
 );
-
-// Асинхронное действие для загрузки профиля
-export const loadProfile = createAsyncThunk(
-    'auth/loadProfile',
-    async (token, { rejectWithValue}) => {
-      try {
-        const profileData = await fetchProfileData(token);
-        localStorage.setItem('profileData', JSON.stringify(profileData));
-        return profileData;
-      } catch (error) {
-        return rejectWithValue(error.message);
-      }
-    }
-  );
 
 // Слайс для состояния аутентификации
 const authSlice = createSlice({
@@ -97,17 +82,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      .addCase(loadProfile.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(loadProfile.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.profileData = action.payload;
-      })
-      .addCase(loadProfile.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      });
   },
 });
 
