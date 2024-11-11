@@ -4,7 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import DOMPurify from 'dompurify';
 import { validateEmail, validatePasswordLength } from '../../../utils/validation';
-import { login, loadProfile } from '../authSlice';
+import { login } from '../authSlice';
+import { loadProfile } from '../../profile/profileSlice';
 import styles from './AuthForm.module.css';
 
 const LoginForm = () => {
@@ -54,18 +55,13 @@ const LoginForm = () => {
     if (!formIsValid) return;
 
     try {
-      // Вызов экшена login для логина пользователя
       const resultAction = await dispatch(login({ email: userEmail, password })).unwrap();
       console.log('Login success:', resultAction);
 
-      // Вызов экшена для загрузки профиля
       await dispatch(loadProfile(resultAction.token)).unwrap();
 
-      // Очистка формы
       setFormData({ email: '', password: '' });
-
       console.log('Navigating to profile...');
-      // Редирект на страницу профиля
       navigate('/profile');
     } catch (err) {
       setErrors({ email: err.message, password: '' });
