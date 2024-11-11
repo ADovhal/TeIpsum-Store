@@ -6,13 +6,14 @@ import { logout } from '../../auth/authSlice';
 import { loadProfile } from '../profileSlice';
 import { deleteAccount } from '../UserService';
 import ProfileData from './ProfileData';
-import styles from './ProfilePage.module.css';
+import styles from './ProfileForm.module.css';
 
 const ProfileForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
-    const { user, profileData, token, isLoading, error } = useSelector(state => state.auth);
+    const { token, user } = useSelector(state => state.auth);
+    const { profileData, isLoading, error } = useSelector(state => state.profile);
     console.log(user, profileData, token, isLoading, error)
 
     useEffect(() => {
@@ -21,7 +22,6 @@ const ProfileForm = () => {
             } else if (!token) {
                 navigate('/login');
             }
-        // }
     }, [user, profileData, token, dispatch, navigate]);
 
     const handleLogout = () => {
