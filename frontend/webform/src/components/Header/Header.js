@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useNavigate, useState } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useDispatch } from 'react-redux';
 import { refreshToken } from '../../features/auth/authSlice';  // Импортируем refreshToken
@@ -8,7 +8,6 @@ import logo from '../../assets/images/logo.png';
 
 
 const Header = () => {
-
 	const [menuOpen, setMenuOpen] = useState(false)
 	const navigate = useNavigate()
 	const dispatch = useDispatch();
