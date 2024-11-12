@@ -3,13 +3,13 @@ package com.dovhal.application.controllers;
 import com.dovhal.application.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final JwtUtil jwtUtil;
@@ -18,20 +18,23 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/validate-token")
-    public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshAccessToken(@RequestHeader("Authorization") String refreshTokenHeader) {
+        String refreshToken = refreshTokenHeader.replace("Bearer ", "");
 
         try {
-            String extractedUsername = jwtUtil.extractUsername(token);
-            if (extractedUsername != null && jwtUtil.isTokenExpired(token)) {
-                System.out.println("Token validated!");
-                return ResponseEntity.ok().build();
+            String email = jwtUtil.extractEmailFromRefreshToken(refreshToken);
+
+            if (email != null && !jwtUtil.isRefreshTokenExpired(refreshToken)) {
+                String newAccessToken = jwtUtil.createAccessToken(email);
+                Map<String, String> tokens = new HashMap<>();
+                tokens.put("accessToken", newAccessToken);
+                return ResponseEntity.ok(tokens);
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is expired or invalid");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
     }
 }

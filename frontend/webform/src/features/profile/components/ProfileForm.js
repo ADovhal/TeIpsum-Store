@@ -1,10 +1,8 @@
-// src/pages/ProfileForm.js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../auth/authSlice';
-import { loadProfile } from '../profileSlice';
-import { deleteAccount } from '../UserService';
+import { logoutAsync } from '../../auth/authSlice'; // Используем logoutAsync вместо logout
+import { loadProfile, deleteUserAccount } from '../profileSlice';
 import ProfileData from './ProfileData';
 import styles from './ProfileForm.module.css';
 
@@ -12,29 +10,38 @@ const ProfileForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
-    const { token, user } = useSelector(state => state.auth);
-    const { profileData, isLoading, error } = useSelector(state => state.profile);
-    console.log(user, profileData, token, isLoading, error)
+    const user = useSelector(state => state.auth.user);
+    const accessToken = useSelector(state => state.auth.accessToken); // Достаем accessToken из authSlice
+    const profileData = useSelector(state => state.profile.profileData);
+    const isLoading = useSelector(state => state.profile.isLoading);
+    const error = useSelector(state => state.profile.error);
+    const isDeleted = useSelector(state => state.profile.isDeleted);
 
     useEffect(() => {
-            if (!profileData && token) {
-                dispatch(loadProfile(token));
-            } else if (!token) {
-                navigate('/login');
-            }
-    }, [user, profileData, token, dispatch, navigate]);
+        if (!profileData && accessToken) {
+            dispatch(loadProfile(accessToken));
+        } else if (!accessToken) {
+            navigate('/login');
+        }
+    }, [user, profileData, accessToken, dispatch, navigate]);
+
+    useEffect(() => {
+        if (isDeleted) {
+            dispatch(logoutAsync()); // Вызываем logoutAsync
+            navigate('/'); // Перенаправляем на главную страницу
+        }
+    }, [isDeleted, dispatch, navigate]);
 
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logoutAsync()); // Используем logoutAsync
         navigate('/login');
     };
 
     const handleDeleteAccount = async () => {
         if (window.confirm('Are you sure you want to delete your account? This action is irreversible.')) {
             try {
-                await deleteAccount();
-                dispatch(logout());
-                navigate('/');
+                dispatch(deleteUserAccount());
+                navigate('/login')
             } catch (error) {
                 console.error('Error deleting account:', error);
             }

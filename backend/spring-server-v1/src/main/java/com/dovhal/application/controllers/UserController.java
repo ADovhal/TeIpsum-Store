@@ -63,23 +63,19 @@ public class UserController {
 
         User foundUser = userService.findUserByEmail(request.getEmail());
 
-        if (foundUser != null) {
-            System.out.println("User found: " + foundUser.getId());
-            System.out.println("Stored password: " + foundUser.getPassword());
-            System.out.println("Received password: " + request.getPassword());
+        System.out.println("User found: " + foundUser.getId());
+        System.out.println("Stored password: " + foundUser.getPassword());
+        System.out.println("Received password: " + request.getPassword());
 
-            boolean passwordMatches = passwordEncoder.matches(request.getPassword(), foundUser.getPassword());
-            System.out.println("Password matches: " + passwordMatches);
+        if (passwordEncoder.matches(request.getPassword(), foundUser.getPassword())) {
+            String accessToken = jwtUtil.createAccessToken(foundUser.getEmail());
+            String refreshToken = jwtUtil.createRefreshToken(foundUser.getEmail());
 
-            if (passwordMatches) {
-                String token = jwtUtil.createToken(foundUser.getEmail());  // Используем email для токена
-                Map<String, Object> response = new HashMap<>();
-                response.put("id", foundUser.getId());
-                response.put("email", foundUser.getEmail());  // Отдаем email вместо username
-                response.put("token", token);
-                System.out.println(response);
-                return ResponseEntity.ok(response);
-            }
+            Map<String, Object> tokens = new HashMap<>();
+            tokens.put("accessToken", accessToken);
+            tokens.put("refreshToken", refreshToken);
+            return ResponseEntity.ok(tokens);
+
         } else {
             System.out.println("User not found");
         }
