@@ -7,7 +7,8 @@ export const loadProfile = createAsyncThunk(
   async (token, { rejectWithValue }) => {
     try {
       const profileData = await fetchProfileData(token);
-      localStorage.setItem('profileData', JSON.stringify(profileData)); // Сохраняем профиль в localStorage
+      console.log(profileData)
+      //localStorage.setItem('profileData', JSON.stringify(profileData)); // Сохраняем профиль в localStorage
       return profileData;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -56,6 +57,7 @@ const profileSlice = createSlice({
     .addCase(loadProfile.fulfilled, (state, action) => {
       state.isLoading = false;
       state.profileData = action.payload;
+      localStorage.setItem('profileData', JSON.stringify(action.payload));
     })
     .addCase(loadProfile.rejected, (state, action) => {
       state.isLoading = false;
@@ -69,6 +71,8 @@ const profileSlice = createSlice({
       state.isLoading = false;
       state.isDeleted = true;
       state.profileData = null;
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('profileData');
     })
     .addCase(deleteUserAccount.rejected, (state, action) => {
       state.isLoading = false;

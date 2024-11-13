@@ -5,6 +5,7 @@ import api from '../../services/api';  // Импортируем настрое�
 import { useSelector } from 'react-redux';
 import styles from './Header.module.css';
 import logo from '../../assets/images/logo.png';
+// import { loadProfile } from '../../features/profile/profileSlice';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,6 +18,8 @@ const Header = () => {
       // Если нет токена, перенаправляем на страницу логина
       navigate('/login');
       return;
+    }else{
+      navigate('/profile')
     }
 
     try {

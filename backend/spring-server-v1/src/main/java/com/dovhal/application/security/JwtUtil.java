@@ -32,7 +32,7 @@ public class JwtUtil {
     public String createRefreshToken(String email) {
         Algorithm algorithm = Algorithm.HMAC256(refreshSecretKey);
         // Refresh токен живет 5 минут (604800000 мс)
-        long REFRESH_TOKEN_EXPIRATION = 300000;
+        long REFRESH_TOKEN_EXPIRATION = 120000;
         return JWT.create()
                 .withSubject(email)
                 .withIssuedAt(new Date())
@@ -83,22 +83,8 @@ public class JwtUtil {
                     .getExpiresAt();
             return expirationDate.before(new Date()); // Вернет true, если истек
         } catch (JWTVerificationException e) {
-//            return true;  // Считаем истекшим, если невалиден
             System.out.println("Error checking refresh token expiration: " + e.getMessage());
             return true;
-        }
-    }
-
-    // Верификация токена (проверка его валидности и истечения срока)
-    public void verifyToken(String token) throws JWTVerificationException {
-        try {
-            // Попытаться верифицировать токен
-            JWT.require(Algorithm.HMAC256(accessSecretKey))  // Указываем алгоритм для верификации
-                    .build()
-                    .verify(token);  // Проверяем токен
-        } catch (JWTVerificationException e) {
-            System.out.println("Token verification failed: " + e.getMessage());
-            throw new JWTVerificationException("Invalid or expired token.", e);  // Бросаем исключение, если токен невалиден
         }
     }
 }

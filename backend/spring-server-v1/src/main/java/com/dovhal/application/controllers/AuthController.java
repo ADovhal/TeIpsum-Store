@@ -19,11 +19,12 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshAccessToken(@RequestHeader("Authorization") String refreshTokenHeader) {
-        System.out.println("Received refresh token header: " + refreshTokenHeader);  // Логируем весь заголовок
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken") String refreshToken) {
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No refresh token found");
+        }
 
-        String refreshToken = refreshTokenHeader.replace("Bearer ", "");
-        System.out.println("Extracted refresh token: " + refreshToken);  // Логируем только токен
+        System.out.println("Extracted refresh token from cookies: " + refreshToken);  // Логируем токен из куки
 
         // Проверяем, не истек ли refresh token
         if (jwtUtil.isRefreshTokenExpired(refreshToken)) {
@@ -46,7 +47,6 @@ public class AuthController {
             tokens.put("accessToken", newAccessToken);
             return ResponseEntity.ok(tokens);
         } catch (Exception e) {
-            // Обработка ошибок при генерации токенов
             System.out.println("Error during refresh token verification: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }

@@ -8,6 +8,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
 api.interceptors.request.use(
@@ -26,16 +27,14 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
       const originalRequest = error.config;
-      const state = store.getState();
-      const refresh = state.auth.refreshToken;
 
-      // Если accessToken истек (401) и refreshToken существует
-      if (error.response?.status === 401 && refresh && !originalRequest._retry) {
-          originalRequest._retry = true; // Помечаем запрос, чтобы избежать бесконечного цикла
+      // Проверка, что ошибка 401 (Unauthorized) и запрос еще не повторялся
+      if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
 
           try {
-              // Запрашиваем новый accessToken с использованием refreshToken
-              const newAccessToken = await store.dispatch(refreshToken(refresh)).unwrap();
+              // Запрашиваем новый accessToken, используя refreshToken, хранящийся в куках
+              const newAccessToken = await store.dispatch(refreshToken()).unwrap();
 
               // Обновляем заголовок Authorization для оригинального запроса
               originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;

@@ -6,7 +6,9 @@ import com.dovhal.application.requests.RegistryUserRequest;
 import com.dovhal.application.security.JwtUtil;
 import com.dovhal.application.service.UserService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,45 +57,27 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest request) {
-
+    public ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest request, HttpServletResponse response) {
         String clientIP = httpServletRequest.getRemoteAddr();
         String requestURI = httpServletRequest.getRequestURI();
         System.out.println("Received login request from IP: " + clientIP + " for URI: " + requestURI);
 
         User foundUser = userService.findUserByEmail(request.getEmail());
 
-        System.out.println("User found: " + foundUser.getId());
-        System.out.println("Stored password: " + foundUser.getPassword());
-        System.out.println("Received password: " + request.getPassword());
-
-        if (passwordEncoder.matches(request.getPassword(), foundUser.getPassword())) {
+        if (foundUser != null && passwordEncoder.matches(request.getPassword(), foundUser.getPassword())) {
             String accessToken = jwtUtil.createAccessToken(foundUser.getEmail());
             String refreshToken = jwtUtil.createRefreshToken(foundUser.getEmail());
 
+
+            response.setHeader("Set-Cookie", "refreshToken=" + refreshToken + "; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/");
+            System.out.println("Refresh token: " + refreshToken);
             Map<String, Object> tokens = new HashMap<>();
             tokens.put("accessToken", accessToken);
-            tokens.put("refreshToken", refreshToken);
             return ResponseEntity.ok(tokens);
-
         } else {
-            System.out.println("User not found");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
     }
-
-//    @GetMapping("/protected")
-//    public ResponseEntity<Map<String, String>> getProtectedData(Authentication authentication) {
-//        if (authentication != null && authentication.isAuthenticated()) {
-//            String token = jwtUtil.createToken(authentication.getName());
-//            Map<String, String> response = new HashMap<>();
-//            response.put("token", token);
-//
-//            return ResponseEntity.ok(response);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-//        }
-//    }
 
     @GetMapping("/profile")
     public ResponseEntity<Map<String, Object>> getUserProfile() {
@@ -114,15 +98,21 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteCurrentUser() {
+    public ResponseEntity<String> deleteCurrentUser(HttpServletResponse response) {
         User currentUser = userService.getCurrentUser();
-
         if (currentUser != null) {
             userService.deleteUserById(currentUser.getId());
             SecurityContextHolder.clearContext();
+            // Удаление cookies с refreshToken
+            Cookie cookie = new Cookie("refreshToken", null);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0); // Устанавливаем 0 для удаления cookies
+            response.addCookie(cookie);
             return ResponseEntity.ok("Account deleted successfully");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
     }
+
 }

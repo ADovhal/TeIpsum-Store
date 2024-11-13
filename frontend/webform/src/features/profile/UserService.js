@@ -11,16 +11,23 @@ import store from '../../redux/store';
 export const fetchProfileData = async () => {
     const state = store.getState();
     const token = state.auth.accessToken;
+
+    console.log('Token for fetchProfileData: ', token)
   
     if (!token) {
       throw new Error('No access token found, please log in again.');
     }
   
     try {
-      const response = await api.get('/users/profile');
-      return response.data;
+        const response = await api.get('/users/profile', { 
+          headers: { 
+              Authorization: `Bearer ${token}` 
+          },
+        })
+        console.log('Response Headers:', response.headers);  // Логируем заголовки ответа
+        return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch profile data');
+        throw new Error(error.response?.data?.message);
     }
   };
 

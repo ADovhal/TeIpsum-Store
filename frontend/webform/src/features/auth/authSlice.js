@@ -23,7 +23,7 @@ export const login = createAsyncThunk(
 
             // Сохраняем токены в localStorage
             localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            //localStorage.setItem('refreshToken', refreshToken);
 
             return { id, email, accessToken, refreshToken };
         } catch (error) {
@@ -52,7 +52,6 @@ export const refreshToken = createAsyncThunk(
 
 // Асинхронное действие для выхода
 export const logoutAsync = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
-    //await logoutUser();
     dispatch(clearAuthState()); // Очистка состояния аутентификации
 });
 
@@ -74,7 +73,6 @@ const authSlice = createSlice({
             state.profileData = null;
             state.isAuthenticated = false;
             localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
             localStorage.removeItem('profileData');
         },
     },
@@ -86,7 +84,6 @@ const authSlice = createSlice({
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.accessToken = action.payload.accessToken;
-                state.refreshToken = action.payload.refreshToken;
                 state.user = { id: action.payload.id, email: action.payload.email };
                 state.isAuthenticated = true;
             })
