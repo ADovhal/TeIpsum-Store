@@ -1,4 +1,3 @@
-// src/slices/profileSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchProfileData, deleteAccount } from '../profile/UserService';
 
@@ -9,7 +8,6 @@ export const loadProfile = createAsyncThunk(
     try {
       const profileData = await fetchProfileData(token);
       console.log(profileData)
-      //localStorage.setItem('profileData', JSON.stringify(profileData)); // Сохраняем профиль в localStorage
       return profileData;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -22,7 +20,7 @@ export const deleteUserAccount = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await deleteAccount();
-      return true; // Возвращаем true для успешного удаления
+      return true;
     } catch (error) {
       return rejectWithValue(error.message);
     }

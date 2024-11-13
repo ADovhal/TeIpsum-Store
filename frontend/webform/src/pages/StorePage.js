@@ -11,7 +11,6 @@ const StorePage = () => {
   const { viewMode, setViewMode } = useContext(ViewTypeContext);
   const dispatch = useDispatch();
 
-  // Извлекаем данные из Redux
   const { products, totalPages, loading, error } = useSelector((state) => state.products || {});
 
   const [filters, setFilters] = useState({
@@ -77,8 +76,6 @@ const StorePage = () => {
             <button onClick={() => setViewMode('list')}>Блоки</button>
           </div>
         </div>
-
-        {/* Отображение загрузки или ошибки */}
         {loading && <div>Loading...</div>}
         {error && <div>Error: {error}</div>}
 

@@ -1,4 +1,3 @@
-// src/features/products/ProductService.js
 import api from '../../services/api';
 
 export const getProductsFiltered = async ({ name, category, minPrice, maxPrice, rating, page, size }) => {

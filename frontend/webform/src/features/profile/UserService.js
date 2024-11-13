@@ -1,13 +1,6 @@
-// src/services/userService.js
-import api from '../../services/api'; // Импортируем централизованный экземпляр api.js
+import api from '../../services/api';
 import store from '../../redux/store';
 
-// Получаем токен из localStorage
-// export const getToken = () => {
-//     return localStorage.getItem('token');
-// };
-
-// Получаем данные профиля пользователя
 export const fetchProfileData = async () => {
     const state = store.getState();
     const token = state.auth.accessToken;
@@ -24,16 +17,14 @@ export const fetchProfileData = async () => {
               Authorization: `Bearer ${token}` 
           },
         })
-        console.log('Response Headers:', response.headers);  // Логируем заголовки ответа
+        console.log('Response Headers:', response.headers);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message);
     }
   };
 
-// Удаляем аккаунт пользователя
 export const deleteAccount = async () => {
-    // const token = getToken(); // Получаем токен
     const state = store.getState();
     const token = state.auth.accessToken;
     if (!token) {

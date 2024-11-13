@@ -1,4 +1,3 @@
-// src/components/ProfileData.js
 import React from 'react';
 import styles from './ProfileData.module.css';
 

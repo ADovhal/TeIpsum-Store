@@ -1,4 +1,3 @@
-/* src/pages/ProfilePage.js */
 import React, { useEffect } from 'react';
 import ProfileForm from '../features/profile/components/ProfileForm';
 

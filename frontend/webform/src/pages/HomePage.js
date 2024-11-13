@@ -1,4 +1,3 @@
-// src/pages/HomePage.js
 import React, { useEffect } from 'react';
 import styles from './HomePage.module.css';
 import { Link } from 'react-router-dom';
@@ -56,8 +55,6 @@ const HomePage = () => {
           <Link to="/store" className={styles.shopNowButton}>Discover products</Link>
         </div>
       </section>
-
-      {/* Описание магазина */}
       <section className={styles.aboutStore}>
         <h2>About our shop</h2>
         <p>

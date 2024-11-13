@@ -1,21 +1,17 @@
-// Header.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../../services/api';  // Импортируем настроенный axios
+import api from '../../services/api';
 import { useSelector } from 'react-redux';
 import styles from './Header.module.css';
 import logo from '../../assets/images/logo.png';
-// import { loadProfile } from '../../features/profile/profileSlice';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { accessToken } = useSelector((state) => state.auth);
 
-  // Функция для проверки профиля пользователя
   const checkProfile = async () => {
     if (!accessToken) {
-      // Если нет токена, перенаправляем на страницу логина
       navigate('/login');
       return;
     }else{
@@ -23,7 +19,6 @@ const Header = () => {
     }
 
     try {
-      // Пытаемся получить данные профиля
       const response = await api.get('/users/profile', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -31,12 +26,10 @@ const Header = () => {
       });
 
       if (response.status === 200) {
-        // Если токен действителен, перенаправляем в профиль
         navigate('/profile');
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
-      // Здесь перехватывает автоматический механизм обновления токена в api.js
     }
   };
 
@@ -50,7 +43,6 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      {/* Контейнер для гамбургера и лого */}
       <div className={styles.logoContainer}>
         <button className={styles.hamburger} onClick={toggleMenu}>
           <span className={styles.bar}></span>
@@ -61,8 +53,6 @@ const Header = () => {
           <img src={logo} alt="Logo" />
         </Link>
       </div>
-
-      {/* Навигационное меню */}
       <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`}>
         <Link to="/" className={styles.navItem} onClick={closeMenu}>
           Home
@@ -77,8 +67,6 @@ const Header = () => {
           Contact Us
         </Link>
       </nav>
-
-      {/* Блок действий */}
       <div className={styles.actions}>
         <Link to="/cart" className={styles.iconButton}>
           <i className="fa fa-shopping-cart"></i>

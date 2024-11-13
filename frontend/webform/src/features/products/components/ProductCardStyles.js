@@ -1,4 +1,3 @@
-// src/components/ProductCard/ProductCardStyles.js
 import styled from 'styled-components';
 
 export const Card = styled.div`

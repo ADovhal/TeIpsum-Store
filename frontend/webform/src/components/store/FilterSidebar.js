@@ -1,6 +1,5 @@
-// src/components/FilterSidebar/FilterSidebar.js
 import React from 'react';
-import styles from './StorePageComponents.module.css'; // Импортируем стили из CSS модуля
+import styles from './StorePageComponents.module.css';
 
 const FilterSidebar = ({ filters, onFilterChange }) => {
     const handleChange = (e) => {
@@ -33,7 +32,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                     value={filters.minPrice}
                     onChange={handleChange}
                     className={styles.input}
-                    min="0" // Минимальное значение для цены - 0
+                    min="0"
                 />
             </div>
 
@@ -45,7 +44,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                     value={filters.maxPrice}
                     onChange={handleChange}
                     className={styles.input}
-                    min="0" // Минимальное значение для цены - 0
+                    min="0"
                 />
             </div>
 
@@ -57,7 +56,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                     value={filters.rating}
                     onChange={handleChange}
                     className={styles.input}
-                    max="5" // Максимальное значение рейтинга - 5
+                    max="5"
                 />
             </div>
         </div>

@@ -33,11 +33,10 @@ const RegisterForm = () => {
 
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false); // Флаг отправки формы
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const navigate = useNavigate();
 
-  // Обработчик изменений формы
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prevState) => ({
@@ -45,16 +44,14 @@ const RegisterForm = () => {
       [id]: DOMPurify.sanitize(value)
     }));
 
-    // Сбрасываем ошибку для текущего поля при изменении
     if (errors[id]) {
       setErrors({ ...errors, [id]: '' });
     }
   };
 
-  // Обработчик отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true); // Устанавливаем флаг, чтобы показывать ошибки после отправки формы
+    setIsSubmitted(true);
 
     setErrors({
       name: '',
@@ -72,44 +69,38 @@ const RegisterForm = () => {
     const { name, surname, dob, email, phone, password, confirmPassword } = formData;
     let formIsValid = true;
 
-    // Валидация имени
     if (!name.trim()) {
       setErrors((prevState) => ({ ...prevState, name: 'Name is required!' }));
       formIsValid = false;
     }
 
-    // Валидация фамилии
     if (!surname.trim()) {
       setErrors((prevState) => ({ ...prevState, surname: 'Surname is required!' }));
       formIsValid = false;
     }
 
-    // Валидация email
     if (!validateEmail(email)) {
       setErrors((prevState) => ({ ...prevState, email: 'Incorrect email!' }));
       formIsValid = false;
     }
 
-    // Валидация пароля
     if (!validatePasswordLength(password)) {
       setErrors((prevState) => ({ ...prevState, password: 'Password should contain at least 8 characters!' }));
       formIsValid = false;
     }
 
-    // Проверка совпадения пароля и подтверждения
     if (password !== confirmPassword) {
       setErrors((prevState) => ({ ...prevState, confirmPassword: 'Passwords don\'t match!' }));
       formIsValid = false;
     }
 
-    // Если форма не валидна, выходим
     if (!formIsValid) {
       setLoading(false);
       return;
     }
 
     try {
-      // Регистрируем пользователя
+
       await registerUser({ name, surname, dob, email, phone, password });
 
       setSuccessMessage('Success!');
@@ -117,7 +108,6 @@ const RegisterForm = () => {
         navigate('/login');
       }, 2000);
 
-      // Сбрасываем форму
       setFormData({
         name: '',
         surname: '',
@@ -128,7 +118,7 @@ const RegisterForm = () => {
         confirmPassword: ''
       });
     } catch (err) {
-      setErrors({ email: err.message }); // Показ ошибки регистрации
+      setErrors({ email: err.message });
       console.error('Registration error:', err);
     } finally {
       setLoading(false);

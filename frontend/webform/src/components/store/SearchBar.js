@@ -1,6 +1,5 @@
-// src/components/SearchBar/SearchBar.js
 import React from 'react';
-import styles from './StorePageComponents.module.css'; // Импортируем стили из CSS модуля
+import styles from './StorePageComponents.module.css';
 
 const SearchBar = ({ searchQuery, onSearchChange }) => {
     return (

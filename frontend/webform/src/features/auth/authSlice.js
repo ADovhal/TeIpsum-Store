@@ -1,8 +1,7 @@
-// src/features/auth/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authLoginUser, registerUser, refreshAccessToken } from './AuthService';
 
-// Асинхронное действие для регистрации
+
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -14,16 +13,14 @@ export const register = createAsyncThunk(
     }
   }
 );
-// Асинхронное действие для логина
+
 export const login = createAsyncThunk(
     'auth/login',
     async (credentials, { rejectWithValue }) => {
         try {
             const { id, email, accessToken, refreshToken } = await authLoginUser(credentials);
 
-            // Сохраняем токены в localStorage
             localStorage.setItem('accessToken', accessToken);
-            //localStorage.setItem('refreshToken', refreshToken);
 
             return { id, email, accessToken, refreshToken };
         } catch (error) {
@@ -32,16 +29,12 @@ export const login = createAsyncThunk(
     }
 );
 
-// Асинхронное действие для обновления токена
 export const refreshToken = createAsyncThunk(
     'auth/refreshToken',
     async (refreshToken, { rejectWithValue }) => {
         try {
             const accessToken = await refreshAccessToken(refreshToken);
-
             console.log('New Access token from api.interceptor: ', accessToken);
-
-            // Сохраняем новый accessToken
             localStorage.setItem('accessToken', accessToken);
             return accessToken;
         } catch (error) {
@@ -50,9 +43,8 @@ export const refreshToken = createAsyncThunk(
     }
 );
 
-// Асинхронное действие для выхода
 export const logoutAsync = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
-    dispatch(clearAuthState()); // Очистка состояния аутентификации
+    dispatch(clearAuthState());
 });
 
 const authSlice = createSlice({

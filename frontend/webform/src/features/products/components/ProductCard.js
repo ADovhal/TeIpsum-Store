@@ -1,4 +1,3 @@
-// src/components/ProductCard/ProductCard.js
 import React from 'react';
 import { Card, CardImage, CardContent, CardTitle, CardPrice, AddToCartButton } from './ProductCardStyles';
 

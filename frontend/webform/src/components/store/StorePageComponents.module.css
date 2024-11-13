@@ -1,6 +1,3 @@
-/* StorePageComponents.module.css */
-
-/* Стили для боковой панели фильтров */
 .filterSidebar {
     position: sticky;
     top: 80px;
@@ -37,10 +34,9 @@
     font-size: 1rem;
     border-radius: 5px;
     border: 1px solid #ddd;
-    box-sizing: border-box; /* Чтобы padding не нарушал размеры */
+    box-sizing: border-box;
 }
 
-/* Стили для строки поиска */
 .searchBar {
     margin-bottom: 20px;
     max-width: 800px;

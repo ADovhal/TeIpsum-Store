@@ -1,4 +1,3 @@
-// src/components/ProductBlock/ProductBlock.js
 import React from 'react';
 import { Block, BlockImage, BlockContent, BlockTitle, BlockDescription, BlockPrice, AddToCartButton } from './ProductBlockStyles';
 
