@@ -11,10 +11,14 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String accessSecretKey;
-    @Value("${jwt.refresh-secret}")
-    private String refreshSecretKey;
+    private final String accessSecretKey;
+    private final String refreshSecretKey;
+
+    public JwtUtil(@Value("${jwt.secret}") String accessSecretKey,
+                   @Value("${jwt.refresh-secret}") String refreshSecretKey) {
+        this.accessSecretKey = accessSecretKey;
+        this.refreshSecretKey = refreshSecretKey;
+    }
 
     // Метод для создания Access Token
     public String createAccessToken(String email) {
