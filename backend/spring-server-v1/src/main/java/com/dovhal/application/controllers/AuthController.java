@@ -20,20 +20,34 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestHeader("Authorization") String refreshTokenHeader) {
+        System.out.println("Received refresh token header: " + refreshTokenHeader);  // Логируем весь заголовок
+
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
+        System.out.println("Extracted refresh token: " + refreshToken);  // Логируем только токен
+
+        // Проверяем, не истек ли refresh token
+        if (jwtUtil.isRefreshTokenExpired(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is expired or invalid");
+        }
+
+        // Попытка извлечь email из refresh token
+        String email = jwtUtil.extractEmailFromRefreshToken(refreshToken);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
 
         try {
-            String email = jwtUtil.extractEmailFromRefreshToken(refreshToken);
+            // Генерация нового access token
+            String newAccessToken = jwtUtil.createAccessToken(email);
+            System.out.println("New access token: " + newAccessToken);
 
-            if (email != null && !jwtUtil.isRefreshTokenExpired(refreshToken)) {
-                String newAccessToken = jwtUtil.createAccessToken(email);
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("accessToken", newAccessToken);
-                return ResponseEntity.ok(tokens);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is expired or invalid");
-            }
+            // Возвращаем новый access token
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", newAccessToken);
+            return ResponseEntity.ok(tokens);
         } catch (Exception e) {
+            // Обработка ошибок при генерации токенов
+            System.out.println("Error during refresh token verification: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
     }

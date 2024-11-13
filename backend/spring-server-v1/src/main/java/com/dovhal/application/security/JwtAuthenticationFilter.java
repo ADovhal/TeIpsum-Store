@@ -1,6 +1,5 @@
 package com.dovhal.application.security;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,47 +25,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Пропускаем проверку токена для публичных путей, например для /api/products
-        if (path.startsWith("/api/products")) {
-            filterChain.doFilter(request, response);  // Пропускаем фильтр для публичных маршрутов
+        // Пропускаем фильтр для публичных маршрутов, включая маршрут обновления токена
+        if (path.startsWith("/api/products") || path.startsWith("/api/auth/refresh")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        String token = extractToken(request);  // Извлекаем токен из заголовка
-
-        if (token != null) {
-            try {
-                jwtUtil.verifyToken(token);  // Проверка токена
-                String email = jwtUtil.extractEmailFromAccessToken(token);  // Извлекаем email из токена
-
-                // Если токен валиден, устанавливаем информацию о пользователе в контексте безопасности
+        // Извлечение Access Token из заголовка
+        String accessToken = extractAccessToken(request);
+        if (accessToken != null) {
+            if (!jwtUtil.isAccessTokenExpired(accessToken)) {
+                // Если Access Token действителен, получаем email и устанавливаем контекст безопасности
+                String email = jwtUtil.extractEmailFromAccessToken(accessToken);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, null
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (TokenExpiredException e) {
-                // Обработка истекшего токена
+
+            } else {
+                // Если Access Token истек, возвращаем код 401 и сообщение
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token has expired.");
-                return; // Прерываем фильтрацию, если токен истек
-            } catch (Exception e) {
-                // Обработка других ошибок токена
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid token.");
-                return; // Прерываем фильтрацию, если токен невалиден
+                response.getWriter().write("Access token is expired. Please refresh your token.");
+                return;
             }
         }
 
-        filterChain.doFilter(request, response);  // Продолжаем фильтрацию
+        // Продолжаем фильтрацию, если Access Token валиден или не требуется
+        filterChain.doFilter(request, response);
     }
 
-    // Метод для извлечения токена из заголовка Authorization
-    private String extractToken(HttpServletRequest request) {
+    // Метод для извлечения Access Token из заголовка Authorization
+    private String extractAccessToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7);
-        }
-        return null;
+        return (header != null && header.startsWith("Bearer ")) ? header.substring(7) : null;
     }
 }

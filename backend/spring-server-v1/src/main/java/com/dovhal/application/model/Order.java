@@ -1,6 +1,5 @@
 package com.dovhal.application.model;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

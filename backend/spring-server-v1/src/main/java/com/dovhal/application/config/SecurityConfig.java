@@ -36,9 +36,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)  // Отключаем CSRF
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/products/**") // Пути без авторизации , "/api/users/profile", "/api/refresh", "/api/users/delete"
+                        .requestMatchers("/api/users/register", "/api/users/login", "/api/products/**", "/api/auth/refresh") // Пути без авторизации , "/api/users/profile", "/api/refresh", "/api/users/delete"
                         .permitAll()
-                        .requestMatchers("/api/users/profile", "/api/refresh", "/api/users/delete") // Защищенные пути
+                        .requestMatchers("/api/users/profile", "/api/users/delete") // Защищенные пути
                         .authenticated()  // Эти маршруты требуют авторизации
                         .anyRequest().authenticated())  // Все остальные маршруты также требуют аутентификации
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless конфигурация

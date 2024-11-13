@@ -1,5 +1,8 @@
+// AuthService.js
 import api from '../../services/api';
+import axios from 'axios';
 
+// Функция для регистрации пользователя
 export const registerUser = async (userData) => {
     try {
         const response = await api.post('/users/register', userData);
@@ -9,6 +12,7 @@ export const registerUser = async (userData) => {
     }
 };
 
+// Функция для логина
 export const authLoginUser = async (credentials) => {
     try {
         const response = await api.post('/users/login', credentials);
@@ -16,27 +20,40 @@ export const authLoginUser = async (credentials) => {
         if (!accessToken) {
             throw new Error('No access token returned from server');
         }
-        localStorage.setItem('refreshToken', refreshToken); // Сохраняем только refreshToken
-        return { id, email, accessToken };
+        localStorage.setItem('refreshToken', refreshToken); // Сохраняем refreshToken в localStorage
+        return { id, email, accessToken, refreshToken }; // возвращаем refreshToken в состояние
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Login failed');
     }
 };
 
-// Новый метод для получения нового accessToken
-export const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
+
+// Функция для получения нового accessToken
+export const refreshAccessToken = async (refreshToken) => {
+    console.log('Refresh token in refreshAccessToken:', refreshToken);
     if (!refreshToken) {
         throw new Error('No refresh token found, please log in again.');
     }
+    
     try {
-        const response = await api.post('/auth/refresh', { refreshToken });
+        // Создаем новый экземпляр axios без перехватчиков
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_URL_TEST}/auth/refresh`,
+            null,
+            {
+                headers: {
+                    Authorization: `Bearer ${refreshToken}`, // Используем refreshToken
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
         return response.data.accessToken;
     } catch (error) {
         throw new Error('Failed to refresh access token');
     }
 };
 
-export const logoutUser = () => {
-    localStorage.removeItem('refreshToken'); // Удаляем только refreshToken
-};
+// // Функция для выхода из системы
+// export const logoutUser = () => {
+//     localStorage.removeItem('refreshToken'); // Удаляем только refreshToken
+// };

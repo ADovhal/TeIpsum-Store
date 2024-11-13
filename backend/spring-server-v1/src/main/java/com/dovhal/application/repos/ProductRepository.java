@@ -2,18 +2,22 @@ package com.dovhal.application.repos;
 
 import com.dovhal.application.model.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+
     default Page<Product> findAll(Pageable pageable) {
-        return null;
+        return new PageImpl<>(Collections.emptyList(), pageable, 0);
     }
 
     // Метод с фильтрацией
