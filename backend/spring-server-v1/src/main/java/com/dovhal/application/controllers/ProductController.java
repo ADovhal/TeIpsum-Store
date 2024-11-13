@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import org.springframework.hateoas.PagedModel;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -38,13 +37,10 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        // Получаем страницу продуктов
         Page<Product> products = productService.getFilteredProducts(name, category, minPrice, maxPrice, rating, page, size);
 
         PagedModel<EntityModel<Product>> pagedModel = pagedResourcesAssembler.toModel(products, product -> {
-            // Преобразуем каждый продукт в EntityModel с добавлением ссылок
             EntityModel<Product> productEntityModel = EntityModel.of(product);
-            // Можно добавить ссылки на продукт, например:
             productEntityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).getFilteredProducts(name, category, minPrice, maxPrice, rating, page, size)).withSelfRel());
             return productEntityModel;
         });

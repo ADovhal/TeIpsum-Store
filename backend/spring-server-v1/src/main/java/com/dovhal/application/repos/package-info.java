@@ -1,4 +1,4 @@
-//@NonNullApi
-//package com.dovhal.application.repos;
-//
-//import org.springframework.lang.NonNullApi;
+@NonNullApi
+package com.dovhal.application.repos;
+
+import org.springframework.lang.NonNullApi;

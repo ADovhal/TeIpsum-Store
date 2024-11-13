@@ -16,16 +16,12 @@ public class ProductService {
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
-
     public Page<Product> getFilteredProducts(String name, String category, BigDecimal minPrice, BigDecimal maxPrice, Double rating, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
 
-        // Применяем фильтры до пагинации, создаем запрос с фильтрами
         if (name != null || category != null || minPrice != null || maxPrice != null || rating != null) {
-            // Метод с фильтрацией (реализуйте его в репозитории)
             return productRepository.findByFilters(name, category, minPrice, maxPrice, rating, pageable);
         } else {
-            // Если фильтры пустые, возвращаем все продукты с пагинацией
             return productRepository.findAll(pageable);
         }
     }

@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchProfileData, deleteAccount } from '../profile/UserService';
 
+
 export const loadProfile = createAsyncThunk(
   'profile/loadProfile',
   async (token, { rejectWithValue }) => {

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3002", "http://localhost:3000"})
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -67,8 +66,6 @@ public class UserController {
         if (foundUser != null && passwordEncoder.matches(request.getPassword(), foundUser.getPassword())) {
             String accessToken = jwtUtil.createAccessToken(foundUser.getEmail());
             String refreshToken = jwtUtil.createRefreshToken(foundUser.getEmail());
-
-
             response.setHeader("Set-Cookie", "refreshToken=" + refreshToken + "; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/");
             System.out.println("Refresh token: " + refreshToken);
             Map<String, Object> tokens = new HashMap<>();

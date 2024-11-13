@@ -36,15 +36,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)  // Отключаем CSRF
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/products/**", "/api/auth/refresh") // Пути без авторизации , "/api/users/profile", "/api/refresh", "/api/users/delete"
+                        .requestMatchers("/api/users/register", "/api/users/login", "/api/products/**", "/api/auth/refresh")
                         .permitAll()
-                        .requestMatchers("/api/users/profile", "/api/users/delete") // Защищенные пути
-                        .authenticated()  // Эти маршруты требуют авторизации
-                        .anyRequest().authenticated())  // Все остальные маршруты также требуют аутентификации
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless конфигурация
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)  // Добавляем фильтр
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Добавление CORS конфигурации
-
+                        .requestMatchers("/api/users/profile", "/api/users/delete")
+                        .authenticated()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }
 
@@ -61,14 +60,14 @@ public class SecurityConfig {
         corsConfig.addAllowedMethod("DELETE");
         corsConfig.addAllowedMethod("OPTIONS");
         corsConfig.addAllowedHeader("*");
-        corsConfig.setAllowCredentials(true); // Разрешаем отправку учетных данных (токенов и т.п.)
+        corsConfig.setAllowCredentials(true);
         return corsConfig;
     }
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration()); // Применяем CORS ко всем путям
+        source.registerCorsConfiguration("/**", corsConfiguration());
         return source;
     }
 

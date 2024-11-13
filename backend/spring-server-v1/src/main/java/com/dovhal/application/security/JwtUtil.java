@@ -19,8 +19,8 @@ public class JwtUtil {
     // Метод для создания Access Token
     public String createAccessToken(String email) {
         Algorithm algorithm = Algorithm.HMAC256(accessSecretKey);
-        // Access токен живет 1 минуту (900000 мс)
-        long ACCESS_TOKEN_EXPIRATION = 60000;
+        // Access токен живет 15 минут (900000 мс)
+        long ACCESS_TOKEN_EXPIRATION = 900000;
         return JWT.create()
                 .withSubject(email)
                 .withIssuedAt(new Date())
@@ -28,11 +28,9 @@ public class JwtUtil {
                 .sign(algorithm);
     }
 
-    // Метод для создания Refresh Token
     public String createRefreshToken(String email) {
         Algorithm algorithm = Algorithm.HMAC256(refreshSecretKey);
-        // Refresh токен живет 5 минут (604800000 мс)
-        long REFRESH_TOKEN_EXPIRATION = 120000;
+        long REFRESH_TOKEN_EXPIRATION = 604800000;
         return JWT.create()
                 .withSubject(email)
                 .withIssuedAt(new Date())
@@ -40,7 +38,6 @@ public class JwtUtil {
                 .sign(algorithm);
     }
 
-    // Извлечение email из Access Token
     public String extractEmailFromAccessToken(String token) {
         return JWT.require(Algorithm.HMAC256(accessSecretKey))
                 .build()
@@ -48,7 +45,6 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    // Извлечение email из Refresh Token
     public String extractEmailFromRefreshToken(String token) {
         try {
             return JWT.require(Algorithm.HMAC256(refreshSecretKey))
@@ -61,27 +57,25 @@ public class JwtUtil {
         }
     }
 
-    // Проверка, истек ли Access Token
     public boolean isAccessTokenExpired(String token) {
         try {
             Date expirationDate = JWT.require(Algorithm.HMAC256(accessSecretKey))
                     .build()
                     .verify(token)
                     .getExpiresAt();
-            return expirationDate.before(new Date()); // Вернет true, если истек
+            return expirationDate.before(new Date());
         } catch (JWTVerificationException e) {
-            return true;  // Считаем истекшим, если невалиден
+            return true;
         }
     }
 
-    // Проверка, истек ли Refresh Token
     public boolean isRefreshTokenExpired(String token) {
         try {
             Date expirationDate = JWT.require(Algorithm.HMAC256(refreshSecretKey))
                     .build()
                     .verify(token)
                     .getExpiresAt();
-            return expirationDate.before(new Date()); // Вернет true, если истек
+            return expirationDate.before(new Date());
         } catch (JWTVerificationException e) {
             System.out.println("Error checking refresh token expiration: " + e.getMessage());
             return true;
