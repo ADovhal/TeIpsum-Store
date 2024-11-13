@@ -19,6 +19,7 @@ pipeline {
         DB_USER = credentials('db_user')
         DB_PASSWORD = credentials('db_password_shop_test_env')
         JWT_SECRET = credentials('jwt_secret')
+        JWT_REFRESH_SECRET = credentials('jwt_refresh_secret')
         CORS_ALLOWED_ORIGINS = credentials('cors_allowed_origins_test_env')
     }
 
@@ -55,6 +56,7 @@ pipeline {
                     DB_USER=${DB_USER}
                     DB_PASSWORD=${DB_PASSWORD}
                     JWT_SECRET=${JWT_SECRET}
+                    JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
                     CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
                     """
 
