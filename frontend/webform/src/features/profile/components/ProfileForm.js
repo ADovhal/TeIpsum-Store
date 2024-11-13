@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logoutAsync } from '../../auth/authSlice'; // Используем logoutAsync вместо logout
+import { logoutAsync } from '../../auth/authSlice';
 import { deleteUserAccount } from '../profileSlice';
 import ProfileData from './ProfileData';
 import styles from './ProfileForm.module.css';
@@ -10,30 +10,13 @@ const ProfileForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
-    // const user = useSelector(state => state.auth.user);
-    // const accessToken = useSelector(state => state.auth.accessToken); // Достаем accessToken из authSlice
     const profileData = useSelector(state => state.profile.profileData);
     const isLoading = useSelector(state => state.profile.isLoading);
     const error = useSelector(state => state.profile.error);
-    // const isDeleted = useSelector(state => state.profile.isDeleted);
 
-    // useEffect(() => {
-    //     if (!profileData && accessToken) {
-    //         dispatch(loadProfile(accessToken));
-    //     } else if (!accessToken) {
-    //         navigate('/login');
-    //     }
-    // }, [profileData, accessToken, dispatch, navigate]);
-
-    // useEffect(() => {
-    //     if (isDeleted) {
-    //         //dispatch(logoutAsync()); // Вызываем logoutAsync
-    //         navigate('/'); // Перенаправляем на главную страницу
-    //     }
-    // }, [isDeleted, dispatch, navigate]);
 
     const handleLogout = () => {
-        dispatch(logoutAsync()); // Используем logoutAsync
+        dispatch(logoutAsync());
         navigate('/login');
     };
 
