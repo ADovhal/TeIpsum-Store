@@ -19,7 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken") String refreshToken) {
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
         if (refreshToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No refresh token found");
         }
