@@ -4,9 +4,9 @@ import { fetchProfileData, deleteAccount } from '../profile/UserService';
 
 export const loadProfile = createAsyncThunk(
   'profile/loadProfile',
-  async (token, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const profileData = await fetchProfileData(token);
+      const profileData = await fetchProfileData();
       console.log(profileData)
       return profileData;
     } catch (error) {

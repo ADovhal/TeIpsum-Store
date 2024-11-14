@@ -1,5 +1,5 @@
 // App.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import GlobalStyles from './styles/GlobalStyles';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -11,8 +11,23 @@ import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage';
 import PrivateRoute from './routes/PrivateRoute';
 import {ViewTypeProvider} from './context/ViewTypeContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadProfile } from './features/profile/profileSlice';
+
 
 const App = () => {
+
+    const dispatch = useDispatch();
+    const profileData = useSelector((state) => state.profile.profileData);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+
+    // Загружаем профиль только если его нет в Redux и доступен токен
+    useEffect(() => {
+        if (!profileData && accessToken) {
+            // Запрашиваем профиль с сервера, если данных нет в Redux
+            dispatch(loadProfile(accessToken)); 
+        }
+    }, [dispatch, profileData, accessToken]);
 
     return (
         <>

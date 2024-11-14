@@ -57,7 +57,7 @@ const LoginForm = () => {
       const resultAction = await dispatch(login({ email: userEmail, password })).unwrap();
       console.log('Login success:', resultAction);
 
-      dispatch(loadProfile(resultAction.accessToken));
+      dispatch(loadProfile());
 
       setFormData({ email: '', password: '' });
       console.log('Navigating to profile...');
