@@ -11,7 +11,7 @@ const ProfileForm = () => {
     const navigate = useNavigate();
     
     const profileData = useSelector(state => state.profile.profileData);
-    const isLoading = useSelector(state => state.profile.isLoading);
+    // const isLoading = useSelector(state => state.profile.isLoading);
     const error = useSelector(state => state.profile.error);
 
 
@@ -31,9 +31,9 @@ const ProfileForm = () => {
         }
     };
 
-    if (isLoading) {
-        return <p>Loading profile data...</p>;
-    }
+    // if (isLoading) {
+    //     return <p>Loading profile data...</p>;
+    // }
 
     if (error) {
         return <p>Error: {error}</p>;
