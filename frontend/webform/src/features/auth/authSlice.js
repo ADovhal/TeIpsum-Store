@@ -20,7 +20,7 @@ export const login = createAsyncThunk(
         try {
             const { id, email, accessToken, refreshToken } = await authLoginUser(credentials);
 
-            localStorage.setItem('accessToken', accessToken);
+            //localStorage.setItem('accessToken', accessToken);
 
             return { id, email, accessToken, refreshToken };
         } catch (error) {
@@ -35,7 +35,7 @@ export const refreshToken = createAsyncThunk(
         try {
             const accessToken = await refreshAccessToken();
             console.log('New Access token from api.interceptor: ', accessToken);
-            localStorage.setItem('accessToken', accessToken);
+            //localStorage.setItem('accessToken', accessToken);
             return accessToken;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -77,6 +77,7 @@ const authSlice = createSlice({
                 state.isLoading = false;
                 state.accessToken = action.payload.accessToken;
                 state.user = { id: action.payload.id, email: action.payload.email };
+                localStorage.setItem('accessToken', action.payload.accessToken);
                 state.isAuthenticated = true;
             })
             .addCase(login.rejected, (state, action) => {
