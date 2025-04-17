@@ -156,6 +156,7 @@ pipeline {
         failure {
             script {
                 echo 'Build failed!'
+              
                 def commitStatusUrl = "https://api.github.com/repos/ADovhal/WebShopOnline/statuses/${env.GIT_COMMIT}"
 
                 def body = JsonOutput.toJson([
