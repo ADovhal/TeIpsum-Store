@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  frontend:
-    build: ./frontend/webform
-    ports:
-        - '9000:80'
-        # networks:
-        #     - webapp-network

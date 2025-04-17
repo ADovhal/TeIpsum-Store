@@ -1,29 +1,33 @@
 package com.dovhal.application.requests;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
+
+@Getter
+@Setter
 public class RegistryUserRequest {
-
-    @NotBlank(message = "Username is required")
-    private String username;
 
     @NotBlank(message = "Password is required")
     private String password;
 
-    // Getters and Setters
-    public String getUsername() {
-        return username;
-    }
+    @NotBlank(message = "Name is required")
+    private String name;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    @NotBlank(message = "Surname is required")
+    private String surname;
 
-    public String getPassword() {
-        return password;
-    }
+    @Past(message = "Date of birth must be in the past")
+    private LocalDate dob;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    @NotBlank(message = "Phone is required")
+    private String phone;
 }
