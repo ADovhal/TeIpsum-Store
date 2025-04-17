@@ -69,39 +69,42 @@ const LoginForm = () => {
   };
 
   return (
-    <div className={`${styles.authForm} ${styles.loginForm}`}>
+    <main className={`${styles.authForm} ${styles.loginForm}`}>
       <h2>Sign In</h2>
       <form onSubmit={handleSubmit}>
-        <div className={styles.formGroup}>
-          <label htmlFor="email">Email</label>
+        <fieldset className={styles.formGroup}>
+          <legend className="visually-hidden">Email</legend>
           <input
             type="email"
             id="email"
             placeholder="Email"
+            aria-label='Email'
             value={formData.email}
             onChange={handleChange}
             className={`${styles.inputField} ${errors.email ? styles.errorInput : ''}`}
           />
           {errors.email && <p className={styles.errorMessage}>{errors.email}</p>}
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="password">Password</label>
+        </fieldset>
+
+        <fieldset className={styles.formGroup}>
+          <legend className="visually-hidden">Password</legend>
           <input
             type="password"
             id="password"
             placeholder="Password"
+            aria-label='Password'
             value={formData.password}
             onChange={handleChange}
             className={`${styles.inputField} ${errors.password ? styles.errorInput : ''}`}
           />
           {errors.password && <p className={styles.errorMessage}>{errors.password}</p>}
-        </div>
+        </fieldset>
         <button type="submit" className={styles.submitButton}>Sign In</button>
       </form>
       <p className={styles.registerLink}>
         Don't have an account? <Link to="/register">Create one</Link>
       </p>
-    </div>
+    </main>
   );
 };
 

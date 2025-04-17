@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect } from 'react';
 import GlobalStyles from './styles/GlobalStyles';
 import { Routes, Route } from 'react-router-dom';
@@ -21,10 +20,8 @@ const App = () => {
     const profileData = useSelector((state) => state.profile.profileData);
     const accessToken = useSelector((state) => state.auth.accessToken);
 
-    // Загружаем профиль только если его нет в Redux и доступен токен
     useEffect(() => {
         if (!profileData && accessToken) {
-            // Запрашиваем профиль с сервера, если данных нет в Redux
             dispatch(loadProfile(accessToken)); 
         }
     }, [dispatch, profileData, accessToken]);

@@ -18,7 +18,7 @@ const HomePage = () => {
       brand: "Apple",
       price: 999.99,
       imageUrl: "https://via.placeholder.com/200",
-      description: "Флагманский смартфон с передовыми функциями.",
+      description: "A flagship smartphone with advanced features.",
     },
     {
       id: 2,
@@ -26,7 +26,7 @@ const HomePage = () => {
       brand: "Sony",
       price: 349.99,
       imageUrl: "https://via.placeholder.com/200",
-      description: "Лучшие в классе беспроводные наушники с шумоподавлением.",
+      description: "Best-in-class wireless noise-canceling headphones.",
     },
     {
       id: 3,
@@ -34,7 +34,7 @@ const HomePage = () => {
       brand: "Levi's",
       price: 89.99,
       imageUrl: "https://via.placeholder.com/200",
-      description: "Классические джинсы с отличной посадкой.",
+      description: "Classic jeans with a great fit.",
     },
     {
       id: 4,
@@ -42,19 +42,19 @@ const HomePage = () => {
       brand: "Samsung",
       price: 649.99,
       imageUrl: "https://via.placeholder.com/200",
-      description: "Мощный планшет для работы и развлечений.",
+      description: "A powerful tablet for work and entertainment.",
     },
   ];
   
   return (
-    <div className={styles.homePage}>
-      <section className={styles.heroSection}>
+    <main className={styles.homePage}>
+      <header className={styles.heroSection}>
         <div className={styles.heroText}>
           <h1>Welcome to MyStore!</h1>
           <p>The best products at competitive prices!</p>
           <Link to="/store" className={styles.shopNowButton}>Discover products</Link>
         </div>
-      </section>
+      </header>
       <section className={styles.aboutStore}>
         <h2>About our shop</h2>
         <p>
@@ -62,15 +62,17 @@ const HomePage = () => {
         Our store guarantees quality service and fast delivery.
         </p>
       </section>
-      <section className={styles.popularProducts}>
+      <section className={styles.popularProducts} aria-label="Popular Products">
         <h2>Popular products</h2>
         <div className={styles.productList}>
           {popularProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <article key={product.id}>
+              <ProductCard product={product} />
+            </article>
           ))}
         </div>
       </section>
-    </div>
+    </main>
   );
 };
 

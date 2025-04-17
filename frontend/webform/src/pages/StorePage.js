@@ -64,62 +64,68 @@ const StorePage = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', position: 'relative' }}>
-      <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
-      
-      <div style={{ flex: 1, marginLeft: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: '20px', paddingLeft: '80px', paddingTop: '20px' }}>
-          <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-          
-          <div style={{ paddingBottom: '20px' }}>
-            <button onClick={() => setViewMode('grid')} style={{ marginRight: '20px' }}>Карточки</button>
-            <button onClick={() => setViewMode('list')}>Блоки</button>
-          </div>
-        </div>
-        {loading && <div>Loading...</div>}
-        {error && <div>Error: {error}</div>}
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', flexDirection: 'column', height: '80vh' }}>
+      <div style={{ display: 'flex', flex: 1 }}>
+        <aside>
+          <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+        </aside>
 
-        <div style={{
-          display: viewMode === 'grid' ? 'flex' : 'block',
-          flexWrap: viewMode === 'grid' ? 'wrap' : 'none',
-          justifyContent: viewMode === 'grid' ? 'flex-start' : 'center',
-          marginTop: viewMode === 'grid' ? '0px' : '30px',
-          marginBottom: viewMode === 'grid' ? '30px' : '40px',
-          paddingLeft: viewMode === 'grid' ? '20px' : '80px'
-        }}>
-          {Array.isArray(products) && products.length > 0 ? (
-            products.map((product) => (
-              viewMode === 'grid' ? (
-                <ProductCard key={product.id} product={product} />
-              ) : (
-                <ProductBlock key={product.id} product={product} />
-              )
-            ))
-          ) : (
-            <p>No products found.</p>
-          )}
-        </div>
+        <main style={{ flex: 1, marginLeft: '20px' }}>
+          <header style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: '20px', paddingLeft: '80px', paddingTop: '20px' }}>
+            <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
 
-        <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
+            <div style={{ paddingBottom: '20px' }}>
+              <button onClick={() => setViewMode('grid')} style={{ marginRight: '20px' }}>Cards</button>
+              <button onClick={() => setViewMode('list')}>Blocks</button>
+            </div>
+          </header>
+
+          {loading && <div>Loading...</div>}
+          {error && <div>Error: {error}</div>}
+
+          <section aria-label="Product List" style={{
+            display: viewMode === 'grid' ? 'flex' : 'block',
+            flexWrap: viewMode === 'grid' ? 'wrap' : 'none',
+            justifyContent: viewMode === 'grid' ? 'flex-start' : 'center',
+            marginTop: viewMode === 'grid' ? '0px' : '30px',
+            marginBottom: viewMode === 'grid' ? '30px' : '40px',
+            paddingLeft: viewMode === 'grid' ? '20px' : '80px'
+          }}>
+            {Array.isArray(products) && products.length > 0 ? (
+              products.map((product) => (
+                <article key={product.id}>
+                  {viewMode === 'grid' ? (
+                    <ProductCard product={product} />
+                  ) : (
+                    <ProductBlock product={product} />
+                  )}
+                </article>
+              ))
+            ) : (
+              <p>No products found.</p>
+            )}
+          </section>
+        </main>
+      </div>
+        <footer style={{
+          padding: '20px 0',
           display: 'flex',
           justifyContent: 'center',
-          width: '100%'
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
-          <button onClick={handlePreviousPage} disabled={page === 0}>
-            Previous
-          </button>
-          <span style={{ margin: '0 10px' }}>
-            Page {page + 1} of {totalPages}
-          </span>
-          <button onClick={handleNextPage} disabled={page >= totalPages - 1}>
-            Next
-          </button>
-        </div>
-      </div>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <button onClick={handlePreviousPage} disabled={page === 0}>
+              Previous
+            </button>
+            <span style={{ margin: '0 10px' }}>
+              Page {page + 1} of {totalPages}
+            </span>
+            <button onClick={handleNextPage} disabled={page >= totalPages - 1}>
+              Next
+            </button>
+          </div>
+        </footer>
     </div>
   );
 };

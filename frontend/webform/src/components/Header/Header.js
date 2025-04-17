@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect} from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 import { useSelector } from 'react-redux';
 import styles from './Header.module.css';
@@ -8,7 +8,12 @@ import logo from '../../assets/images/logo.png';
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { accessToken } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   const checkProfile = async () => {
     if (!accessToken) {
@@ -43,38 +48,50 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.logoContainer}>
-        <button className={styles.hamburger} onClick={toggleMenu}>
+      <section className={styles.logoContainer}>
+        <button className={styles.hamburger} onClick={toggleMenu} aria-label="Toggle navigation menu">
           <span className={styles.bar}></span>
           <span className={styles.bar}></span>
           <span className={styles.bar}></span>
         </button>
-        <Link to="/" className={styles.logo}>
-          <img src={logo} alt="Logo" />
+        <Link to="/" className={styles.logo} aria-label="Home">
+          <img src={logo} alt="Website Logo" />
         </Link>
-      </div>
-      <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`}>
-        <Link to="/" className={styles.navItem} onClick={closeMenu}>
-          Home
-        </Link>
-        <Link to="/store" className={styles.navItem} onClick={closeMenu}>
-          Store
-        </Link>
-        <Link to="/about" className={styles.navItem} onClick={closeMenu}>
-          About Us
-        </Link>
-        <Link to="/contact" className={styles.navItem} onClick={closeMenu}>
-          Contact Us
-        </Link>
+      </section>
+
+      <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`} aria-label="Primary navigation">
+        <ul className={styles.navList}>
+          <li>
+            <Link to="/" className={styles.navItem} onClick={closeMenu}>
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/store" className={styles.navItem} onClick={closeMenu}>
+              Store
+            </Link>
+          </li>
+          <li>
+            <Link to="/about" className={styles.navItem} onClick={closeMenu}>
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" className={styles.navItem} onClick={closeMenu}>
+              Contact Us
+            </Link>
+          </li>
+        </ul>
       </nav>
-      <div className={styles.actions}>
-        <Link to="/cart" className={styles.iconButton}>
+
+      <section className={styles.actions}>
+        <Link to="/cart" className={styles.iconButton} aria-label="Cart">
           <i className="fa fa-shopping-cart"></i>
         </Link>
-        <button onClick={checkProfile} className={styles.iconButton}>
+        <button onClick={checkProfile} className={styles.iconButton} aria-label="Profile">
           <i className="fa fa-user"></i>
         </button>
-      </div>
+      </section>
     </header>
   );
 };

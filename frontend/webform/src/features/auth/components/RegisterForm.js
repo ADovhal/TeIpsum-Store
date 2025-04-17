@@ -127,100 +127,106 @@ const RegisterForm = () => {
 
   return (
 
-      <div className={`${styles.authForm} ${styles.registerForm}`}>
+      <main className={`${styles.authForm} ${styles.registerForm}`}>
         <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="name">Name</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Name</legend>
             <input
               type="text"
               id="name"
-              placeholder="Provide your name"
+              placeholder="Your name"
+              aria-label='Name'
               value={formData.name}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.name && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.name && isSubmitted && <p className={styles.errorMessage}>{errors.name}</p>}
-          </div>
+          </fieldset>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="surname">Surname</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Last name</legend>
             <input
               type="text"
               id="surname"
-              placeholder="Provide your surname"
+              placeholder="Your last name"
+              aria-label='surname'
               value={formData.surname}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.surname && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.surname && isSubmitted && <p className={styles.errorMessage}>{errors.surname}</p>}
-          </div>
+          </fieldset>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="dob">Date of birth</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Date of Birth</legend>
             <input
               type="date"
               id="dob"
+              aria-label='Date of Birth'
               value={formData.dob}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.dob && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.dob && isSubmitted && <p className={styles.errorMessage}>{errors.dob}</p>}
-          </div>
+          </fieldset>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="email">Email</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Email</legend>
             <input
               type="email"
               id="email"
-              placeholder="Provide your email"
+              placeholder="Your email"
+              aria-label='Email'
               value={formData.email}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.email && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.email && isSubmitted && <p className={styles.errorMessage}>{errors.email}</p>}
-          </div>
+          </fieldset>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="phone">Phone</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Phone</legend>
             <input
               type="text"
               id="phone"
-              placeholder="Provide your phone number"
+              placeholder="Your phone number"
+              aria-label='Phone'
               value={formData.phone}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.phone && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.phone && isSubmitted && <p className={styles.errorMessage}>{errors.phone}</p>}
-          </div>
+          </fieldset>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Password</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Password</legend>
             <input
               type="password"
               id="password"
               placeholder="Choose your password"
+              aria-label='Password'
               value={formData.password}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.email && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.password && isSubmitted && <p className={styles.errorMessage}>{errors.password}</p>}
-          </div>
+          </fieldset>
 
-          {/* Поле для подтверждения пароля */}
-          <div className={styles.formGroup}>
-            <label htmlFor="confirmPassword">Confirm password</label>
+          <fieldset className={styles.formGroup}>
+            <legend className="visually-hidden">Confirm password</legend>
             <input
               type="password"
               id="confirmPassword"
-              placeholder="Confirm password"
+              placeholder="Repeat your password"
+              aria-label='Confirm password'
               value={formData.confirmPassword}
               onChange={handleChange}
               className={`${styles.inputField} ${errors.confirmPassword && isSubmitted ? styles.errorInput : ''}`}
             />
             {errors.confirmPassword && isSubmitted && <p className={styles.errorMessage}>{errors.confirmPassword}</p>}
-          </div>
+          </fieldset>
 
           <button type="submit" className={styles.submitButton} disabled={loading}>
             {loading ? 'Loading...' : 'Sign Up'}
@@ -232,7 +238,7 @@ const RegisterForm = () => {
         <p className={styles.registerLink}>
           Already have account? <Link to="/login">Sign In</Link>
         </p>
-      </div>
+      </main>
   );
 };
 
