@@ -164,7 +164,7 @@ Nie można jej uruchomić bezpośrednio poprzez otwarcie pliku `index.html` w pr
 
 ## 📬 Kontakt
 
-**Autor projektu**: Andrzej Dowhal  
+**Autor projektu**: Andrii Dovhal
 🔗 [GitHub — ADovhal](https://github.com/ADovhal)
 
 ---
