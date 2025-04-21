@@ -7,6 +7,29 @@ Aplikacja umożliwia wyświetlanie produktów sklepu oraz uwierzytelnianie użyt
 
 ---
 
+## ⚙️ Technologie użyte w projekcie
+
+| Technologia     | Opis                                          |
+|-----------------|-----------------------------------------------|
+| React           | Budowa interfejsu użytkownika (SPA)           |
+| Redux           | Zarządzanie globalnym stanem aplikacji        |
+| JavaScript (ES6+)| Logika działania aplikacji klienckiej         |
+| HTML5           | Struktura dokumentów WWW                      |
+| CSS3            | Stylizacja i układ interfejsu                 |
+| React Router    | Routing i nawigacja między stronami           |
+| Axios           | Komunikacja z backendem (REST API)            |
+
+---
+
+## 🛠 Główne funkcjonalności
+
+- 🛍  Dynamiczne wyświetlanie produktów sklepu.
+- 👤 Przygotowany system uwierzytelniania użytkownika.
+- 🔒 Bezpieczne przesyłanie i pobieranie danych (komunikacja z backendem).
+- 📱 Responsywny i przyjazny dla użytkownika interfejs.
+- 🔄 Przygotowana struktura globalnego zarządzania stanem (Redux Toolkit).
+
+---
 ## 📂 Struktura katalogów
 
 ```
@@ -84,6 +107,7 @@ webform/
 │   ├── reportWebVitals.js
 │   └── setupTests.js
 ├── .gitignore
+├── docker-compose.yml
 ├── Dockerfile
 ├── nginx.template.conf
 ├── package.json
@@ -123,27 +147,22 @@ Wersja produkcyjna zostanie utworzona w folderze `build/`.
 
 ---
 
-## ⚙️ Technologie użyte w projekcie
+## 🐳 Uruchomienie za pomocą Dockera (rekomendowane)
+Dla łatwej konteneryzacji aplikacji rekomendowane jest użycie Dockera.
+Docker pozwala na izolację środowiska, эффективное zarządzanie pamięcią oraz szybkie wdrażanie.
 
-| Technologia     | Opis                                          |
-|-----------------|-----------------------------------------------|
-| React           | Budowa interfejsu użytkownika (SPA)           |
-| Redux           | Zarządzanie globalnym stanem aplikacji        |
-| JavaScript (ES6+)| Logika działania aplikacji klienckiej         |
-| HTML5           | Struktura dokumentów WWW                      |
-| CSS3            | Stylizacja i układ interfejsu                 |
-| React Router    | Routing i nawigacja między stronami           |
-| Axios           | Komunikacja z backendem (REST API)            |
-
----
-
-## 🛠 Główne funkcjonalności
-
-- 🛍  Dynamiczne wyświetlanie produktów sklepu.
-- 👤 Przygotowany system uwierzytelniania użytkownika.
-- 🔒 Bezpieczne przesyłanie i pobieranie danych (komunikacja z backendem).
-- 📱 Responsywny i przyjazny dla użytkownika interfejs.
-- 🔄 Przygotowana struktura globalnego zarządzania stanem (Redux Toolkit).
+Jak uruchomić projekt w kontenerze:
+1. Zbuduj i uruchom kontener:
+```
+docker-compose up --build
+```
+2. Aplikacja będzie dostępna pod adresem:
+```
+http://localhost:3000
+```
+🧠 Dlaczego Docker?
+Kontener Dockera działa jak odizolowane środowisko, dzięki czemu zużycie zasobów jest 
+zoptymalizowane, a aplikacja zajmuje mniej pamięci i miejsca niż przy tradycyjnym uruchamianiu.
 
 ---
 
@@ -159,7 +178,8 @@ Wersja produkcyjna zostanie utworzona w folderze `build/`.
 ---
 ## 📝 Uwaga dotycząca uruchamiania
 
-Aplikacja jest oparta na React oraz modułach ES6, dlatego wymaga uruchomienia za pomocą środowiska developerskiego (`npm start`) lub zbudowania wersji produkcyjnej (`npm run build`).  
+Aplikacja jest oparta na React oraz modułach ES6, dlatego wymaga uruchomienia za pomocą 
+środowiska developerskiego (`npm start`), budowy (npm run build) lub za pomocą kontenera Docker.  
 Nie można jej uruchomić bezpośrednio poprzez otwarcie pliku `index.html` w przeglądarce.
 
 ## 📬 Kontakt
