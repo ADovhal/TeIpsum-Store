@@ -1,70 +1,171 @@
-# Getting Started with Create React App
+# 🛒 Webform — Frontend do WebShopOnline
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📋 Opis projektu
 
-## Available Scripts
+**Webform** to część frontendowa projektu **WebShopOnline**, stworzona przy użyciu nowoczesnych technologii frontendowych (**React**, **Redux**, **JavaScript**).  
+Aplikacja umożliwia wyświetlanie produktów sklepu oraz uwierzytelnianie użytkowników, z planowanym rozszerzeniem o zarządzanie koszykiem, zamówieniami i płatnościami poprzez komunikację z backendem.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 📂 Struktura katalogów
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+webform/
+├── public/
+│   ├── favicon.ico
+│   ├── index.html
+│   └── manifest.json
+├── src/
+│   ├── assets/
+│   │   └── images/
+│   │       └── logo.png
+│   ├── components/
+│   │   ├── Footer/
+│   │   │   ├── Footer.js
+│   │   │   └── Footer.module.css
+│   │   ├── Header/
+│   │   │   ├── Header.js
+│   │   │   └── Header.module.css
+│   │   └── store/
+│   │       ├── FilterSidebar.js
+│   │       ├── SearchBar.js
+│   │       └── StorePageComponents.module.css
+│   ├── context/
+│   │   └── ViewTypeContext.js
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── AuthService.js
+│   │   │   ├── authSlice.js
+│   │   │   └── components/
+│   │   │       ├── AuthForm.module.css
+│   │   │       ├── LoginForm.js
+│   │   │       └── RegisterForm.js
+│   │   ├── cart/
+│   │   │   ├── cartSlice.js
+│   │   │   └── components/
+│   │   │       └── CartItem.js
+│   │   ├── orders/
+│   │   ├── products/
+│   │   │   ├── productSlice.js
+│   │   │   ├── ProductService.js
+│   │   │   └── components/
+│   │   │       ├── ProductBlock.js
+│   │   │       ├── ProductBlockStyles.js
+│   │   │       ├── ProductCard.js
+│   │   │       └── ProductCardStyles.js
+│   │   └── profile/
+│   │       ├── profileSlice.js
+│   │       ├── UserService.js
+│   │       └── components/
+│   │   │       ├── ProfileData.js
+│   │   │       ├── ProfileData.module.css
+│   │   │       ├── ProfileForm.js
+│   │   │       ├── ProfileForm.module.css
+│   ├── pages/
+│   │   ├── HomePage.js
+│   │   ├── HomePage.module.css
+│   │   ├── LoginPage.js
+│   │   ├── ProfilePage.js
+│   │   ├── RegisterPage.js
+│   │   └── StorePage.js
+│   ├── redux/
+│   │   └── store.js
+│   ├── routes/
+│   │   └── PrivateRoute.js
+│   ├── services/
+│   │   └── api.js
+│   ├── styles/
+│   │   └── GlobalStyles.js
+│   ├── utils/
+│   │   └── validation.js
+│   ├── App.js
+│   ├── App.test.js
+│   ├── index.js
+│   ├── reportWebVitals.js
+│   └── setupTests.js
+├── .gitignore
+├── Dockerfile
+├── nginx.template.conf
+├── package.json
+├── package-lock.json
+└── README.md
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 Szybki start
 
-### `npm run build`
+### Instalacja zależności
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Uruchomienie projektu w trybie developerskim
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm start
+```
 
-### `npm run eject`
+Aplikacja będzie dostępna pod adresem:
+```
+http://localhost:3000
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Budowanie wersji produkcyjnej
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run build
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Wersja produkcyjna zostanie utworzona w folderze `build/`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## ⚙️ Technologie użyte w projekcie
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+| Technologia     | Opis                                          |
+|-----------------|-----------------------------------------------|
+| React           | Budowa interfejsu użytkownika (SPA)           |
+| Redux           | Zarządzanie globalnym stanem aplikacji        |
+| JavaScript (ES6+)| Logika działania aplikacji klienckiej         |
+| HTML5           | Struktura dokumentów WWW                      |
+| CSS3            | Stylizacja i układ interfejsu                 |
+| React Router    | Routing i nawigacja między stronami           |
+| Axios           | Komunikacja z backendem (REST API)            |
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🛠 Główne funkcjonalności
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- 🛍  Dynamiczne wyświetlanie produktów sklepu.
+- 👤 Przygotowany system uwierzytelniania użytkownika.
+- 🔒 Bezpieczne przesyłanie i pobieranie danych (komunikacja z backendem).
+- 📱 Responsywny i przyjazny dla użytkownika interfejs.
+- 🔄 Przygotowana struktura globalnego zarządzania stanem (Redux Toolkit).
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📈 Plany na dalszy rozwój
 
-### Making a Progressive Web App
+- 🔜 Implementacja funkcjonalności koszyka zakupów (dodawanie, usuwanie produktów).
+- 🔜 Obsługa zamówień i historii zakupów dla zalogowanych użytkowników.
+- 🔜 Rozbudowa profilu użytkownika (edycja danych, zmiana hasła).
+- 🔜 Wdrożenie systemu płatności oraz opcji dostawy.
+- 🔜 Dodanie sekcji **Contact Us** z formularzem wysyłającym wiadomości e-mail do sklepu.
+- 🔜 Stworzenie strony **About Us** z opisem sklepu i lokalizacjami.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
+## 📝 Uwaga dotycząca uruchamiania
 
-### Advanced Configuration
+Aplikacja jest oparta na React oraz modułach ES6, dlatego wymaga uruchomienia za pomocą środowiska developerskiego (`npm start`) lub zbudowania wersji produkcyjnej (`npm run build`).  
+Nie można jej uruchomić bezpośrednio poprzez otwarcie pliku `index.html` w przeglądarce.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📬 Kontakt
 
-### Deployment
+**Autor projektu**: Andrzej Dowhal  
+🔗 [GitHub — ADovhal](https://github.com/ADovhal)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+> *Frontend stworzony w ramach projektu edukacyjnego WebShopOnline.*
