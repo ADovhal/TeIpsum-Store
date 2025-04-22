@@ -35,7 +35,6 @@ Aplikacja umożliwia wyświetlanie produktów sklepu oraz uwierzytelnianie użyt
 ```
 webform/
 ├── public/
-│   ├── favicon.ico
 │   ├── index.html
 │   └── manifest.json
 ├── src/
@@ -149,10 +148,10 @@ Wersja produkcyjna zostanie utworzona w folderze `build/`.
 
 ## 🐳 Uruchomienie za pomocą Dockera (rekomendowane)
 Dla łatwej konteneryzacji aplikacji rekomendowane jest użycie Dockera.
-Docker pozwala na izolację środowiska, эффективное zarządzanie pamięcią oraz szybkie wdrażanie.
+Docker pozwala na izolację środowiska, efektywne zarządzanie pamięcią oraz szybkie wdrażanie.
 
 Jak uruchomić projekt w kontenerze:
-1. Zbuduj i uruchom kontener:
+1. Budowanie i uruchomienie kontenera:
 ```
 docker-compose up --build
 ```
