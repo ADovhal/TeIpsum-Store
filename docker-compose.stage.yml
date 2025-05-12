@@ -1,5 +1,5 @@
 services:
-    prod-ecommerce-nginx:
+    stage-ecommerce-nginx:
         image: nginx:latest
         restart: always
         ports:
