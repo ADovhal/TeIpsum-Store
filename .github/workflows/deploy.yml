@@ -74,16 +74,12 @@ jobs:
          script: |
 
             echo "📁 Cloning/Updating repository..."
-
-            if [ ! -d "$PROJECT_DIR" ]; then
-              git clone https://github.com/${{ github.repository }} $PROJECT_DIR
-            else
-              cd $PROJECT_DIR
-              git checkout ${{ github.ref }}
-              git pull origin ${{ github.ref }}
-            fi
-
+            
             cd $PROJECT_DIR
+            git clone https://github.com/${{ github.repository }}
+            git checkout ${{ github.ref }}
+            git pull origin ${{ github.ref }}
+
 
             echo "📝 Creating .env file..."
 
