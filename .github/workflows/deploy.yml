@@ -78,7 +78,9 @@ jobs:
             if [ ! -d "$PROJECT_DIR" ]; then
               git clone https://github.com/${{ github.repository }} $PROJECT_DIR
             else
-              cd $PROJECT_DIR && git pull
+              cd $PROJECT_DIR
+              git checkout ${{ github.ref }}
+              git pull origin ${{ github.ref }}
             fi
 
             cd $PROJECT_DIR
