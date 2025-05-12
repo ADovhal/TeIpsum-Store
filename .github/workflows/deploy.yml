@@ -67,10 +67,10 @@ jobs:
       - name: Checkout repository
         uses: appleboy/ssh-action@v1.2.2
         with:
-         host: ${{ env.DEPLOY_HOST }}
-         username: ${{ env.DEPLOY_USER }}
-         key: ${{ secrets[env.DEPLOY_KEY_NAME] }}
-         port: ${{ env.DEPLOY_PORT }}
+         host: ${{ secrets.PROD_DEPLOY_HOST }}
+         username: ${{ secrets.PROD_DEPLOY_USER }}
+         key: ${{ secrets.PROD_DEPLOY_KEY }}
+         port: ${{ secrets.PROD_DEPLOY_PORT }}
          script: |
 
             echo "📁 Cloning/Updating repository..."
