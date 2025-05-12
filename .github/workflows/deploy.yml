@@ -110,7 +110,7 @@ jobs:
 
             echo "🔄 Restarting Docker..."
 
-            docker compose --env-file ${{ env.PROJECT_DIR }}/frontend/webform/.env -f docker-compose.${{ env.DEPLOY_ENV }}.yml down
+            docker compose -f docker-compose.${{ env.DEPLOY_ENV }}.yml down
             docker compose --env-file ${{ env.PROJECT_DIR }}/frontend/webform/.env -f docker-compose.${{ env.DEPLOY_ENV }}.yml up -d --build
 
             echo "✅ Deployment complete"
