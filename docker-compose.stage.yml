@@ -39,7 +39,7 @@ services:
                 ipv4_address: 172.19.0.2
 
     stage-ecommerce-db:
-        image: stage-ecommerce-postgres:latest
+        image: postgres:latest
         ports:
             - '5433:5432'
         environment:
