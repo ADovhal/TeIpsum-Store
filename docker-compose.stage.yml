@@ -8,7 +8,7 @@ services:
             - ./nginx.stage.conf:/etc/nginx/nginx.conf
             - /etc/letsencrypt/archive/stage.advd.tech:/etc/nginx/ssl
         networks:
-            - prod-net
+            - stage-net
     stage-ecommerce-frontend:
         build:
             context: ./frontend/webform
@@ -17,7 +17,7 @@ services:
         env_file:
             - ./frontend/webform/.env
         networks:
-            test-net:
+            stage-net:
                 ipv4_address: 172.19.0.4
 
     stage-ecommerce-backend:
@@ -35,7 +35,7 @@ services:
             - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
             - BACKEND_SERVER_PORT=22093
         networks:
-            test-net:
+            stage-net:
                 ipv4_address: 172.19.0.2
 
     stage-ecommerce-db:
