@@ -78,8 +78,16 @@ jobs:
             echo $PROJECT_DIR
             git clone https://github.com/${{ github.repository }} /home/adeployer/projects/ecommerce-store-project
             cd /home/adeployer/projects/ecommerce-store-project
-            git checkout ${{ github.ref }}
-            git pull origin ${{ github.ref }}
+
+            if [ ${{ github.ref }} == 'refs/heads/main' ]; then
+              echo "🔄 Switching to main branch..."
+              git checkout main
+            else
+              echo "🔄 Switching to develop branch..."
+              git checkout develop
+            fi
+
+            git pull
 
 
             echo "📝 Creating .env file..."
