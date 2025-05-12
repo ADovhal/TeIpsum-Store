@@ -3,7 +3,7 @@ import store from '../redux/store';
 import { refreshToken, logoutAsync } from '../features/auth/authSlice';
 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL_TEST,
+    baseURL: process.env.REACT_APP_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
