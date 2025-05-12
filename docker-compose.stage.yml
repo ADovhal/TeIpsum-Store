@@ -7,7 +7,7 @@ services:
         volumes:
             - ./nginx.stage.conf:/etc/nginx/nginx.conf
             - /etc/letsencrypt/archive/stage.advd.tech:/etc/nginx/ssl
-            - /etc/nginx/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
+            - ./secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
         networks:
             - stage-net
     stage-ecommerce-frontend:
