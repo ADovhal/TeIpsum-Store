@@ -31,37 +31,37 @@ jobs:
     env:
       PROJECT_DIR: /home/adeployer/projects/ecommerce-store-project
 
-      #DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
-      #DEPLOY_HOST: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
-      #DEPLOY_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_USER || secrets.STAGE_DEPLOY_USER }}
-      #DEPLOY_KEY_NAME: ${{ github.ref == 'refs/heads/main' && 'PROD_DEPLOY_KEY' || 'TEST_DEPLOY_KEY' }}
+      DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
+      DEPLOY_HOST: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
+      DEPLOY_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_USER || secrets.STAGE_DEPLOY_USER }}
+      DEPLOY_KEY_NAME: ${{ github.ref == 'refs/heads/main' && 'PROD_DEPLOY_KEY' || 'TEST_DEPLOY_KEY' }}
 
-      #REACT_APP_API_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}
-      #DOMAIN_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DOMAIN_NAME || secrets.STAGE_DOMAIN_NAME }}
-      #DB_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_NAME || secrets.STAGE_DB_NAME }}
-      #DB_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_URL || secrets.STAGE_DB_URL }}
-      #DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_USER || secrets.STAGE_DB_USER }}
-      #DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_PASSWORD || secrets.STAGE_DB_PASSWORD }}
-      #JWT_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_SECRET || secrets.STAGE_JWT_SECRET }}
-      #JWT_REFRESH_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_REFRESH_SECRET || secrets.STAGE_JWT_REFRESH_SECRET }}
-      #CORS_ALLOWED_ORIGINS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CORS_ALLOWED_ORIGINS || secrets.STAGE_CORS_ALLOWED_ORIGINS }}
+      REACT_APP_API_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}
+      DOMAIN_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DOMAIN_NAME || secrets.STAGE_DOMAIN_NAME }}
+      DB_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_NAME || secrets.STAGE_DB_NAME }}
+      DB_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_URL || secrets.STAGE_DB_URL }}
+      DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_USER || secrets.STAGE_DB_USER }}
+      DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DB_PASSWORD || secrets.STAGE_DB_PASSWORD }}
+      JWT_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_SECRET || secrets.STAGE_JWT_SECRET }}
+      JWT_REFRESH_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_REFRESH_SECRET || secrets.STAGE_JWT_REFRESH_SECRET }}
+      CORS_ALLOWED_ORIGINS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CORS_ALLOWED_ORIGINS || secrets.STAGE_CORS_ALLOWED_ORIGINS }}
     
-      DEPLOY_ENV: ${{ needs.define-env.outputs.DEPLOY_ENV }}
-      DEPLOY_ENV_UPPER: ${{ needs.define-env.outputs.DEPLOY_ENV_UPPER }}
-      DEPLOY_HOST: ${{ secrets[format('{0}_DEPLOY_HOST', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
-      DEPLOY_USER: ${{ secrets[format('{0}_DEPLOY_USER', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DEPLOY_KEY_NAME: ${{ format('{0}_DEPLOY_KEY', needs.define-env.outputs.DEPLOY_ENV_UPPER) }}
+    #   DEPLOY_ENV: ${{ needs.define-env.outputs.DEPLOY_ENV }}
+    #   DEPLOY_ENV_UPPER: ${{ needs.define-env.outputs.DEPLOY_ENV_UPPER }}
+    #   DEPLOY_HOST: ${{ secrets[format('{0}_DEPLOY_HOST', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+    #   DEPLOY_USER: ${{ secrets[format('{0}_DEPLOY_USER', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DEPLOY_KEY_NAME: ${{ format('{0}_DEPLOY_KEY', needs.define-env.outputs.DEPLOY_ENV_UPPER) }}
           
-      REACT_APP_API_URL: ${{ secrets[format('{0}_REACT_APP_API_URL', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DOMAIN_NAME: ${{ secrets[format('{0}_DOMAIN_NAME', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DB_NAME: ${{ secrets[format('{0}_DB_NAME', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DB_URL: ${{ secrets[format('{0}_DB_URL', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DB_USER: ${{ secrets[format('{0}_DB_USER', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      DB_PASSWORD: ${{ secrets[format('{0}_DB_PASSWORD', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      JWT_SECRET: ${{ secrets[format('{0}_JWT_SECRET', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      JWT_REFRESH_SECRET: ${{ secrets[format('{0}_JWT_REFRESH_SECRET', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
-      CORS_ALLOWED_ORIGINS: ${{ secrets[format('{0}_CORS_ALLOWED_ORIGINS', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   REACT_APP_API_URL: ${{ secrets[format('{0}_REACT_APP_API_URL', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DOMAIN_NAME: ${{ secrets[format('{0}_DOMAIN_NAME', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DB_NAME: ${{ secrets[format('{0}_DB_NAME', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DB_URL: ${{ secrets[format('{0}_DB_URL', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DB_USER: ${{ secrets[format('{0}_DB_USER', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   DB_PASSWORD: ${{ secrets[format('{0}_DB_PASSWORD', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   JWT_SECRET: ${{ secrets[format('{0}_JWT_SECRET', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   JWT_REFRESH_SECRET: ${{ secrets[format('{0}_JWT_REFRESH_SECRET', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+    #   CORS_ALLOWED_ORIGINS: ${{ secrets[format('{0}_CORS_ALLOWED_ORIGINS', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
 
     steps:
       - name: Checkout repository
@@ -110,8 +110,8 @@ jobs:
 
             echo "🔄 Restarting Docker..."
 
-            docker compose --env-file .env -f docker-compose.${DEPLOY_ENV}.yml down
-            docker compose --env-file .env -f docker-compose.${DEPLOY_ENV}.yml up -d --build
+            docker compose --env-file .env -f docker-compose.${{ env.DEPLOY_ENV }}.yml down
+            docker compose --env-file .env -f docker-compose.${{ env.DEPLOY_ENV }}.yml up -d --build
 
             echo "✅ Deployment complete"
 
