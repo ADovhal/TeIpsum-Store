@@ -96,7 +96,7 @@ jobs:
 
             echo "📝 Creating .env file..."
 
-            cat <<EOF > .env
+            cat <<EOF > ${{ env.PROJECT_DIR }}/frontend/webform/.env
             REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}
             DOMAIN_NAME=${{ env.DOMAIN_NAME }}
             DB_NAME=${{ env.DB_NAME }}
@@ -110,8 +110,8 @@ jobs:
 
             echo "🔄 Restarting Docker..."
 
-            docker compose --env-file .env -f docker-compose.${{ env.DEPLOY_ENV }}.yml down
-            docker compose --env-file .env -f docker-compose.${{ env.DEPLOY_ENV }}.yml up -d --build
+            docker compose --env-file ${{ env.PROJECT_DIR }}/frontend/webform/.env -f docker-compose.${{ env.DEPLOY_ENV }}.yml down
+            docker compose --env-file ${{ env.PROJECT_DIR }}/frontend/webform/.env -f docker-compose.${{ env.DEPLOY_ENV }}.yml up -d --build
 
             echo "✅ Deployment complete"
 
