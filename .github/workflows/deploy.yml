@@ -70,7 +70,7 @@ jobs:
          host: ${{ secrets.PROD_DEPLOY_HOST }}
          username: ${{ secrets.PROD_DEPLOY_USER }}
          key: ${{ secrets.PROD_DEPLOY_KEY }}
-         port: ${{ secrets.PROD_DEPLOY_PORT }}
+         port: ${{ secrets.DEPLOY_PORT }}
          script: |
 
             echo "📁 Cloning/Updating repository..."
