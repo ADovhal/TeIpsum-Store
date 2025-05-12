@@ -75,6 +75,9 @@ jobs:
 
             echo "📁 Cloning/Updating repository..."
             
+            PROJECT_DIR="${{ env.PROJECT_DIR }}"
+            DEPLOY_ENV="${{ env.DEPLOY_ENV }}"
+
             echo $PROJECT_DIR
             rm -rf $PROJECT_DIR
             git clone https://github.com/${{ github.repository }} /home/adeployer/projects/ecommerce-store-project
@@ -93,15 +96,17 @@ jobs:
 
             echo "📝 Creating .env file..."
 
-            echo "REACT_APP_API_URL=${REACT_APP_API_URL}" > .env
-            echo "DOMAIN_NAME=${DOMAIN_NAME}" >> .env
-            echo "DB_NAME=${DB_NAME}" >> .env
-            echo "DB_URL=${DB_URL}" >> .env
-            echo "DB_USER=${DB_USER}" >> .env
-            echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
-            echo "JWT_SECRET=${JWT_SECRET}" >> .env
-            echo "JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}" >> .env
-            echo "CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}" >> .env
+            cat <<EOF > .env
+            REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}
+            DOMAIN_NAME=${{ env.DOMAIN_NAME }}
+            DB_NAME=${{ env.DB_NAME }}
+            DB_URL=${{ env.DB_URL }}
+            DB_USER=${{ env.DB_USER }}
+            DB_PASSWORD=${{ env.DB_PASSWORD }}
+            JWT_SECRET=${{ env.JWT_SECRET }}
+            JWT_REFRESH_SECRET=${{ env.JWT_REFRESH_SECRET }}
+            CORS_ALLOWED_ORIGINS=${{ env.CORS_ALLOWED_ORIGINS }}
+            EOF
 
             echo "🔄 Restarting Docker..."
 
