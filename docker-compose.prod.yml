@@ -41,7 +41,7 @@ services:
                 ipv4_address: 172.19.0.12
 
     prod-ecommerce-db:
-        image: prod-ecommerce-postgres:latest
+        image: postgres:latest
         ports:
             - '5434:5432'
         environment:
