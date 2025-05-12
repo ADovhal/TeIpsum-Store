@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_DIR: '/home/adeployer/projects/ecommerce-store-project'
+      PROJECT_DIR: /home/adeployer/projects/ecommerce-store-project
 
       #DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
       #DEPLOY_HOST: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
@@ -76,6 +76,7 @@ jobs:
             echo "📁 Cloning/Updating repository..."
             
             echo $PROJECT_DIR
+            rm -rf $PROJECT_DIR
             git clone https://github.com/${{ github.repository }} /home/adeployer/projects/ecommerce-store-project
             cd /home/adeployer/projects/ecommerce-store-project
 
