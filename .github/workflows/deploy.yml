@@ -49,6 +49,7 @@ jobs:
       DEPLOY_ENV: ${{ needs.define-env.outputs.DEPLOY_ENV }}
       DEPLOY_ENV_UPPER: ${{ needs.define-env.outputs.DEPLOY_ENV_UPPER }}
       DEPLOY_HOST: ${{ secrets[format('{0}_DEPLOY_HOST', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
       DEPLOY_USER: ${{ secrets[format('{0}_DEPLOY_USER', needs.define-env.outputs.DEPLOY_ENV_UPPER)] }}
       DEPLOY_KEY_NAME: ${{ format('{0}_DEPLOY_KEY', needs.define-env.outputs.DEPLOY_ENV_UPPER) }}
           
@@ -64,17 +65,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up SSH
-        run: |
-          echo "${{ secrets[env.DEPLOY_KEY_NAME] }}" | base64 -d > private_key
-          chmod 600 private_key
-
-      - name: Deploy over SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << EOF
-            set -e
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+         host: ${{ env.DEPLOY_HOST }}
+         username: ${{ env.DEPLOY_USER }}
+         key: ${{ secrets[env.DEPLOY_KEY_NAME] }}
+         port: ${{ env.DEPLOY_PORT }}
+         script: |
 
             echo "📁 Cloning/Updating repository..."
 
