@@ -1,0 +1,243 @@
+.aboutStore {
+  position: relative;
+}
+
+.aboutStickyHeader {
+  text-align: center;
+  padding: 20px;
+  will-change: transform, opacity;
+  z-index: 10;
+}
+
+.lavresLeft {
+  position: absolute;
+  left: 36rem;
+  top: 0;
+  width: 10%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+.lavresRight {
+  position: absolute;
+  right: 36rem;
+  top: 0;
+  width: 10%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.aboutStickyHeader h2 {
+  font-family: 'Petit Formal Script', cursive;
+  font-size: 2.5rem;
+  margin: 0;
+  color: #2a3a1e;
+}
+
+.aboutStickyHeader p {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.6rem;
+  margin: 10px 0;
+  color: #2a3a1e;
+}
+
+.aboutContent {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+
+@media (max-width: 1735px) {
+
+  .lavresLeft{
+    left: 28rem;
+    width: 10%;
+  }
+
+  .lavresRight{
+    right: 28rem;
+    width: 10%;
+  }
+}
+
+@media (max-width: 1536px) {
+
+  .lavresLeft{
+    left: 22rem;
+    width: 10%;
+  }
+
+  .lavresRight{
+    right: 22rem;
+    width: 10%;
+  }
+}
+
+@media (max-width: 1280px) {
+  
+  .lavresLeft{
+    left: 18rem;
+    width: 10%;
+  }
+
+  .lavresRight{
+    right: 18rem;
+    width: 10%;
+  }
+}
+
+@media (max-width: 1080px) {
+
+  .lavresLeft{
+    left: 12rem;
+    width: 10%;
+  }
+
+  .lavresRight{
+    right: 12rem;
+    width: 10%;
+  }
+}
+
+@media (max-width: 920px) {
+
+  .lavresLeft{
+    left: 8rem;
+    width: 10%;
+  }
+
+  .lavresRight{
+    right: 8rem;
+    width: 10%;
+  }
+}
+
+@media (max-width: 768px) {
+  
+  .aboutStickyHeader h2 {
+    font-size: 1.8rem;
+  }
+
+  .aboutStickyHeader p {
+    font-size: 1.2rem;
+  }
+  
+  .lavresLeft{
+    left: 8rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 8rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 675px ) {
+  
+  .aboutStickyHeader h2 {
+    font-size: 1.8rem;
+  }
+
+  .aboutStickyHeader p {
+    font-size: 1.2rem;
+  }
+  
+  .lavresLeft{
+    left: 6rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 6rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 580px ) {
+
+  .lavresLeft{
+    left: 4rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 4rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 20%;
+  }
+}
+
+@media (max-width:390px) {
+
+  .lavresLeft{
+    left: 0.1rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.1rem;
+    width: 20%;
+  }
+}
+
+@media (max-width:360px) {
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 20%;
+  }
+
+  .aboutStore{
+    padding-top: 2rem;
+  }
+}
+
+@media screen and (max-width: 360px) {
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 15%;
+  }
+  
+}
+
+@media (max-height: 600px) {
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 20%;
+  }
+}

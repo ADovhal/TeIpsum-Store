@@ -65,21 +65,32 @@ const StorePage = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', flexDirection: 'column', height: '80vh' }}>
-      <div style={{ display: 'flex', flex: 1 }}>
-        <aside>
-          <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
-        </aside>
-
-        <main style={{ flex: 1, marginLeft: '20px' }}>
-          <header style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: '20px', paddingLeft: '80px', paddingTop: '20px' }}>
+      <header style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', paddingLeft: '80px' }}>
             <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
 
-            <div style={{ paddingBottom: '20px' }}>
-              <button onClick={() => setViewMode('grid')} style={{ marginRight: '20px' }}>Cards</button>
-              <button onClick={() => setViewMode('list')}>Blocks</button>
+            <div style={{ paddingLeft: '80px', paddingBottom: '20px' }}>
+              <button
+                onClick={() => setViewMode(prev => prev === 'grid' ? 'list' : 'grid')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 16px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  backgroundColor: '#f9f9f9',
+                  cursor: 'pointer'
+                }}
+              >
+                {viewMode === 'grid' ? '📄 List' : '🔳 Cards'}
+              </button>
             </div>
-          </header>
-
+      </header>
+      <div style={{ display: 'flex', flex: 1 }}>
+        <aside>
+            <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+        </aside>
+        <main style={{ flex: 1, marginLeft: '20px' }}>
           {loading && <div>Loading...</div>}
           {error && <div>Error: {error}</div>}
 

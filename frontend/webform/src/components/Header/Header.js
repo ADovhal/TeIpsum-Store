@@ -1,19 +1,38 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import api from '../../services/api';
 import { useSelector } from 'react-redux';
+import { HeaderHeightContext } from '../../context/HeaderHeightContext';
+import { useContext } from 'react';
+import api from '../../services/api';
 import styles from './Header.module.css';
-import logo from '../../assets/images/logo.png';
+import FireButton from '../../styles/FireButton';
+import logo from '../../assets/images/ActualLogo.png';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const headerRef = useRef(null);
+  const { setHeaderHeight } = useContext(HeaderHeightContext);
   const location = useLocation();
   const { accessToken } = useSelector((state) => state.auth);
 
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+      const updateHeight = () => {
+          if (headerRef.current) {
+              setHeaderHeight(headerRef.current.offsetHeight);
+          }
+      };
+      updateHeight();
+      const resizeObserver = new ResizeObserver(updateHeight);
+      if (headerRef.current) {
+          resizeObserver.observe(headerRef.current);
+      }
+      return () => resizeObserver.disconnect();
+  }, [setHeaderHeight]);
 
   const checkProfile = async () => {
     if (!accessToken) {
@@ -47,12 +66,12 @@ const Header = () => {
   };
 
   return (
-    <header className={styles.header}>
-      <section className={styles.logoContainer}>
+    <header ref={headerRef} className={styles.header}>
+      <section className={styles.headerLeft}>
         <button className={styles.hamburger} onClick={toggleMenu} aria-label="Toggle navigation menu">
-          <span className={styles.bar}></span>
-          <span className={styles.bar}></span>
-          <span className={styles.bar}></span>
+          <span className={styles.bar}/>
+          <span className={styles.bar}/>
+          <span className={styles.bar}/>
         </button>
         <Link to="/" className={styles.logo} aria-label="Home">
           <img src={logo} alt="Website Logo" />
@@ -62,24 +81,16 @@ const Header = () => {
       <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`} aria-label="Primary navigation">
         <ul className={styles.navList}>
           <li>
-            <Link to="/" className={styles.navItem} onClick={closeMenu}>
-              Home
-            </Link>
+              <FireButton><Link to="/" className={styles.navItem} onClick={closeMenu}>Home</Link></FireButton>
           </li>
           <li>
-            <Link to="/store" className={styles.navItem} onClick={closeMenu}>
-              Store
-            </Link>
+              <FireButton><Link to="/store" className={styles.navItem} onClick={closeMenu}>Store</Link></FireButton>
           </li>
           <li>
-            <Link to="/about" className={styles.navItem} onClick={closeMenu}>
-              About Us
-            </Link>
+              <FireButton><Link to="/about" className={styles.navItem} onClick={closeMenu}>About</Link></FireButton>
           </li>
           <li>
-            <Link to="/contact" className={styles.navItem} onClick={closeMenu}>
-              Contact Us
-            </Link>
+              <FireButton><Link to="/contact" className={styles.navItem} onClick={closeMenu}>Contact</Link></FireButton>
           </li>
         </ul>
       </nav>

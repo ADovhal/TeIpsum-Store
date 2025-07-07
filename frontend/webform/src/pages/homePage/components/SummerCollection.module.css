@@ -1,0 +1,82 @@
+.summerSection {
+  position: relative;
+  padding: 120px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  background-color: #fefae0;
+}
+
+.heading {
+  font-size: 4rem;
+  font-family: 'Sacramento', cursive;
+  color: #4a2e1f;
+  margin-bottom: 80px;
+  text-align: center;
+}
+
+.contentWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 20px;
+  flex-wrap: nowrap;
+}
+
+.image {
+  height: 420px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  object-fit: cover;
+  max-width: 100%;
+}
+
+.textBlock {
+  max-width: 500px;
+  text-align: left;
+}
+
+.textBlock h3 {
+  font-size: 2rem;
+  color: #3f2d23;
+  margin-bottom: 20px;
+}
+
+.textBlock p {
+  font-size: 1.2rem;
+  color: #5c4b3a;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.textBlock button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  background-color: #d17f65;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.textBlock button:hover {
+  background-color: #bb5233;
+}
+
+@media (max-width: 860px) {
+  .contentWrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .textBlock {
+    text-align: center;
+  }
+}
