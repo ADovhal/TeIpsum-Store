@@ -1,0 +1,445 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Sacramento&family=Petit+Formal+Script&display=swap');
+
+.homePage {
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.heroSection {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: opacity 0.6s cubic-bezier(0.33, 1, 0.68, 1), 
+              transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.heroContent {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.bgleft,
+.bgcenter,
+.bgright {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.bgcenter {
+  left: 0;
+  width: 10%;
+  z-index: 1;
+}
+
+.bgleft {
+  left: 0;
+  z-index: 2;
+}
+
+.bgright {
+  right: 0;
+  z-index: 2;
+}
+
+.heroText {
+  position: relative;
+  z-index: 3;
+  padding-top: 10vh;
+}
+
+.heroText h1 {
+  font-family: 'Sacramento', cursive;
+  color: #2a3a1e;
+  font-size: 8rem;
+  margin: 0;
+}
+
+.heroText p {
+  font-family: 'Great Vibes', cursive;
+  color: #5a4b3e;
+  font-size: 4rem;
+  margin: 10px 0;
+  padding-bottom: 20px;
+}
+
+.shopNowButton {
+  background-color: #8c4a3a;
+  opacity: 0.8;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  margin-top: 50px;
+}
+
+.shopNowButton:hover {
+  background-color: #2980b9;
+}
+
+.popularProducts {
+  padding: 40px 20px;
+  background: linear-gradient(135deg,#bfbbfa, #dde4ff);
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.popularProducts h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #3498db;
+  position: relative;
+  z-index: 10;
+}
+
+.productList {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+@keyframes smoothAppear {
+  from {
+    transform: translateY(-10px);
+    opacity: 0.9;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Media Queries */
+@media (max-width: 1735px) {
+  .bgleft {
+    transform: translateX(-30%);
+  }
+
+  .bgright {
+    transform: translateX(30%);
+  }
+
+  .lavresLeft{
+    left: 24rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 24rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 1536px) {
+  .bgleft {
+    transform: translateX(-20%);
+  }
+
+  .bgright {
+    transform: translateX(20%);
+  }
+
+  .lavresLeft{
+    left: 18rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 18rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .bgleft {
+    transform: translateX(-40%);
+  }
+
+  .bgright {
+    transform: translateX(30%);
+  }
+  
+  .lavresLeft{
+    left: 14rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 14rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 1080px) {
+  .bgleft {
+    transform: translateX(-55%);
+  }
+
+  .bgright {
+    transform: translateX(55%);
+  }
+
+  .lavresLeft{
+    left: 6rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 6rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 920px) {
+  .bgleft,
+  .bgcenter,
+  .bgright {
+    display: none;
+  }
+
+  .heroSection {
+    background-color: #E6E6E4;
+  }
+  
+  .heroText {
+    padding-top: 15vh;
+  }
+  .lavresLeft{
+    left: 6rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 6rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroText h1 {
+    font-size: 6rem;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 1.8rem;
+  }
+
+  .aboutStickyHeader p {
+    font-size: 1.2rem;
+  }
+  
+  .lavresLeft{
+    left: 8rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 8rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 675px ) {
+  .heroText h1 {
+    font-size: 6rem;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 1.8rem;
+  }
+
+  .aboutStickyHeader p {
+    font-size: 1.2rem;
+  }
+  
+  .lavresLeft{
+    left: 6rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 6rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 580px ) {
+
+  .lavresLeft{
+    left: 4rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 4rem;
+    width: 15%;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    height: 95vh;
+  }
+  .heroText h1 {
+    /* padding-top: 5rem; */
+    font-size: 4rem;
+  }
+
+  .heroText p {
+    font-size: 1.8rem;
+  }
+
+  .shopNowButton {
+    margin-top: 10px;
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 20%;
+  }
+}
+
+@media (max-width:390px) {
+  .heroSection {
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+    height: 90vh;
+  }
+  .heroText h1 {
+    font-size: 5rem;
+  }
+
+  .heroText p {
+    font-size: 2.5rem;
+  }
+
+  .shopNowButton {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+
+  .lavresLeft{
+    left: 0.1rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.1rem;
+    width: 20%;
+  }
+}
+
+@media (max-width:360px) {
+  .heroSection {
+    padding-top: 60px;
+    height: 90vh;
+  }
+  .heroText h1 {
+    font-size: 5rem;
+  }
+
+  .heroText p {
+    font-size: 2.5rem;
+  }
+
+  .shopNowButton {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 20%;
+  }
+
+  .aboutStore{
+    padding-top: 2rem;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .heroSection {
+    padding-top: 60px;
+    height: 90vh;
+  }
+  .heroText h1 {
+    font-size: 4rem;
+  }
+
+  .heroText p {
+    font-size: 2rem;
+  }
+
+  .shopNowButton {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 15%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 15%;
+  }
+  
+}
+
+@media (max-height: 600px) {
+  .heroText h1 {
+    font-size: 4rem;
+  }
+
+  .heroText p {
+    font-size: 1.2rem;
+  }
+
+  .shopNowButton {
+    margin-top: 10px;
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+
+  .lavresLeft{
+    left: 0.2rem;
+    width: 20%;
+  }
+
+  .lavresRight{
+    right: 0.2rem;
+    width: 20%;
+  }
+}

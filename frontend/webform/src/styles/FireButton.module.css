@@ -1,0 +1,48 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.flame {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 120px;
+  height: 80px;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.button {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  color: #2a3a1e;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-shadow: 1px 1px 2px #d4af37;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease, transform 0.3s ease;
+  z-index: 1;
+  overflow: visible;
+}
+.button:hover ~ .flame,
+.button:focus ~ .flame {
+  opacity: 1;
+}
+.button:hover {
+  color: #8c4a3a;
+  transform: scale(1.1);
+}
+.wrapper:hover .flame {
+  opacity: 1;
+}
