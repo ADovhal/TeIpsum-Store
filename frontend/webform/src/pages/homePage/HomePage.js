@@ -8,14 +8,12 @@ import bgLeft from '../../assets/images/mainBg_left_part.png';
 import bgCenter from '../../assets/images/mainBg_middle_part.png';
 import bgRight from '../../assets/images/mainBg_right_part.png';
 import { HeaderHeightContext } from '../../context/HeaderHeightContext';
-import lavresLeft from '../../assets/images/lavres_left.png';
-import lavresRight from '../../assets/images/lavres_right.png';
 
 const HomePage = () => {
   const aboutRef = useRef(null);
   const stickyHeaderRef = useRef(null);
   const productsRef = useRef(null);
-  const [isSticky, setIsSticky] = useState(false);
+  const [setIsSticky] = useState(false);
   const [shouldHide, setShouldHide] = useState(false);
   const { headerHeight } = useContext(HeaderHeightContext);
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState(0);
@@ -60,7 +58,7 @@ const HomePage = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [headerHeight]);
+  }, [headerHeight, setIsSticky]);
 
   const popularProducts = [
     // ... ваш массив продуктов ...
@@ -143,6 +141,7 @@ const HomePage = () => {
             </article>
           ))}
         </div>
+        
       </section>
     </main>
   );
