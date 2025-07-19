@@ -1,8 +1,8 @@
-import api from '../../services/api';
+import apiProduct from '../../services/apiProduct';
 
 export const getProductsFiltered = async ({ name, category, minPrice, maxPrice, rating, page, size }) => {
     try {
-      const response = await api.get('/products', {
+      const response = await apiProduct.get('/products', {
         params: {
           name,
           category,
