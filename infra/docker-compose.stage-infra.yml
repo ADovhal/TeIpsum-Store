@@ -26,7 +26,7 @@ services:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: dev
     volumes:
-      - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d
+      - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
       - pgdata:/var/lib/postgresql/data
     networks: [stage-net]
 
