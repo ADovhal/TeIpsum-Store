@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleCart, closeCart } from '../../features/cart/cartSlice';
 import { HeaderHeightContext } from '../../context/HeaderHeightContext';
 import { useContext } from 'react';
-import api from '../../services/api';
+import apiUser from '../../services/apiUser';
 import styles from './Header.module.css';
 import FireButton from '../../styles/FireButton';
 import logo from '../../assets/images/ActualLogo.png';
@@ -71,7 +71,7 @@ const Header = () => {
     }
 
     try {
-      const response = await api.get('/users/profile', {
+      const response = await apiUser.get('/users/profile', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
