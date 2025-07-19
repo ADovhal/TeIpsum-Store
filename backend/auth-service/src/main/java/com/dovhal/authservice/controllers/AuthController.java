@@ -104,7 +104,7 @@ public class AuthController {
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("None") // or "None" if you're doing cross-origin with credentials + HTTPS
+                .sameSite("None")
                 .path("/")
                 .maxAge(REFRESH_TOKEN_EXPIRATION)
                 .build();
