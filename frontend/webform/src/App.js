@@ -5,8 +5,9 @@ import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/homePage/HomePage';
-import AboutPage from './pages/aboutPage/AboutPage';
 import StorePage from './pages/StorePage';
+import AboutPage from './pages/aboutPage/AboutPage';
+import ContactPage from './pages/contactPage/ContactPage.jsx';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
@@ -38,6 +39,7 @@ const App = () => {
                             <Route path="/" element={<HomePage />} />
                             <Route path="/about" element={<AboutPage />} />
                             <Route path="/store" element={<ViewTypeProvider> <StorePage /> </ViewTypeProvider>} />
+                            <Route path="/contact" element={<ContactPage />} />
                             <Route path="/register" element={<RegisterPage />} />
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/profile" element={<PrivateRoute element={ProfilePage} />} />

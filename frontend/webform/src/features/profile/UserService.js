@@ -1,4 +1,4 @@
-import api from '../../services/api';
+import apiUser from '../../services/apiUser';
 import store from '../../redux/store';
 
 export const fetchProfileData = async () => {
@@ -12,7 +12,7 @@ export const fetchProfileData = async () => {
     }
   
     try {
-        const response = await api.get('/users/profile', { 
+        const response = await apiUser.get('/users/profile', { 
           headers: { 
               Authorization: `Bearer ${token}` 
           },
@@ -33,7 +33,7 @@ export const deleteAccount = async () => {
 
     try {
         console.log('Sending DELETE request...');
-        const response = await api.delete('/users/delete', {
+        const response = await apiUser.delete('/users/delete', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

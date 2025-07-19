@@ -1,23 +1,23 @@
 import api from '../../services/api';
-import axios from 'axios';
+import apiAuth from '../../services/apiAuth';
 
 export const registerUser = async (userData) => {
     try {
-        const response = await api.post('/users/register', userData, {
+        const response = await apiAuth.post('/auth/register', userData, {
             headers: {
                 'Content-Type': 'application/json',
             },
-            withCredentials: false,
+            withCredentials: true,
         });
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || 'Registration failed');
+        throw new Error(error.response?.data?.error || 'Registration failed');
     }
 };
 
 export const authLoginUser = async (credentials) => {
     try {
-        const response = await api.post('/users/login', credentials, {
+        const response = await apiAuth.post('/auth/login', credentials, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -34,8 +34,9 @@ export const authLoginUser = async (credentials) => {
 
 export const refreshAccessToken = async () => {
     try {
-        const response = await axios.post(
-            `${process.env.REACT_APP_API_URL_TEST}/auth/refresh`,
+        const response = await apiAuth.post(
+            // `${process.env.REACT_APP_API_URL_TEST}/auth/refresh`,
+            '/auth/refresh',
             null,
             {
                 withCredentials: true,

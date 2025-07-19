@@ -1,0 +1,13 @@
+services:  
+  prod-user-service:
+    container_name: prod-user-service
+    build:
+      context: ../..
+      dockerfile: backend/user-service/Dockerfile
+    ports: ['22094:9093']
+    image: prod-user-service:latest
+    networks: [prod-net]
+
+networks:
+  prod-net:
+    external: true
