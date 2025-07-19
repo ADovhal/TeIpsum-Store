@@ -1,4 +1,3 @@
-import api from '../../services/api';
 import apiAuth from '../../services/apiAuth';
 
 export const registerUser = async (userData) => {
