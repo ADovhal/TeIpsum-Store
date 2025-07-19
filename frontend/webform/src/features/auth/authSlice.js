@@ -67,6 +67,11 @@ const authSlice = createSlice({
             localStorage.removeItem('accessToken');
             localStorage.removeItem('profileData');
         },
+        setAccessToken: (state, action) => {
+            state.accessToken = action.payload;
+            localStorage.setItem('accessToken', action.payload);
+            state.isAuthenticated = true;
+    },
     },
     extraReducers: (builder) => {
         builder
@@ -101,5 +106,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { clearAuthState } = authSlice.actions;
+export const { clearAuthState, setAccessToken } = authSlice.actions;
 export default authSlice.reducer;

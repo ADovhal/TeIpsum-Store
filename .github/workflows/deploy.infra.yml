@@ -1,0 +1,72 @@
+name: Deploy Infra
+
+on:
+  push:
+    paths:
+      - 'infra/docker-compose.*infra.yml'
+      - 'infra/init/**'
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Infra (Postgres, Redis и т.д.)
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
+          username: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_USER || secrets.STAGE_DEPLOY_USER }}
+          key: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_KEY || secrets.STAGE_DEPLOY_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script: |
+            set -e
+
+            PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
+            GIT_BRANCH=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
+            DEPLOY_ENV=${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
+
+            echo "📦 Cloning project..."
+            rm -rf $PROJECT_DIR
+            git clone https://github.com/${{ github.repository }} $PROJECT_DIR
+            cd $PROJECT_DIR
+            git checkout $GIT_BRANCH
+            git pull
+
+            echo "📁 Writing .env file..."
+            ENV_PATH="infra/.env.${DEPLOY_ENV}.infra"
+            cat <<EOF > $ENV_PATH
+            POSTGRES_USER=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_USER || secrets.STAGE_INFRA_POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_PASSWORD || secrets.STAGE_INFRA_POSTGRES_PASSWORD }}
+            EOF
+                    
+            echo "🔐 Preparing init-multiple-dbs.sql from template..."
+            cp infra/init/init-multiple-dbs.template.sql infra/init/init-multiple-dbs.sql
+            TEMPLATE_PATH="infra/init/init-multiple-dbs.template.sql"
+            OUTPUT_PATH="infra/init/init-multiple-dbs.sql"
+
+            sed -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
+                -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
+                -e "s|<<PRODUCT_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_PRODUCT_SERVICE_DB_NAME }}|g" \
+                -e "s|<<ORDER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_NAME || secrets.STAGE_ORDER_SERVICE_DB_NAME }}|g" \
+                -e "s|<<AUTH_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_USER || secrets.STAGE_AUTH_SERVICE_DB_USER }}|g" \
+                -e "s|<<USER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_USER || secrets.STAGE_USER_SERVICE_DB_USER }}|g" \
+                -e "s|<<PRODUCT_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_USER || secrets.STAGE_PRODUCT_SERVICE_DB_USER }}|g" \
+                -e "s|<<ORDER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_USER || secrets.STAGE_ORDER_SERVICE_DB_USER }}|g" \
+                -e "s|<<AUTH_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_PASSWORD || secrets.STAGE_AUTH_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<USER_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_PASSWORD || secrets.STAGE_USER_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<PRODUCT_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_PASSWORD || secrets.STAGE_PRODUCT_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<ORDER_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_PASSWORD || secrets.STAGE_ORDER_SERVICE_DB_PASSWORD }}|g" \
+                $TEMPLATE_PATH > $OUTPUT_PATH
+            echo "📄 Generated init-multiple-dbs.sql from template."
+
+            echo "🧱 Rebuilding infra containers..."
+            docker compose --env-file $ENV_PATH -f infra/docker-compose.${DEPLOY_ENV}-infra.yml down
+            docker compose --env-file $ENV_PATH -f infra/docker-compose.${DEPLOY_ENV}-infra.yml up -d --build
+
+            echo "✅ Infra deployed!"

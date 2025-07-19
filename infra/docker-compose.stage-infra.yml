@@ -1,0 +1,39 @@
+services:
+  kafka:
+    container_name: stage-teipsum-kafka
+    image: confluentinc/cp-kafka:7.0.0
+    ports: ["29092:9092"]
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: stage-teipsum-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://stage-teipsum-kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks: [stage-net]
+
+  zookeeper:
+    container_name: stage-teipsum-zookeeper
+    image: confluentinc/cp-zookeeper:7.0.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks: [stage-net]
+
+  postgres:
+    container_name: stage-teipsum-postgres
+    image: postgres:15
+    ports: ["5433:5435"]
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    volumes:
+      - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+    networks: [stage-net]
+
+
+volumes:
+  pgdata:
+
+networks:
+  stage-net:
+    external: true

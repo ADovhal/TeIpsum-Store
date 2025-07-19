@@ -1,0 +1,15 @@
+services:
+    stage-teipsum-frontend:
+      container_name: stage-teipsum-frontend
+      build:
+        context: .
+        args:
+          - NGINX_CONFIG=nginx.stage.conf
+      image: stage-frontend:latest
+      ports: ['22092:82']
+      env_file: ./.env
+      networks: [stage-net]
+
+networks:
+  stage-net:
+    external: true

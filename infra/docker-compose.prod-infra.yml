@@ -1,0 +1,39 @@
+services:
+  kafka:
+    container_name: prod-teipsum-kafka
+    image: confluentinc/cp-kafka:7.0.0
+    ports: ["29092:9094"]
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: prod-teipsum-zookeeper:2182
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://prod-teipsum-kafka:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks: [prod-net]
+
+  zookeeper:
+    container_name: prod-teipsum-zookeeper
+    image: confluentinc/cp-zookeeper:7.0.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2182
+    networks: [prod-net]
+
+  postgres:
+    container_name: prod-teipsum-postgres
+    image: postgres:15
+    ports: ["5433:5434"]
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    volumes:
+      - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+    networks: [prod-net]
+
+
+volumes:
+  pgdata:
+
+networks:
+  prod-net:
+    external: true

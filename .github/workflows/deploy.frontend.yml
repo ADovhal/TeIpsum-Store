@@ -1,0 +1,45 @@
+name: Deploy Frontend
+
+on:
+  push:
+    paths:
+      - 'frontend/webform/**'
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Frontend
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
+          username: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_USER || secrets.STAGE_DEPLOY_USER }}
+          key: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_KEY || secrets.STAGE_DEPLOY_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script: |
+            PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
+            GIT_BRANCH=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
+            DEPLOY_ENV=${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
+            COMPOSE_FILE="frontend/webform/docker-compose.${DEPLOY_ENV}-frontend.yml"
+
+            echo "📦 Deploying Frontend ($DEPLOY_ENV)..."
+            rm -rf $PROJECT_DIR
+            git clone https://github.com/${{ github.repository }} $PROJECT_DIR
+            cd $PROJECT_DIR
+            git checkout $GIT_BRANCH
+            git pull
+
+            echo "📁 Writing frontend .env file"
+            echo "REACT_APP_API_URL=${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}" > frontend/webform/.env
+
+            docker compose -f $COMPOSE_FILE down
+            docker compose -f $COMPOSE_FILE up -d --build
+
+            echo "✅ Frontend deployed!"

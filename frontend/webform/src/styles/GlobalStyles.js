@@ -13,6 +13,24 @@ const GlobalStyles = createGlobalStyle`
     background-color: #E6E6E4
   }
 
+  .button {
+    background-color: #8c4a3a;
+    opacity: 0.8;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    margin-top: 50px;
+  }
+
+  .button:hover {
+    background-color: #2980b9;
+  }
+
   ::-webkit-scrollbar {
     width: 0;
     height: 0;

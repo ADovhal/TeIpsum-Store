@@ -1,0 +1,15 @@
+services:
+    prod-teipsum-frontend:
+      container_name: prod-teipsum-frontend
+      build:
+        context: .
+        args:
+          - NGINX_CONFIG=nginx.prod.conf
+      image: prod-frontend:latest
+      ports: ['22092:81']
+      env_file: ./.env
+      networks: [prod-net]
+
+networks:
+  prod-net:
+    external: true

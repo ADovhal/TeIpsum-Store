@@ -1,0 +1,14 @@
+services:
+  stage-auth-service:
+    container_name: stage-auth-service
+    build:
+      context: ../..
+      dockerfile: backend/auth-service/Dockerfile
+    ports: ['22093:9091']
+    image: stage-auth-service:latest
+    networks:
+      - stage-net
+
+networks:
+  stage-net:
+    external: true

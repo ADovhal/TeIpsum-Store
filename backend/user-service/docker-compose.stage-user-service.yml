@@ -1,0 +1,13 @@
+services:  
+  stage-user-service:
+    container_name: stage-user-service
+    build:
+      context: ../..
+      dockerfile: backend/user-service/Dockerfile
+    ports: ['22094:9095']
+    image: stage-user-service:latest
+    networks: [stage-net]
+
+networks:
+  stage-net:
+    external: true
