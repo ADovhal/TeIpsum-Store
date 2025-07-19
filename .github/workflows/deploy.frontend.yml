@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'frontend/webform'  # Клонируем только нужную часть
+          fetch-depth: 1
 
       - name: Deploy Frontend
         uses: appleboy/ssh-action@v1.2.2
@@ -25,20 +28,36 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
+            FRONTEND_DIR="$PROJECT_DIR/frontend/webform"
             GIT_BRANCH=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
             DEPLOY_ENV=${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
-            COMPOSE_FILE="frontend/webform/docker-compose.${DEPLOY_ENV}-frontend.yml"
+            COMPOSE_FILE="docker-compose.${DEPLOY_ENV}-frontend.yml"
 
             echo "📦 Deploying Frontend ($DEPLOY_ENV)..."
-            rm -rf $PROJECT_DIR
-            git clone https://github.com/${{ github.repository }} $PROJECT_DIR
-            cd $PROJECT_DIR
-            git checkout $GIT_BRANCH
-            git pull
+
+            # Создаем временную директорию
+            TEMP_DIR=$(mktemp -d)
+            
+            # Клонируем только нужную ветку и часть проекта
+            git clone --branch $GIT_BRANCH --depth 1 --filter=blob:none \
+              --sparse https://github.com/${{ github.repository }} $TEMP_DIR
+            cd $TEMP_DIR
+            git sparse-checkout set frontend/webform
+
+            # Копируем только фронтенд
+            mkdir -p $FRONTEND_DIR
+            rsync -av --delete $TEMP_DIR/frontend/webform/ $FRONTEND_DIR/
+
+            # Очищаем временные файлы
+            rm -rf $TEMP_DIR
+
+            # Переходим в директорию фронтенда
+            cd $FRONTEND_DIR
 
             echo "📁 Writing frontend .env file"
-            echo "REACT_APP_API_URL=${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}" > frontend/webform/.env
+            echo "REACT_APP_API_URL=${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}" > .env
 
+            # Запускаем docker-compose
             docker compose -f $COMPOSE_FILE down
             docker compose -f $COMPOSE_FILE up -d --build
 
