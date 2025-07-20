@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Deploy Nginx
         uses: appleboy/ssh-action@v1.2.2
         with:
@@ -24,20 +21,36 @@ jobs:
           key: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_KEY || secrets.STAGE_DEPLOY_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
+            set -e
+
+            echo "🚀 Starting Nginx deploy..."
+
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
+            NGINX_DIR="$PROJECT_DIR/infra/nginx"
             GIT_BRANCH=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
             DEPLOY_ENV=${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
 
-            echo "📦 Deploying Nginx ($DEPLOY_ENV)..."
-            rm -rf $PROJECT_DIR
-            git clone https://github.com/${{ github.repository }} $PROJECT_DIR
-            cd $PROJECT_DIR
-            git checkout $GIT_BRANCH
-            git pull
+            echo "📦 Using sparse checkout to fetch only infra/nginx"
+            TEMP_DIR=$(mktemp -d)
+            git clone --depth 1 --branch "$GIT_BRANCH" --filter=blob:none --sparse https://github.com/${{ github.repository }} "$TEMP_DIR"
+            cd "$TEMP_DIR"
+            git sparse-checkout set infra/nginx
 
-            COMPOSE_FILE="nginx/docker-compose.${DEPLOY_ENV}-nginx.yml"
+            echo "🧹 Cleaning old nginx dir on server..."
+            rm -rf "$NGINX_DIR"
+            mkdir -p "$PROJECT_DIR/infra"
 
-            docker compose -f $COMPOSE_FILE down
-            docker compose -f $COMPOSE_FILE up -d --build
+            echo "📥 Copying new nginx files..."
+            cp -r "$TEMP_DIR/infra/nginx" "$PROJECT_DIR/infra/"
 
-            echo "✅ Nginx deployed!"
+            echo "🧼 Cleaning up temp..."
+            rm -rf "$TEMP_DIR"
+
+            echo "🛠 Rebuilding nginx container..."
+            cd "$NGINX_DIR"
+            COMPOSE_FILE="docker-compose.${DEPLOY_ENV}-nginx.yml"
+
+            docker compose -f "$COMPOSE_FILE" down
+            docker compose -f "$COMPOSE_FILE" up -d --build
+
+            echo "✅ Nginx deployed successfully!"
