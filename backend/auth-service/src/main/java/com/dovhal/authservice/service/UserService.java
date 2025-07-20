@@ -17,7 +17,7 @@
 //    public UserService(UserRepository userRepository) {
 //        this.userRepository = userRepository;
 //    }
-//
+// 
 //    public UserCredentials registerUser(UserCredentials user) {
 //        if (userRepository.existsByEmail(user.getEmail())) {
 //            throw new RuntimeException("This email is already in use");
