@@ -66,43 +66,65 @@ jobs:
             echo "📦 Deploying service: ${{ inputs.SERVICE_NAME }}"
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
             SERVICE_DIR="$PROJECT_DIR/backend/${{ inputs.SERVICE_NAME }}"
-            SERVICE_PATH="backend/${{ inputs.SERVICE_NAME }}"
             DEPLOY_ENV="${{ inputs.DEPLOY_ENV }}"
             COMPOSE_FILE="${{ inputs.COMPOSE_FILE }}"
             GIT_BRANCH="${{ inputs.GIT_BRANCH }}"
 
             TEMP_DIR=$(mktemp -d)
             echo "🛠 Created temp directory: $TEMP_DIR"
-                  
-            echo "🔁 Fetching service code..."
+
+            echo "🔁 Cloning repository with precise file control..."
             git clone --branch "$GIT_BRANCH" --depth 1 \
-              --filter=blob:none --sparse \
+              --filter=blob:none --no-checkout \
               https://github.com/${{ github.repository }} "$TEMP_DIR"
-                  
+            
             cd "$TEMP_DIR"
+            
+            echo "⚙️ Setting up precise file checkout..."
             git sparse-checkout init --no-cone
             git sparse-checkout set \
-              "backend/$SERVICE_NAME" \
-              "backend/shared-dto" \
+              "backend/${{ inputs.SERVICE_NAME }}" \
+              "backend/shared-dto/src" \
+              "backend/shared-dto/pom.xml" \
               "backend/pom.xml"
-                  
-            echo "📂 Copying service files..."
+            
+            git checkout "$GIT_BRANCH"
+            
+            echo "📂 Verifying downloaded files structure:"
+            ls -la "$TEMP_DIR/backend/shared-dto/src/main/java/com/dovhal/shared/" || \
+              { echo "❌ Shared DTO sources missing!"; exit 1; }
+            ls -la "$TEMP_DIR/backend/pom.xml" || \
+              { echo "❌ Root pom.xml missing!"; exit 1; }
+
+            echo "📤 Copying files to target..."
             mkdir -p "$PROJECT_DIR/backend"
+            
             rsync -av --delete \
-              --include="backend/$SERVICE_NAME/**" \
-              --include="backend/shared-dto/**" \
-              --include="backend/pom.xml" \
-              --exclude="*" \
-              "$TEMP_DIR/" "$PROJECT_DIR/"
+              "$TEMP_DIR/backend/${{ inputs.SERVICE_NAME }}/" \
+              "$PROJECT_DIR/backend/${{ inputs.SERVICE_NAME }}/"
+            
+            mkdir -p "$PROJECT_DIR/backend/shared-dto"
+            rsync -av --delete \
+              "$TEMP_DIR/backend/shared-dto/src/" \
+              "$PROJECT_DIR/backend/shared-dto/src/"
+            cp -v \
+              "$TEMP_DIR/backend/shared-dto/pom.xml" \
+              "$PROJECT_DIR/backend/shared-dto/pom.xml"
+            
+            cp -v \
+              "$TEMP_DIR/backend/pom.xml" \
+              "$PROJECT_DIR/backend/pom.xml"
 
+            echo "🔍 Final structure verification:"
+            find "$PROJECT_DIR/backend/shared-dto/src" -type f | head -10 || \
+              { echo "❌ Final shared-dto src check failed!"; exit 1; }
+            ls -la "$PROJECT_DIR/backend/pom.xml" || \
+              { echo "❌ Final pom.xml check failed!"; exit 1; }
 
-
-            cd "$PROJECT_DIR"
             rm -rf "$TEMP_DIR"
             
-            echo "📁 Creating .env for ${{ inputs.SERVICE_NAME }}"
+            echo "📁 Creating .env..."
             ENV_PATH="$SERVICE_DIR/.env"
-            
             cat <<EOF > "$ENV_PATH"
             SERVICE_SERVER_PORT=${{ secrets.SERVICE_SERVER_PORT }}
             DB_NAME=${{ secrets.DB_NAME }}
@@ -115,10 +137,9 @@ jobs:
             SPRING_KAFKA_BOOTSTRAP_SERVERS=${{ secrets.SPRING_KAFKA_BOOTSTRAP_SERVERS }}
             EOF
             
-            echo "🔄 Restarting Docker container..."
-            cd "$SERVICE_DIR"
-            cd ..
-            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" down -v || true
+            echo "🔄 Rebuilding Docker container..."
+            cd "$PROJECT_DIR/backend"
+            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" down --remove-orphans --volumes
             docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" up -d --build
             
             echo "✅ Successfully deployed ${{ inputs.SERVICE_NAME }}!"
