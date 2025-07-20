@@ -15,7 +15,7 @@ jobs:
             SERVICE_NAME: user-service
             DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
             GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
-            COMPOSE_FILE: docker-compose.$DEPLOY_ENV-user-service.yml
+            COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-user-service.yml
         secrets:
             PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
 
