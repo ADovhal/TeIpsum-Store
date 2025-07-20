@@ -6,8 +6,9 @@ services:
       - "22443:443"
       - "22080:80"
     volumes:
-        - ./nginx.prod.conf:/etc/nginx/nginx.conf
-        - /etc/letsencrypt/live/teipsum.store:/etc/nginx/ssl
+        - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+        - /etc/letsencrypt/live/teipsum.store:/etc/nginx/ssl:ro
+        - /etc/letsencrypt/archive/teipsum.store:/etc/letsencrypt/archive/teipsum.store:ro
         - /home/adeployer/secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
     networks: [prod-net]
 
