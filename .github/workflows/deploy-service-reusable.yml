@@ -112,7 +112,8 @@ jobs:
             # 6. Перезапуск сервиса
             echo "🔄 Restarting Docker container..."
             cd "$SERVICE_DIR"
-            docker compose --env-file "$ENV_PATH" -f "$COMPOSE_FILE" down || true
-            docker compose --env-file "$ENV_PATH" -f "$COMPOSE_FILE" up -d --build
+            cd ..
+            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" down || true
+            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" up -d --build
             
             echo "✅ Successfully deployed ${{ inputs.SERVICE_NAME }}!"

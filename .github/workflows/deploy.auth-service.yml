@@ -15,7 +15,7 @@ jobs:
       SERVICE_NAME: auth-service
       DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
       GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
-      COMPOSE_FILE: docker-compose.stage-auth-service.yml
+      COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-auth-service.yml
     secrets:
       PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
 
