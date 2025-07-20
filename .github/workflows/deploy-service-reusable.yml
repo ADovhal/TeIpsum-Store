@@ -73,26 +73,28 @@ jobs:
 
             TEMP_DIR=$(mktemp -d)
             echo "🛠 Created temp directory: $TEMP_DIR"
-
+                  
             echo "🔁 Fetching service code..."
             git clone --branch "$GIT_BRANCH" --depth 1 \
               --filter=blob:none --sparse \
               https://github.com/${{ github.repository }} "$TEMP_DIR"
-
+                  
             cd "$TEMP_DIR"
             git sparse-checkout init --no-cone
             git sparse-checkout set \
-              "$SERVICE_PATH" \
+              "backend/$SERVICE_NAME" \
               "backend/shared-dto" \
-              "backend/shared-dto/src" \
-              "backend/pom.xml" \
-              "backend/shared-dto/pom.xml"
-
+              "backend/pom.xml"
+                  
             echo "📂 Copying service files..."
-            mkdir -p "$SERVICE_DIR"
-            rsync -av --delete "$TEMP_DIR/$SERVICE_PATH/" "$SERVICE_DIR/"
-            rsync -av "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/"
-            rsync -av "$TEMP_DIR/backend/shared-dto/pom.xml" "$PROJECT_DIR/backend/shared-dto/"
+            mkdir -p "$PROJECT_DIR/backend"
+            rsync -av --delete \
+              --include="backend/$SERVICE_NAME/**" \
+              --include="backend/shared-dto/**" \
+              --include="backend/pom.xml" \
+              --exclude="*" \
+              "$TEMP_DIR/" "$PROJECT_DIR/"
+
 
 
             cd "$PROJECT_DIR"
