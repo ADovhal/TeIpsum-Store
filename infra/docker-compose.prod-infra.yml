@@ -22,6 +22,7 @@ services:
     container_name: prod-teipsum-postgres
     image: postgres:15
     ports: ["5433:5434"]
+    command: postgres -p 5434
     env_file:
       - .env.prod.infra
     volumes:
