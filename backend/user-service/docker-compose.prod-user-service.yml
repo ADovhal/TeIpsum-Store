@@ -4,8 +4,6 @@ services:
     build:
       context: ../..
       dockerfile: backend/user-service/Dockerfile
-    volumes:
-      - maven-cache:/root/.m2
     ports: ['22094:9093']
     image: prod-user-service:latest
     networks: [prod-net]
