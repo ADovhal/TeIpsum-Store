@@ -2,7 +2,7 @@ services:
   stage-auth-service:
     container_name: stage-auth-service
     build:
-      context: .
+      context: ../..
       dockerfile: backend/auth-service/Dockerfile
     ports: ['22093:${SERVICE_SERVER_PORT}']
     image: stage-auth-service:latest
