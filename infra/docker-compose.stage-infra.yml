@@ -26,7 +26,7 @@ services:
     env_file:
       - .env.stage.infra
     volumes:
-      - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
+      - ./init/:/docker-entrypoint-initdb.d/
       - pgdata:/var/lib/postgresql/data
     networks: [stage-net]
 
