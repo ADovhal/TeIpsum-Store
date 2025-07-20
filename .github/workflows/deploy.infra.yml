@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            infra/docker-compose.*infra.yml
+            infra/init/**
+          fetch-depth: 1
 
       - name: Deploy Infra (Postgres, Redis и т.д.)
         uses: appleboy/ssh-action@v1.2.2
@@ -28,27 +33,36 @@ jobs:
             set -e
 
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
+            INFRA_DIR="$PROJECT_DIR/infra"
             GIT_BRANCH=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
             DEPLOY_ENV=${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
 
-            echo "📦 Cloning project..."
-            rm -rf $PROJECT_DIR
-            git clone https://github.com/${{ github.repository }} $PROJECT_DIR
-            cd $PROJECT_DIR
-            git checkout $GIT_BRANCH
-            git pull
-
+            echo "📦 Preparing infra files..."
+            TEMP_DIR=$(mktemp -d)
+            
+            # Клонируем только нужные файлы инфраструктуры
+            git clone --branch $GIT_BRANCH --depth 1 \
+              --filter=blob:none --sparse \
+              https://github.com/${{ github.repository }} $TEMP_DIR
+            
+            cd $TEMP_DIR
+            git sparse-checkout set infra/docker-compose.*infra.yml infra/init
+            
+            # Создаем структуру директорий
+            mkdir -p $INFRA_DIR
+            rsync -av --delete $TEMP_DIR/infra/ $INFRA_DIR/
+            rm -rf $TEMP_DIR
+            
             echo "📁 Writing .env file..."
-            ENV_PATH="infra/.env.${DEPLOY_ENV}.infra"
+            ENV_PATH="$INFRA_DIR/.env.${DEPLOY_ENV}.infra"
             cat <<EOF > $ENV_PATH
             POSTGRES_USER=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_USER || secrets.STAGE_INFRA_POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_PASSWORD || secrets.STAGE_INFRA_POSTGRES_PASSWORD }}
             EOF
                     
             echo "🔐 Preparing init-multiple-dbs.sql from template..."
-            cp infra/init/init-multiple-dbs.template.sql infra/init/init-multiple-dbs.sql
-            TEMPLATE_PATH="infra/init/init-multiple-dbs.template.sql"
-            OUTPUT_PATH="infra/init/init-multiple-dbs.sql"
+            TEMPLATE_PATH="$INFRA_DIR/init/init-multiple-dbs.template.sql"
+            OUTPUT_PATH="$INFRA_DIR/init/init-multiple-dbs.sql"
 
             sed -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
                 -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
@@ -66,7 +80,8 @@ jobs:
             echo "📄 Generated init-multiple-dbs.sql from template."
 
             echo "🧱 Rebuilding infra containers..."
-            docker compose --env-file $ENV_PATH -f infra/docker-compose.${DEPLOY_ENV}-infra.yml down
-            docker compose --env-file $ENV_PATH -f infra/docker-compose.${DEPLOY_ENV}-infra.yml up -d --build
+            cd $INFRA_DIR
+            docker compose --env-file $ENV_PATH -f docker-compose.${DEPLOY_ENV}-infra.yml down
+            docker compose --env-file $ENV_PATH -f docker-compose.${DEPLOY_ENV}-infra.yml up -d --build
 
             echo "✅ Infra deployed!"
