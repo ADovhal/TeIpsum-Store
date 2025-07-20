@@ -3,8 +3,8 @@ services:
     container_name: prod-teipsum-nginx
     image: nginx:latest
     ports: 
-      - "22080:80"
-      - "22443:443"
+      - "22081:80"
+      - "23443:443"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt/live/teipsum.store/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
