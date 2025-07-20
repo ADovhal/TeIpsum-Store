@@ -1,6 +1,6 @@
 services:
-  stage-teipsum-nginx:
-    container_name: stage-teipsum-nginx
+  prod-teipsum-nginx:
+    container_name: prod-teipsum-nginx
     image: nginx:latest
     ports: 
       - "22080:80"
@@ -11,8 +11,8 @@ services:
       - /etc/letsencrypt/live/teipsum.store/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
       - /home/adeployer/secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
     networks:
-      - stage-net
+      - prod-net
 
 networks:
-  stage-net:
+  prod-net:
     external: true
