@@ -22,9 +22,6 @@ services:
     container_name: stage-teipsum-postgres
     image: postgres:15
     ports: ["5433:5435"]
-    environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev
     volumes:
       - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
       - pgdata:/var/lib/postgresql/data
