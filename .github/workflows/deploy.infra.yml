@@ -22,6 +22,7 @@ jobs:
             infra/docker-compose.prod-infra.yml
             infra/init/
           fetch-depth: 1
+          sparse-checkout-cone-mode: false
 
       - name: Deploy Infra
         uses: appleboy/ssh-action@v1.2.2
@@ -48,38 +49,36 @@ jobs:
             cd $TEMP_DIR
             git sparse-checkout set --no-cone 'infra/docker-compose.*infra.yml' 'infra/init/'
             
-            mkdir -p $INFRA_DIR
-            cp infra/docker-compose.*infra.yml $INFRA_DIR/
-            cp -r infra/init $INFRA_DIR/
+            mkdir -p "$INFRA_DIR"
+            chmod -R 755 "$INFRA_DIR"
+            
+            cp -v "$TEMP_DIR/infra/docker-compose."*infra.yml "$INFRA_DIR/"
+            cp -rv "$TEMP_DIR/infra/init" "$INFRA_DIR/"
             rm -rf $TEMP_DIR
             
             echo "📁 Writing .env file..."
             ENV_PATH="$INFRA_DIR/.env.${DEPLOY_ENV}.infra"
-            cat <<EOF > $ENV_PATH
+            cat <<EOF > "$ENV_PATH"
             POSTGRES_USER=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_USER || secrets.STAGE_INFRA_POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_PASSWORD || secrets.STAGE_INFRA_POSTGRES_PASSWORD }}
             EOF
 
             echo "🔐 Preparing init-multiple-dbs.sql from template..."
-            cp infra/init/init-multiple-dbs.template.sql infra/init/init-multiple-dbs.sql
             TEMPLATE_PATH="$INFRA_DIR/init/init-multiple-dbs.template.sql"
             OUTPUT_PATH="$INFRA_DIR/init/init-multiple-dbs.sql"
             
-            # Проверяем существование шаблона
+            chmod 644 "$TEMPLATE_PATH" || true
+            
             if [ ! -f "$TEMPLATE_PATH" ]; then
               echo "❌ Error: Template file not found at $TEMPLATE_PATH"
+              echo "Directory contents:"
               ls -la "$INFRA_DIR/init/"
               exit 1
             fi
 
             cp -v "$TEMPLATE_PATH" "$OUTPUT_PATH"
+            chmod 644 "$OUTPUT_PATH"
             
-            if [ ! -f "$OUTPUT_PATH" ]; then
-              echo "❌ Error: Failed to create output file at $OUTPUT_PATH"
-              ls -la "$INFRA_DIR/init/"
-              exit 1
-            fi
-
             sed -i \
                 -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
                 -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
@@ -97,8 +96,8 @@ jobs:
             echo "📄 Generated init-multiple-dbs.sql from template."
                     
             echo "🧱 Rebuilding infra containers..."
-            cd $INFRA_DIR
-            docker compose --env-file $ENV_PATH -f docker-compose.${DEPLOY_ENV}-infra.yml down
-            docker compose --env-file $ENV_PATH -f docker-compose.${DEPLOY_ENV}-infra.yml up -d --build
+            cd "$INFRA_DIR"
+            docker compose --env-file "$ENV_PATH" -f "docker-compose.${DEPLOY_ENV}-infra.yml" down
+            docker compose --env-file "$ENV_PATH" -f "docker-compose.${DEPLOY_ENV}-infra.yml" up -d --build
 
             echo "✅ Infra deployed!"
