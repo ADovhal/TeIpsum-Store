@@ -101,7 +101,7 @@ jobs:
                     
             echo "🧱 Rebuilding infra containers..."
             cd "$INFRA_DIR"
-            docker compose --env-file "$ENV_PATH" -f "docker-compose.${DEPLOY_ENV}-infra.yml" down
+            docker compose --env-file "$ENV_PATH" -f "docker-compose.${DEPLOY_ENV}-infra.yml" down -v
             docker compose --env-file "$ENV_PATH" -f "docker-compose.${DEPLOY_ENV}-infra.yml" up -d --build
 
             echo "✅ Infra deployed!"
