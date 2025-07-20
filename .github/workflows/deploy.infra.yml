@@ -18,10 +18,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            infra/docker-compose.stage-infra.yml
-            infra/docker-compose.prod-infra.yml
             infra/init/
           fetch-depth: 1
+          sparse-checkout-cone-mode: false
 
       - name: Deploy Infra
         uses: appleboy/ssh-action@v1.2.2
@@ -46,10 +45,11 @@ jobs:
               https://github.com/${{ github.repository }} $TEMP_DIR
             
             cd $TEMP_DIR
-            git sparse-checkout set infra/docker-compose.stage-infra.yml infra/docker-compose.prod-infra.yml infra/init
-            
+            git sparse-checkout set --no-cone 'infra/docker-compose.*infra.yml' 'infra/init/*'
+
             mkdir -p $INFRA_DIR
-            rsync -av --delete $TEMP_DIR/infra/ $INFRA_DIR/
+            cp infra/docker-compose.*infra.yml $INFRA_DIR/
+            cp -r infra/init $INFRA_DIR/
             rm -rf $TEMP_DIR
             
             echo "📁 Writing .env file..."
