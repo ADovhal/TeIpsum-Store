@@ -67,11 +67,18 @@ jobs:
             # Проверяем существование шаблона
             if [ ! -f "$TEMPLATE_PATH" ]; then
               echo "❌ Error: Template file not found at $TEMPLATE_PATH"
+              ls -la "$INFRA_DIR/init/"
               exit 1
             fi
 
-            cp "$TEMPLATE_PATH" "$OUTPUT_PATH"
+            cp -v "$TEMPLATE_PATH" "$OUTPUT_PATH"
             
+            if [ ! -f "$OUTPUT_PATH" ]; then
+              echo "❌ Error: Failed to create output file at $OUTPUT_PATH"
+              ls -la "$INFRA_DIR/init/"
+              exit 1
+            fi
+
             sed -i \
                 -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
                 -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
