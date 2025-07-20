@@ -37,10 +37,8 @@ on:
         required: true
       DB_PASSWORD:
         required: true
-        
       SPRING_KAFKA_BOOTSTRAP_SERVERS:
         required: true
-
       JWT_SECRET:
         required: true
       JWT_REFRESH_SECRET:
@@ -61,7 +59,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
-            set -e
+            set -e  # Прерывать выполнение при ошибках
             
             echo "📦 Deploying service: ${{ inputs.SERVICE_NAME }}"
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
@@ -70,32 +68,30 @@ jobs:
             DEPLOY_ENV="${{ inputs.DEPLOY_ENV }}"
             COMPOSE_FILE="${{ inputs.COMPOSE_FILE }}"
             GIT_BRANCH="${{ inputs.GIT_BRANCH }}"
-
+            
+            # 1. Подготовка временной директории
             TEMP_DIR=$(mktemp -d)
             echo "🛠 Created temp directory: $TEMP_DIR"
-
+            
+            # 2. Клонирование только нужного сервиса (частичный клон)
             echo "🔁 Fetching service code..."
             git clone --branch "$GIT_BRANCH" --depth 1 \
               --filter=blob:none --sparse \
               https://github.com/${{ github.repository }} "$TEMP_DIR"
-
+            
             cd "$TEMP_DIR"
-            git sparse-checkout init --no-cone
-            git sparse-checkout set \
-              "$SERVICE_PATH" \
-              "backend/shared-dto" \
-              "backend/pom.xml" \
-              "backend/shared-dto/pom.xml"
-
+            git sparse-checkout set "$SERVICE_PATH"
+            
+            # 3. Копирование только измененного сервиса
             echo "📂 Copying service files..."
             mkdir -p "$SERVICE_DIR"
             rsync -av --delete "$TEMP_DIR/$SERVICE_PATH/" "$SERVICE_DIR/"
-            rsync -av "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/"
-            rsync -av "$TEMP_DIR/backend/shared-dto/pom.xml" "$PROJECT_DIR/backend/shared-dto/"
-
+            
+            # 4. Очистка временных файлов
             cd "$PROJECT_DIR"
             rm -rf "$TEMP_DIR"
             
+            # 5. Создание .env файла
             echo "📁 Creating .env for ${{ inputs.SERVICE_NAME }}"
             ENV_PATH="$SERVICE_DIR/.env"
             
@@ -111,10 +107,10 @@ jobs:
             SPRING_KAFKA_BOOTSTRAP_SERVERS=${{ secrets.SPRING_KAFKA_BOOTSTRAP_SERVERS }}
             EOF
             
+            # 6. Перезапуск сервиса
             echo "🔄 Restarting Docker container..."
             cd "$SERVICE_DIR"
-            cd ..
-            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" down -v || true
-            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" up -d --build
+            docker compose --env-file "$ENV_PATH" -f "$COMPOSE_FILE" down || true
+            docker compose --env-file "$ENV_PATH" -f "$COMPOSE_FILE" up -d --build
             
             echo "✅ Successfully deployed ${{ inputs.SERVICE_NAME }}!"
