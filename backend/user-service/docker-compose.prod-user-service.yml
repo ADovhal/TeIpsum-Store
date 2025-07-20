@@ -6,6 +6,7 @@ services:
       dockerfile: backend/user-service/Dockerfile
     ports: ['22094:9093']
     image: prod-user-service:latest
+    env_file: .env
     networks: [prod-net]
 
 networks:
