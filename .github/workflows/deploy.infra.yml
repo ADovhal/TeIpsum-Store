@@ -61,6 +61,7 @@ jobs:
             EOF
 
             echo "🔐 Preparing init-multiple-dbs.sql from template..."
+            cp infra/init/init-multiple-dbs.template.sql infra/init/init-multiple-dbs.sql
             TEMPLATE_PATH="$INFRA_DIR/init/init-multiple-dbs.template.sql"
             OUTPUT_PATH="$INFRA_DIR/init/init-multiple-dbs.sql"
             
