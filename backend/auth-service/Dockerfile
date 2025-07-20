@@ -11,7 +11,6 @@ COPY backend/shared-dto/src backend/shared-dto/src
 COPY backend/auth-service/src backend/auth-service/src
 
 RUN mvn -B package -pl auth-service -am -DskipTests
-
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/backend/auth-service/target/*.jar app.jar
