@@ -80,6 +80,7 @@ jobs:
               https://github.com/${{ github.repository }} "$TEMP_DIR"
             
             cd "$TEMP_DIR"
+            git sparse-checkout init --no-cone
             git sparse-checkout set "$SERVICE_PATH" "backend/shared-dto" "backend/pom.xml"
             
             echo "📂 Copying service files..."
