@@ -1,9 +1,14 @@
 FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 
-COPY backend ./backend
+COPY backend/pom.xml .
+COPY backend/shared-dto/pom.xml backend/shared-dto/
+COPY backend/auth-service/pom.xml backend/auth-service/
 
-WORKDIR /app/backend
+RUN mvn -B dependency:go-offline -pl auth-service -am
+
+COPY backend/shared-dto/src backend/shared-dto/src
+COPY backend/auth-service/src backend/auth-service/src
 
 RUN mvn -B package -pl auth-service -am -DskipTests
 
