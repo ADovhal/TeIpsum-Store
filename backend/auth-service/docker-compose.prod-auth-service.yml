@@ -4,7 +4,7 @@ services:
     build:
       context: ../..
       dockerfile: backend/auth-service/Dockerfile
-    ports: ['22093:9090']
+    ports: ['22093:${SERVICE_SERVER_PORT}']
     image: prod-auth-service:latest
     environment:
       - SERVER_PORT=${SERVICE_SERVER_PORT}
