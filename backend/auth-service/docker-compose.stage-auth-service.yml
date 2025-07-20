@@ -4,16 +4,11 @@ services:
     build:
       context: ../..
       dockerfile: backend/auth-service/Dockerfile
-    volumes:
-      - maven-cache:/root/.m2
     ports: ['22093:${SERVICE_SERVER_PORT}']
     image: stage-auth-service:latest
     env_file: .env
     networks:
       - stage-net
-
-volumes:
-  maven-cache:
 
 networks:
   stage-net:
