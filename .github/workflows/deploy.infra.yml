@@ -58,6 +58,26 @@ jobs:
             POSTGRES_USER=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_USER || secrets.STAGE_INFRA_POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_PASSWORD || secrets.STAGE_INFRA_POSTGRES_PASSWORD }}
             EOF
+
+            echo "🔐 Preparing init-multiple-dbs.sql from template..."
+            cp infra/init/init-multiple-dbs.template.sql infra/init/init-multiple-dbs.sql
+            TEMPLATE_PATH="infra/init/init-multiple-dbs.template.sql"
+            OUTPUT_PATH="infra/init/init-multiple-dbs.sql"
+
+            sed -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
+                -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
+                -e "s|<<PRODUCT_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_PRODUCT_SERVICE_DB_NAME }}|g" \
+                -e "s|<<ORDER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_NAME || secrets.STAGE_ORDER_SERVICE_DB_NAME }}|g" \
+                -e "s|<<AUTH_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_USER || secrets.STAGE_AUTH_SERVICE_DB_USER }}|g" \
+                -e "s|<<USER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_USER || secrets.STAGE_USER_SERVICE_DB_USER }}|g" \
+                -e "s|<<PRODUCT_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_USER || secrets.STAGE_PRODUCT_SERVICE_DB_USER }}|g" \
+                -e "s|<<ORDER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_USER || secrets.STAGE_ORDER_SERVICE_DB_USER }}|g" \
+                -e "s|<<AUTH_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_PASSWORD || secrets.STAGE_AUTH_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<USER_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_PASSWORD || secrets.STAGE_USER_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<PRODUCT_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_PASSWORD || secrets.STAGE_PRODUCT_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<ORDER_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_PASSWORD || secrets.STAGE_ORDER_SERVICE_DB_PASSWORD }}|g" \
+                $TEMPLATE_PATH > $OUTPUT_PATH
+            echo "📄 Generated init-multiple-dbs.sql from template."
                     
             echo "🧱 Rebuilding infra containers..."
             cd $INFRA_DIR
