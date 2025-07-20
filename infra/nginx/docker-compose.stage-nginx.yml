@@ -6,7 +6,7 @@ services:
     ports: ["22080:80"]
     volumes:
         - ./nginx.stage.conf:/etc/nginx/nginx.conf
-        - /etc/letsencrypt/archive/stage.teipsum.tech:/etc/nginx/ssl
+        - /etc/letsencrypt/archive/stage.teipsum.store:/etc/nginx/ssl
         - /home/adeployer/secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
     networks: [stage-net]
 
