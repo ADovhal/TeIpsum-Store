@@ -50,7 +50,6 @@ jobs:
             git sparse-checkout set --no-cone 'infra/docker-compose.*infra.yml' 'infra/init/'
             
             mkdir -p "$INFRA_DIR"
-            chmod -R 755 "$INFRA_DIR"
             
             cp -v "$TEMP_DIR/infra/docker-compose."*infra.yml "$INFRA_DIR/"
             cp -rv "$TEMP_DIR/infra/init" "$INFRA_DIR/"
@@ -66,8 +65,7 @@ jobs:
             echo "🔐 Preparing init-multiple-dbs.sql from template..."
             TEMPLATE_PATH="$INFRA_DIR/init/init-multiple-dbs.template.sql"
             OUTPUT_PATH="$INFRA_DIR/init/init-multiple-dbs.sql"
-            
-            chmod 644 "$TEMPLATE_PATH" || true
+
             
             if [ ! -f "$TEMPLATE_PATH" ]; then
               echo "❌ Error: Template file not found at $TEMPLATE_PATH"
@@ -77,7 +75,6 @@ jobs:
             fi
 
             cp -v "$TEMPLATE_PATH" "$OUTPUT_PATH"
-            chmod 644 "$OUTPUT_PATH"
             
             sed -i \
                 -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
