@@ -6,6 +6,8 @@ services:
       dockerfile: backend/auth-service/Dockerfile
     ports: ['22093:9091']
     image: stage-auth-service:latest
+    environment:
+      - SERVER_PORT=${SERVICE_SERVER_PORT}
     networks:
       - stage-net
 

@@ -7,11 +7,7 @@ services:
     ports: ['22093:9090']
     image: prod-auth-service:latest
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://prod-teipsum-postgres:5432/auth_db
-      - SPRING_DATASOURCE_USERNAME=dev
-      - SPRING_DATASOURCE_PASSWORD=dev
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=prod-teipsum-kafka:9092
-      # - JWT_SECRET=secret_for_test_purpose
+      - SERVER_PORT=${SERVICE_SERVER_PORT}
     networks:
       - prod-net
 
