@@ -1,4 +1,4 @@
-services: 
+services:
   stage-teipsum-nginx:
     container_name: stage-teipsum-nginx
     image: nginx:latest
@@ -6,11 +6,12 @@ services:
       - "22443:443"
       - "22080:80"
     volumes:
-        - ./nginx.stage.conf:/etc/nginx/nginx.conf
-        - /etc/letsencrypt/live/stage.teipsum.store:/etc/nginx/ssl
-        - /home/adeployer/secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
-    networks: [stage-net]
-
+      - ./nginx.stage.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/live/stage.teipsum.store:/etc/nginx/ssl:ro
+      - /etc/letsencrypt/archive/stage.teipsum.store:/etc/letsencrypt/archive/stage.teipsum.store:ro
+      - /home/adeployer/secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
+    networks:
+      - stage-net
 
 networks:
   stage-net:
