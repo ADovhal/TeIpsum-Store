@@ -21,7 +21,8 @@ services:
   postgres:
     container_name: prod-teipsum-postgres
     image: postgres:15
-    ports: ["5433:5434"]
+    ports: 
+      - '5433:5434'
     volumes:
       - ./init/init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
       - pgdata:/var/lib/postgresql/data
