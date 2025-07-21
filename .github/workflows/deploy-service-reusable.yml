@@ -26,7 +26,6 @@ on:
         required: true
       DEPLOY_PORT:
         required: true
-      
       SERVICE_SERVER_PORT:
         required: true
       DB_NAME:
@@ -37,10 +36,8 @@ on:
         required: true
       DB_PASSWORD:
         required: true
-        
       SPRING_KAFKA_BOOTSTRAP_SERVERS:
         required: true
-
       JWT_SECRET:
         required: true
       JWT_REFRESH_SECRET:
@@ -51,8 +48,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
+      - uses: actions/checkout@v4
+      
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('backend/shared-dto/pom.xml') }}
+          restore-keys: |
+            maven-
+
+      - name: Build shared-dto
+        working-directory: backend/shared-dto
+        run: mvn clean install -DskipTests
+
       - name: Deploy ${{ inputs.SERVICE_NAME }} to ${{ inputs.DEPLOY_ENV }}
         uses: appleboy/ssh-action@v1.2.2
         with:
