@@ -13,6 +13,7 @@
 	<groupId>com.teipsum</groupId>
   <artifactId>teipsum-shared-dto</artifactId>
   <packaging>jar</packaging>
+  <version>1.0.0</version>
   <name>teipsum-shared-dto</name>
 
   <developers>
