@@ -103,24 +103,21 @@ jobs:
             echo "🧠 Check if shared-dto changed..."
             SHARED_DTO_DIR="$PROJECT_DIR/backend/shared-dto"
             SHARED_DTO_HASH_FILE="$SHARED_DTO_DIR/.build-hash"
+            M2_CACHE_DIR="/opt/m2-repo"
                     
             NEW_HASH=$(find "$SHARED_DTO_DIR/src" "$SHARED_DTO_DIR/pom.xml" -type f -exec sha256sum {} + | sort | sha256sum | cut -d" " -f1)
             echo "🔍 Shared DTO hash: $NEW_HASH"
                     
             if [ ! -f "$SHARED_DTO_HASH_FILE" ] || [ "$NEW_HASH" != "$(cat $SHARED_DTO_HASH_FILE)" ]; then
-              echo "📦 Ensuring Maven local repository exists..."
-              mkdir -p "$PROJECT_DIR/.m2"
-              ln -sfn "$PROJECT_DIR/.m2" ~/.m2
+              echo "🔨 Building shared-dto in Docker..."
+              cd "$PROJECT_DIR/backend"
+              docker build -f shared-dto/Dockerfile.dto -t shared-dto-builder .
                     
-              echo "🔨 Building shared-dto..."
-              cd "$SHARED_DTO_DIR"
-              mvn clean install -DskipTests -f "$SHARED_DTO_DIR/pom.xml" -Dparent.relativePath=../pom.xml 2>&1 | tee build.log
-              BUILD_RESULT=${PIPESTATUS[0]}
-              if [ "$BUILD_RESULT" -ne 0 ]; then
-                echo "❌ Maven build failed. See log:"
-                cat build.log
-                exit $BUILD_RESULT
-              fi
+              echo "📦 Extracting Maven .m2 repo..."
+              docker create --name tmp-shared-dto shared-dto-builder
+              mkdir -p "$M2_CACHE_DIR"
+              docker cp tmp-shared-dto:/root/.m2 "$M2_CACHE_DIR"
+              docker rm tmp-shared-dto
                     
               echo "$NEW_HASH" > "$SHARED_DTO_HASH_FILE"
             else

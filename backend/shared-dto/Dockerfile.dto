@@ -1,0 +1,9 @@
+FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
+
+WORKDIR /app
+
+COPY backend/pom.xml ./backend/pom.xml
+COPY backend/shared-dto/pom.xml ./backend/shared-dto/pom.xml
+COPY backend/shared-dto/src ./backend/shared-dto/src
+
+RUN mvn -f shared-dto/pom.xml install -DskipTests -Dparent.relativePath=../pom.xml
