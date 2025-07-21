@@ -101,7 +101,7 @@ jobs:
             git checkout "$GIT_BRANCH"
             
             echo "📂 Verifying downloaded files structure:"
-            ls -la "$TEMP_DIR/backend/shared-dto/src/main/java/com/dovhal/shared/" || \
+            ls -la "$TEMP_DIR/backend/shared-dto/src/main/java/com/teipsum/shared/" || \
               { echo "❌ Shared DTO sources missing!"; exit 1; }
             ls -la "$TEMP_DIR/backend/pom.xml" || \
               { echo "❌ Root pom.xml missing!"; exit 1; }
