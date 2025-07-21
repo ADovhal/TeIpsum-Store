@@ -34,7 +34,7 @@
       <jackson-databind.version>2.17.0</jackson-databind.version>
       <java-jwt.version>4.4.0</java-jwt.version>
       <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
-      <shared-dto.version>1.0-SNAPSHOT</shared-dto.version>
+      <shared-dto.version>1.0.0</shared-dto.version>
     </properties>
 
     <dependencyManagement>
