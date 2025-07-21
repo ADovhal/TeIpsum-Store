@@ -5,6 +5,9 @@ FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 COPY backend/pom.xml ./pom.xml
+
+RUN mvn install -N -DskipTests
+
 COPY backend/auth-service/pom.xml ./auth-service/pom.xml
 COPY backend/auth-service/src ./auth-service/src
 
