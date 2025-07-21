@@ -1,4 +1,3 @@
-
 FROM shared-dto-builder AS shared
 
 FROM maven:3.9-eclipse-temurin-17 AS builder
