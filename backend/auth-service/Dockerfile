@@ -4,9 +4,9 @@ FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
-COPY pom.xml ./pom.xml
-COPY auth-service/pom.xml ./auth-service/pom.xml
-COPY auth-service/src ./auth-service/src
+COPY backend/pom.xml ./pom.xml
+COPY backend/auth-service/pom.xml ./auth-service/pom.xml
+COPY backend/auth-service/src ./auth-service/src
 
 COPY --from=shared /root/.m2 /root/.m2
 
