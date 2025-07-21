@@ -1,7 +1,7 @@
-package com.dovhal.userservice.service;
+package com.teipsum.userservice.service;
 
-import com.dovhal.userservice.model.UserProfile;
-import com.dovhal.userservice.repository.UserRepository;
+import com.teipsum.userservice.model.UserProfile;
+import com.teipsum.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.Authentication;
