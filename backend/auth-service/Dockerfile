@@ -29,7 +29,7 @@ RUN mkdir -p /app/shared-dto && \
     fi
 
 RUN cd auth-service && \
-    mvn clean package -DskipTests -Dparent.relativePath=../../pom.xml
+    mvn clean package -DskipTests -Dparent.relativePath=../pom.xml
 
 FROM gcr.io/distroless/java17-debian11
 
