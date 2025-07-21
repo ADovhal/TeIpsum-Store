@@ -1,12 +1,12 @@
-package com.dovhal.userservice.event;
+package com.teipsum.userservice.event;
 
-import com.dovhal.userservice.service.UserService;
+import com.teipsum.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.dovhal.shared.event.UserLoggedInEvent;
-import com.dovhal.shared.event.UserRegisteredEvent;
+import com.teipsum.shared.event.UserLoggedInEvent;
+import com.teipsum.shared.event.UserRegisteredEvent;
 
 @Component
 @RequiredArgsConstructor

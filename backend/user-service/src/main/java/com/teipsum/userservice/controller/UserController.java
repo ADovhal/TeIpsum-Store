@@ -1,7 +1,7 @@
-package com.dovhal.userservice.controller;
+package com.teipsum.userservice.controller;
 
-import com.dovhal.userservice.model.UserProfile;
-import com.dovhal.userservice.service.UserService;
+import com.teipsum.userservice.model.UserProfile;
+import com.teipsum.userservice.service.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

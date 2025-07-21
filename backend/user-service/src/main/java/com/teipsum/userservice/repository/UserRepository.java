@@ -1,6 +1,6 @@
-package com.dovhal.userservice.repository;
+package com.teipsum.userservice.repository;
 
-import com.dovhal.userservice.model.UserProfile;
+import com.teipsum.userservice.model.UserProfile;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.dovhal.userservice;
+package com.teipsum.userservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

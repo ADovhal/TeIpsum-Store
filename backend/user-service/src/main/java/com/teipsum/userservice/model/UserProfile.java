@@ -1,4 +1,4 @@
-package com.dovhal.userservice.model;
+package com.teipsum.userservice.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

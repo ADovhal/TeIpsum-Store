@@ -1,4 +1,4 @@
-package com.dovhal.userservice.config;
+package com.teipsum.userservice.config;
 
 // import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Bean;

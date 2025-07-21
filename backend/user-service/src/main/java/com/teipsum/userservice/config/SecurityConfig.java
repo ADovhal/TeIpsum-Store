@@ -1,4 +1,4 @@
-package com.dovhal.userservice.config;
+package com.teipsum.userservice.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
