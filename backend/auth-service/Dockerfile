@@ -1,52 +1,20 @@
-# FROM maven:3.9.11-eclipse-temurin-17-alpine AS shared-dto-builder
 
-# WORKDIR /build/shared-dto
+FROM shared-dto-builder AS shared
 
-# RUN apk add --no-cache git
-
-# COPY ../../pom.xml /build/
-# COPY ../shared-dto/pom.xml ./pom.xml
-# COPY ../shared-dto/src ./src
-
-# RUN mvn clean install -DskipTests -f /build/shared-dto/pom.xml -Dparent.relativePath=../pom.xml
-
-# FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
-
-# WORKDIR /build/auth-service
-
-# RUN apk add --no-cache git
-
-# COPY --from=shared-dto-builder /root/.m2 /root/.m2
-
-# COPY ../../pom.xml /build/
-# COPY ../auth-service/pom.xml ./pom.xml
-# COPY ../auth-service/src ./src
-
-# RUN mvn clean package -DskipTests -Dparent.relativePath=../pom.xml
-
-# FROM gcr.io/distroless/java17-debian11
-
-# WORKDIR /app
-
-# COPY --from=builder /build/auth-service/target/*.jar app.jar
-
-# ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-
-FROM maven:3.8.4-openjdk-17 AS build
-
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-COPY ../../backend/pom.xml ./pom.xml
-COPY ../../backend/shared-dto/pom.xml ./shared-dto/pom.xml
-COPY ../../.m2 /root/.m2
+COPY backend/pom.xml ./backend/pom.xml
+COPY backend/auth-service/pom.xml ./backend/auth-service/pom.xml
+COPY backend/auth-service/src ./backend/auth-service/src
 
-COPY ./pom.xml ./auth-service/pom.xml
-COPY ./src ./auth-service/src
+COPY --from=shared /root/.m2 /root/.m2
 
-RUN mvn -f pom.xml package -pl auth-service -am -DskipTests
+RUN mvn -f backend/auth-service/pom.xml -DskipTests -Dparent.relativePath=../pom.xml package
 
-FROM openjdk:17-jdk-slim
-
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /app/auth-service/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+
+COPY --from=builder /app/backend/auth-service/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
