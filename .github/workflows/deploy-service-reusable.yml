@@ -84,6 +84,7 @@ jobs:
               "backend/$SERVICE_NAME" \
               "backend/shared-dto/src" \
               "backend/shared-dto/pom.xml" \
+              "backend/shared-dto/Dockerfile.dto" \
               "backend/pom.xml"
             
             git checkout "$GIT_BRANCH"
@@ -104,21 +105,21 @@ jobs:
             SHARED_DTO_DIR="$PROJECT_DIR/backend/shared-dto"
             SHARED_DTO_HASH_FILE="$SHARED_DTO_DIR/.build-hash"
             M2_CACHE_DIR="/opt/m2-repo"
-                    
+
             NEW_HASH=$(find "$SHARED_DTO_DIR/src" "$SHARED_DTO_DIR/pom.xml" -type f -exec sha256sum {} + | sort | sha256sum | cut -d" " -f1)
             echo "🔍 Shared DTO hash: $NEW_HASH"
-                    
+
             if [ ! -f "$SHARED_DTO_HASH_FILE" ] || [ "$NEW_HASH" != "$(cat $SHARED_DTO_HASH_FILE)" ]; then
               echo "🔨 Building shared-dto in Docker..."
               cd "$PROJECT_DIR/backend"
               docker build -f shared-dto/Dockerfile.dto -t shared-dto-builder .
-                    
+
               echo "📦 Extracting Maven .m2 repo..."
               docker create --name tmp-shared-dto shared-dto-builder
               mkdir -p "$M2_CACHE_DIR"
               docker cp tmp-shared-dto:/root/.m2 "$M2_CACHE_DIR"
               docker rm tmp-shared-dto
-                    
+
               echo "$NEW_HASH" > "$SHARED_DTO_HASH_FILE"
             else
               echo "✅ shared-dto is unchanged. Skipping build."
