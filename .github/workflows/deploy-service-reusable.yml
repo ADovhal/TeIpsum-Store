@@ -95,6 +95,7 @@ jobs:
             mkdir -p "$PROJECT_DIR/backend/shared-dto"
             rsync -av --delete "$TEMP_DIR/backend/shared-dto/src/" "$PROJECT_DIR/backend/shared-dto/src/"
             cp -v "$TEMP_DIR/backend/shared-dto/pom.xml" "$PROJECT_DIR/backend/shared-dto/pom.xml"
+            cp -v "$TEMP_DIR/backend/shared-dto/Dockerfile.dto" "$PROJECT_DIR/backend/shared-dto/Dockerfile.dto"
             cp -v "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/pom.xml"
 
             echo "🔍 Verifying file structure..."
