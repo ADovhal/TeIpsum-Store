@@ -1,11 +1,16 @@
-FROM maven:3.8.6-eclipse-temurin-17 AS builder
+# СТАДИЯ СБОРКИ
+FROM maven:3.9.11-eclipse-temurin-17-slim AS builder
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-COPY backend/pom.xml .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY backend/pom.xml ./
 COPY backend/shared-dto/pom.xml ./shared-dto/
 COPY backend/auth-service/pom.xml ./auth-service/
+
 COPY backend/shared-dto/src ./shared-dto/src
 COPY backend/auth-service/src ./auth-service/src
 
@@ -28,6 +33,10 @@ RUN mkdir -p /app/shared-dto && \
 RUN cd auth-service && \
     mvn clean package -DskipTests -Dparent.relativePath=../../pom.xml
 
-FROM eclipse-temurin:17-jre-jammy
+FROM gcr.io/distroless/java17-debian11
+
+WORKDIR /app
+
 COPY --from=builder /app/auth-service/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
