@@ -62,7 +62,8 @@ jobs:
             
             echo "📦 Deploying service: ${{ inputs.SERVICE_NAME }}"
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}"
-            SERVICE_DIR="$PROJECT_DIR/backend/${{ inputs.SERVICE_NAME }}"
+            SERVICE_NAME="${{ inputs.SERVICE_NAME }}"
+            SERVICE_DIR="$PROJECT_DIR/backend/$SERVICE_NAME"
             DEPLOY_ENV="${{ inputs.DEPLOY_ENV }}"
             COMPOSE_FILE="${{ inputs.COMPOSE_FILE }}"
             GIT_BRANCH="${{ inputs.GIT_BRANCH }}"
@@ -80,64 +81,45 @@ jobs:
             echo "⚙️ Setting up precise file checkout..."
             git sparse-checkout init --no-cone
             git sparse-checkout set \
-              "backend/${{ inputs.SERVICE_NAME }}" \
+              "backend/$SERVICE_NAME" \
               "backend/shared-dto/src" \
               "backend/shared-dto/pom.xml" \
               "backend/pom.xml"
             
             git checkout "$GIT_BRANCH"
             
-            echo "📂 Verifying downloaded files structure:"
-            ls -la "$TEMP_DIR/backend/shared-dto/src/main/java/com/teipsum/shared/" || \
-              { echo "❌ Shared DTO sources missing!"; exit 1; }
-            ls -la "$TEMP_DIR/backend/pom.xml" || \
-              { echo "❌ Root pom.xml missing!"; exit 1; }
+            echo "📤 Syncing files to remote project dir..."
+            mkdir -p "$PROJECT_DIR/backend"
+            rsync -av --delete "$TEMP_DIR/backend/$SERVICE_NAME/" "$PROJECT_DIR/backend/$SERVICE_NAME/"
+            mkdir -p "$PROJECT_DIR/backend/shared-dto"
+            rsync -av --delete "$TEMP_DIR/backend/shared-dto/src/" "$PROJECT_DIR/backend/shared-dto/src/"
+            cp -v "$TEMP_DIR/backend/shared-dto/pom.xml" "$PROJECT_DIR/backend/shared-dto/pom.xml"
+            cp -v "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/pom.xml"
 
+            echo "🔍 Verifying file structure..."
+            test -f "$PROJECT_DIR/backend/pom.xml"
+            test -f "$PROJECT_DIR/backend/shared-dto/pom.xml"
 
-            echo "📦 BUILD shared-dto ONLY IF CHANGED"  
+            echo "🧠 Check if shared-dto changed..."
             SHARED_DTO_DIR="$PROJECT_DIR/backend/shared-dto"
             SHARED_DTO_HASH_FILE="$SHARED_DTO_DIR/.build-hash"
 
             NEW_HASH=$(find "$SHARED_DTO_DIR/src" "$SHARED_DTO_DIR/pom.xml" -type f -exec sha256sum {} + | sort | sha256sum | cut -d" " -f1)
-
             echo "🔍 Shared DTO hash: $NEW_HASH"
 
             if [ ! -f "$SHARED_DTO_HASH_FILE" ] || [ "$NEW_HASH" != "$(cat $SHARED_DTO_HASH_FILE)" ]; then
-              echo "🔧 Building shared-dto..."
+              echo "🔨 Building shared-dto..."
               cd "$SHARED_DTO_DIR"
-              mvn clean install -DskipTests -f "$PROJECT_DIR/backend/shared-dto/pom.xml" -Dparent.relativePath=../pom.xml
+              mvn clean install -DskipTests -f "$SHARED_DTO_DIR/pom.xml" -Dparent.relativePath=../pom.xml
               echo "$NEW_HASH" > "$SHARED_DTO_HASH_FILE"
             else
               echo "✅ shared-dto is unchanged. Skipping build."
             fi
 
-            echo "📤 Copying files to target..."
-            mkdir -p "$PROJECT_DIR/backend"
-            
-            rsync -av --delete \
-              "$TEMP_DIR/backend/${{ inputs.SERVICE_NAME }}/" \
-              "$PROJECT_DIR/backend/${{ inputs.SERVICE_NAME }}/"
-            
-            mkdir -p "$PROJECT_DIR/backend/shared-dto"
-            rsync -av --delete \
-              "$TEMP_DIR/backend/shared-dto/src/" \
-              "$PROJECT_DIR/backend/shared-dto/src/"
-            cp -v \
-              "$TEMP_DIR/backend/shared-dto/pom.xml" \
-              "$PROJECT_DIR/backend/shared-dto/pom.xml"
-            
-            cp -v \
-              "$TEMP_DIR/backend/pom.xml" \
-              "$PROJECT_DIR/backend/pom.xml"
+            echo "📦 Caching Maven dependencies..."
+            mkdir -p "$PROJECT_DIR/.m2"
+            rsync -a ~/.m2/ "$PROJECT_DIR/.m2/" || echo "⚠️ Maven cache copy skipped (first run?)"
 
-            echo "🔍 Final structure verification:"
-            find "$PROJECT_DIR/backend/shared-dto/src" -type f | head -10 || \
-              { echo "❌ Final shared-dto src check failed!"; exit 1; }
-            ls -la "$PROJECT_DIR/backend/pom.xml" || \
-              { echo "❌ Final pom.xml check failed!"; exit 1; }
-
-            rm -rf "$TEMP_DIR"
-            
             echo "📁 Creating .env..."
             ENV_PATH="$SERVICE_DIR/.env"
             cat <<EOF > "$ENV_PATH"
@@ -154,7 +136,7 @@ jobs:
             
             echo "🔄 Rebuilding Docker container..."
             cd "$PROJECT_DIR/backend"
-            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" down --remove-orphans --volumes
-            docker compose --env-file "$ENV_PATH" -f "${{ inputs.SERVICE_NAME }}/$COMPOSE_FILE" up -d --build
-            
-            echo "✅ Successfully deployed ${{ inputs.SERVICE_NAME }}!"
+            docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" down --remove-orphans --volumes
+            docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" up -d --build
+
+            echo "✅ Successfully deployed $SERVICE_NAME!"
