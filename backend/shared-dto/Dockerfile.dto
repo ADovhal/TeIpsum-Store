@@ -3,7 +3,11 @@ FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
 WORKDIR /app
 
 COPY pom.xml ./pom.xml
+RUN mvn install -N -DskipTests
+
 COPY shared-dto/pom.xml ./shared-dto/pom.xml
 COPY shared-dto/src ./shared-dto/src
+
+# WORKDIR /app/shared-dto
 
 RUN mvn -f shared-dto/pom.xml install -DskipTests -Dparent.relativePath=../pom.xml

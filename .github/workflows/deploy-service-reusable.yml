@@ -105,7 +105,7 @@ jobs:
             echo "🧠 Check if shared-dto changed..."
             SHARED_DTO_DIR="$PROJECT_DIR/backend/shared-dto"
             SHARED_DTO_HASH_FILE="$SHARED_DTO_DIR/.build-hash"
-            M2_CACHE_DIR="$PROJECT_DIR/backend/.m2"
+            M2_CACHE_DIR="$PROJECT_DIR/backend"
 
             NEW_HASH=$(find "$SHARED_DTO_DIR/src" "$SHARED_DTO_DIR/pom.xml" -type f -exec sha256sum {} + | sort | sha256sum | cut -d" " -f1)
             echo "🔍 Shared DTO hash: $NEW_HASH"
