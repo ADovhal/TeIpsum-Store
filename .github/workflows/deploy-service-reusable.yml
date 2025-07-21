@@ -50,29 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            backend/shared-dto/target
-          key: maven-${{ hashFiles('backend/pom.xml', 'backend/shared-dto/pom.xml') }}
-          restore-keys: |
-            maven-
-
-      - name: Build shared-dto
-        run: |
-          cd backend
-          mvn install -N -DskipTests
-          cd shared-dto
-          mvn clean install -DskipTests -Dparent.relativePath=../pom.xml
-
-      - name: Prepare SSH
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-
       - name: Deploy ${{ inputs.SERVICE_NAME }} to ${{ inputs.DEPLOY_ENV }}
         uses: appleboy/ssh-action@v1.2.2
         with:
