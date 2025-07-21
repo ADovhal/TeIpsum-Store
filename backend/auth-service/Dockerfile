@@ -32,7 +32,7 @@
 
 # ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
-FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
+FROM maven:3.8.4-openjdk-17 AS build
 
 WORKDIR /app
 
@@ -45,8 +45,8 @@ COPY ./src ./auth-service/src
 
 RUN mvn -f pom.xml package -pl auth-service -am -DskipTests
 
-FROM gcr.io/distroless/java17-debian11
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
-COPY --from=builder /app/auth-service/target/*.jar app.jar
+COPY --from=build /app/auth-service/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
