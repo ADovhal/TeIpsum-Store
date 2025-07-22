@@ -14,6 +14,6 @@ RUN mvn -f ${SERVICE_NAME}/pom.xml -DskipTests package
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-COPY --from=builder /app/${SERVICE_NAME}/target/*.jar app.jar
+COPY --from=builder /app/auth-service/target/*.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
