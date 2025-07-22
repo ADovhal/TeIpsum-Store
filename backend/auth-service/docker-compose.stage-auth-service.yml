@@ -4,6 +4,8 @@ services:
     build:
       context: ../..
       dockerfile: backend/auth-service/Dockerfile
+      args:
+        SERVICE_NAME: auth-service
     ports: ['22093:${SERVICE_SERVER_PORT}']
     image: stage-auth-service:latest
     env_file: .env
