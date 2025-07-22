@@ -1,8 +1,8 @@
-# 🛒 Webform — Frontend do WebShopOnline
+# 🛒 Frontend do TeIpsum
 
 ## 📋 Opis projektu
 
-**Webform** to część frontendowa projektu **WebShopOnline**, stworzona przy użyciu nowoczesnych technologii frontendowych (**React**, **Redux**, **JavaScript**).  
+To część frontendowa projektu **TeIpsum**, stworzona przy użyciu nowoczesnych technologii frontendowych (**React**, **Redux**, **JavaScript**).  
 Aplikacja umożliwia wyświetlanie produktów sklepu oraz uwierzytelnianie użytkowników, z planowanym rozszerzeniem o zarządzanie koszykiem, zamówieniami i płatnościami poprzez komunikację z backendem.
 
 ---
@@ -33,7 +33,7 @@ Aplikacja umożliwia wyświetlanie produktów sklepu oraz uwierzytelnianie użyt
 ## 📂 Struktura katalogów
 
 ```
-webform/
+frontend/
 ├── public/
 │   ├── index.html
 │   └── manifest.json
