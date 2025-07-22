@@ -5,7 +5,7 @@ services:
       context: ../..
       dockerfile: backend/user-service/Dockerfile
       args:
-        SERVICE_NAME: auth-service
+        SERVICE_NAME: user-service
     ports: ['22094:9095']
     image: stage-user-service:latest
     env_file: .env
