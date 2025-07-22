@@ -5,8 +5,8 @@ WORKDIR /app
 
 ARG SERVICE_NAME
 
-COPY ../${SERVICE_NAME}/pom.xml ${SERVICE_NAME}/pom.xml
-COPY ../${SERVICE_NAME}/src ${SERVICE_NAME}/src
+COPY backend/${SERVICE_NAME}/pom.xml ${SERVICE_NAME}/pom.xml
+COPY backend/${SERVICE_NAME}/src ${SERVICE_NAME}/src
 COPY --from=shared /root/.m2 /root/.m2
 
 RUN mvn -f ${SERVICE_NAME}/pom.xml -DskipTests package
