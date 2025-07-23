@@ -38,13 +38,12 @@ spring:
 logging:
 #  config: classpath:log4j2.xml
   level:
-#    com.teipsum.userservice: ${USER_LOG_LEVEL:debug}
+#    com.teipsum.userservice: debug
     org.springframework.security: info
     org.hibernate.SQL: warn
 
 jwt:
   secret: ${JWT_SECRET}
-#  refresh-secret: ${JWT_REFRESH_SECRET}
 
 cors:
   allowed:
