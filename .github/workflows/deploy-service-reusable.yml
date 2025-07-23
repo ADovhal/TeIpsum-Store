@@ -108,7 +108,7 @@ jobs:
               mkdir -p "$PROJECT_DIR/backend/$module"
               rsync -av --delete "$TEMP_DIR/backend/$module/src/" "$PROJECT_DIR/backend/$module/src/"
               cp -v "$TEMP_DIR/backend/$module/pom.xml" "$PROJECT_DIR/backend/$module/pom.xml"
-              cp -v "$TEMP_DIR/backend/$module/Dockerfile.dto" "$PROJECT_DIR/backend/$module/Dockerfile.dto"
+              cp -v "$TEMP_DIR/backend/$module/Dockerfile" "$PROJECT_DIR/backend/$module/Dockerfile"
             done
 
             # Копируем parent pom
