@@ -6,6 +6,10 @@ on:
       SERVICE_NAME:
         required: true
         type: string
+      SHARED_MODULES:
+        required: false
+        type: string
+        default: ""
       DEPLOY_ENV:
         required: true
         type: string
@@ -39,9 +43,9 @@ on:
       SPRING_KAFKA_BOOTSTRAP_SERVERS:
         required: true
       JWT_SECRET:
-        required: true
+        required: false
       JWT_REFRESH_SECRET:
-        required: true
+        required: false
       CORS_ALLOWED_ORIGINS:
         required: true
 
@@ -79,58 +83,77 @@ jobs:
             cd "$TEMP_DIR"
             
             echo "⚙️ Setting up precise file checkout..."
+
+            # Получаем список SHARED_MODULES из inputs
+            IFS=',' read -ra SHARED <<< "${{ inputs.SHARED_MODULES }}"
+
+            # Формируем список путей для sparse-checkout
+            MODULES="backend/$SERVICE_NAME backend/pom.xml"
+            for module in "${SHARED[@]}"; do
+              MODULES="$MODULES backend/$module/src backend/$module/pom.xml backend/$module/Dockerfile.dto"
+            done
+
             git sparse-checkout init --no-cone
-            git sparse-checkout set \
-              "backend/$SERVICE_NAME" \
-              "backend/shared-dto/src" \
-              "backend/shared-dto/pom.xml" \
-              "backend/shared-dto/Dockerfile.dto" \
-              "backend/pom.xml"
-            
+            git sparse-checkout set $MODULES
             git checkout "$GIT_BRANCH"
-            
+
             echo "📤 Syncing files to remote project dir..."
-            mkdir -p "$PROJECT_DIR/backend"
+
+            # Синхронизируем основной сервис
+            mkdir -p "$PROJECT_DIR/backend/$SERVICE_NAME"
             rsync -av --delete "$TEMP_DIR/backend/$SERVICE_NAME/" "$PROJECT_DIR/backend/$SERVICE_NAME/"
-            mkdir -p "$PROJECT_DIR/backend/shared-dto"
-            rsync -av --delete "$TEMP_DIR/backend/shared-dto/src/" "$PROJECT_DIR/backend/shared-dto/src/"
-            cp -v "$TEMP_DIR/backend/shared-dto/pom.xml" "$PROJECT_DIR/backend/shared-dto/pom.xml"
-            cp -v "$TEMP_DIR/backend/shared-dto/Dockerfile.dto" "$PROJECT_DIR/backend/shared-dto/Dockerfile.dto"
+
+            # Синхронизируем shared-модули
+            for module in "${SHARED[@]}"; do
+              mkdir -p "$PROJECT_DIR/backend/$module"
+              rsync -av --delete "$TEMP_DIR/backend/$module/src/" "$PROJECT_DIR/backend/$module/src/"
+              cp -v "$TEMP_DIR/backend/$module/pom.xml" "$PROJECT_DIR/backend/$module/pom.xml"
+              cp -v "$TEMP_DIR/backend/$module/Dockerfile.dto" "$PROJECT_DIR/backend/$module/Dockerfile.dto"
+            done
+
+            # Копируем parent pom
             cp -v "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/pom.xml"
 
             echo "🔍 Verifying file structure..."
             test -f "$PROJECT_DIR/backend/pom.xml"
-            test -f "$PROJECT_DIR/backend/shared-dto/pom.xml"
 
+            for module in "${SHARED[@]}"; do
+              test -f "$PROJECT_DIR/backend/$module/pom.xml"
+            done
 
-            echo "🧠 Check if parent POM or shared-dto changed..."
-            SHARED_DTO_DIR="$PROJECT_DIR/backend/shared-dto"
+            echo "🧠 Checking and building shared modules if needed..."
+
+            POM_HASH=$(sha256sum "$PROJECT_DIR/backend/pom.xml" | cut -d' ' -f1)
             M2_CACHE_DIR="$PROJECT_DIR/backend"
-            COMBINED_HASH_FILE="$PROJECT_DIR/backend/.shared-dto-parent.hash"
 
-            # Хэши
-            PARENT_HASH=$(sha256sum "$PROJECT_DIR/backend/pom.xml" | cut -d" " -f1)
-            SHARED_HASH=$(find "$SHARED_DTO_DIR/src" "$SHARED_DTO_DIR/pom.xml" -type f -exec sha256sum {} + | sort | sha256sum | cut -d" " -f1)
-            COMBINED_HASH=$(echo "$PARENT_HASH$SHARED_HASH" | sha256sum | cut -d" " -f1)
+            for module in "${SHARED[@]}"; do
+              MODULE_DIR="$PROJECT_DIR/backend/$module"
+              HASH_FILE="$PROJECT_DIR/backend/.${module//\//-}.hash"
 
-            echo "🔍 Combined hash: $COMBINED_HASH"
+              echo "🔍 Processing $module"
 
-            if [ ! -f "$COMBINED_HASH_FILE" ] || [ "$COMBINED_HASH" != "$(cat $COMBINED_HASH_FILE)" ]; then
-              echo "🔨 Building shared-dto + parent in Docker..."
-              cd "$PROJECT_DIR/backend"
-              docker build -f shared-dto/Dockerfile.dto -t shared-dto-builder .
+              SHARED_HASH=$(find "$MODULE_DIR/src" "$MODULE_DIR/pom.xml" -type f -exec sha256sum {} + | sort | sha256sum | cut -d" " -f1)
+              COMBINED_HASH=$(echo "$POM_HASH$SHARED_HASH" | sha256sum | cut -d" " -f1)
+
+              echo "🔍 Combined hash for $module: $COMBINED_HASH"
+
+              if [ ! -f "$HASH_FILE" ] || [ "$COMBINED_HASH" != "$(cat $HASH_FILE)" ]; then
+                echo "🔨 Building $module in Docker..."
+                cd "$PROJECT_DIR/backend"
+                docker build -f "$module/Dockerfile.dto" -t "${module//\//-}-builder" .
                     
-              echo "📦 Extracting Maven .m2 repo..."
-              docker rm -f tmp-shared-dto 2>/dev/null || true
-              docker create --name tmp-shared-dto shared-dto-builder
-              mkdir -p "$M2_CACHE_DIR"
-              docker cp tmp-shared-dto:/root/.m2 "$M2_CACHE_DIR"
-              docker rm -f tmp-shared-dto
-                    
-              echo "$COMBINED_HASH" > "$COMBINED_HASH_FILE"
-            else
-              echo "✅ parent/shared-dto unchanged. Skipping build."
-            fi
+                echo "📦 Extracting Maven .m2 cache for $module..."
+                docker rm -f tmp-${module//\//-} 2>/dev/null || true
+                docker create --name tmp-${module//\//-} "${module//\//-}-builder"
+                mkdir -p "$M2_CACHE_DIR"
+                docker cp tmp-${module//\//-}:/root/.m2 "$M2_CACHE_DIR"
+                docker rm -f tmp-${module//\//-}
+                
+                echo "$COMBINED_HASH" > "$HASH_FILE"
+              else
+                echo "✅ $module unchanged. Skipping build."
+              fi
+            done
 
             echo "📁 Creating .env..."
             ENV_PATH="$SERVICE_DIR/.env"
@@ -140,11 +163,12 @@ jobs:
             DB_URL=${{ secrets.DB_URL }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
             CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}
             SPRING_KAFKA_BOOTSTRAP_SERVERS=${{ secrets.SPRING_KAFKA_BOOTSTRAP_SERVERS }}
             EOF
+
+            [ -n "${{ secrets.JWT_SECRET }}" ] && echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> "$ENV_PATH"
+            [ -n "${{ secrets.JWT_REFRESH_SECRET }}" ] && echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> "$ENV_PATH"
             
             echo "🔄 Rebuilding Docker container..."
             cd "$PROJECT_DIR/backend"
