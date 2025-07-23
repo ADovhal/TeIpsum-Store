@@ -90,7 +90,7 @@ jobs:
             # Формируем список путей для sparse-checkout
             MODULES="backend/$SERVICE_NAME backend/pom.xml"
             for module in "${SHARED[@]}"; do
-              MODULES="$MODULES backend/$module/src backend/$module/pom.xml backend/$module/Dockerfile.dto"
+              MODULES="$MODULES backend/$module/src backend/$module/pom.xml backend/$module/Dockerfile"
             done
 
             git sparse-checkout init --no-cone
@@ -141,7 +141,7 @@ jobs:
                 echo "🔨 Building $module in Docker..."
                 cd "$PROJECT_DIR/backend"
                 docker build -f "$module/Dockerfile.dto" -t "${module//\//-}-builder" .
-                    
+
                 echo "📦 Extracting Maven .m2 cache for $module..."
                 docker rm -f tmp-${module//\//-} 2>/dev/null || true
                 docker create --name tmp-${module//\//-} "${module//\//-}-builder"

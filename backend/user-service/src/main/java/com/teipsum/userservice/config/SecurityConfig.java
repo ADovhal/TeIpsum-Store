@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -66,9 +67,9 @@ public class SecurityConfig {
             http.addFilterBefore(new OncePerRequestFilter() {
                 @Override
                 protected void doFilterInternal(
-                    @org.springframework.lang.NonNull HttpServletRequest request,
-                    @org.springframework.lang.NonNull HttpServletResponse response,
-                    @org.springframework.lang.NonNull FilterChain filterChain
+                    @NonNull HttpServletRequest request,
+                    @NonNull HttpServletResponse response,
+                    @NonNull FilterChain filterChain
                 ) throws ServletException, IOException {
                     System.out.println(">>> Authorization Header: " + request.getHeader("Authorization"));
                     filterChain.doFilter(request, response);
