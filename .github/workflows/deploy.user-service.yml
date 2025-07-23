@@ -13,6 +13,7 @@ jobs:
         uses: ./.github/workflows/deploy-service-reusable.yml
         with:
             SERVICE_NAME: user-service
+            SHARED_MODULES: shared-dto
             DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
             GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
             COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-user-service.yml
