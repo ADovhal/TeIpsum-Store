@@ -11,7 +11,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-	<groupId>com.teipsum</groupId>
+  <groupId>com.teipsum</groupId>
   <artifactId>teipsum-shared-dto</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
@@ -23,7 +23,7 @@
 			<name>Andrii Dovhal</name>
 			<email>a.dovhal.std@gmail.com</email>
 		</developer>
-	</developers>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
