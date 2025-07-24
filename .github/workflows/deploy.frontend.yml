@@ -40,7 +40,7 @@ jobs:
             git clone --branch $GIT_BRANCH --depth 1 --filter=blob:none \
               --sparse https://github.com/${{ github.repository }} $TEMP_DIR
             cd $TEMP_DIR
-            git sparse-checkout set frontend/**
+            git sparse-checkout set frontend/
 
             mkdir -p $FRONTEND_DIR
             rsync -av --delete $TEMP_DIR/frontend/ $FRONTEND_DIR/
