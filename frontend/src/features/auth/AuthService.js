@@ -34,7 +34,6 @@ export const authLoginUser = async (credentials) => {
 export const refreshAccessToken = async () => {
     try {
         const response = await apiAuth.post(
-            // `${process.env.REACT_APP_API_URL_TEST}/auth/refresh`,
             '/auth/refresh',
             null,
             {
