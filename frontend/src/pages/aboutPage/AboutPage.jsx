@@ -42,7 +42,7 @@ const HomePage = () => {
 
 
       setIsSticky(shouldStick);
-    //   setShouldHide(shouldHideSticky);
+    //   setShouldHide(shouldHideSticky); 
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
