@@ -4,7 +4,7 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [],
-    isOpen: false, // Для отображения всплывающей корзины
+    isOpen: false,
   },
   reducers: {
     addToCart(state, action) {
