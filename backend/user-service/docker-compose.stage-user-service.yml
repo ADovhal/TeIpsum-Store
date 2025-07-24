@@ -6,7 +6,7 @@ services:
       dockerfile: backend/user-service/Dockerfile
       args:
         SERVICE_NAME: user-service
-    ports: ['22094:9095']
+    ports: ['22094:${SERVICE_SERVER_PORT}']
     image: stage-user-service:latest
     env_file: .env
     networks: [stage-net]
