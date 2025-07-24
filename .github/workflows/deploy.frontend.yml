@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'frontend/**'
+          sparse-checkout: 'frontend/'
           fetch-depth: 1
 
       - name: Deploy Frontend
