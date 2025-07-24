@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
 import styles from './AboutPage.module.css';
 import { motion } from 'framer-motion';
 import { HeaderHeightContext } from '../../context/HeaderHeightContext';
 import lavresLeft from '../../assets/images/lavres_left.png';
 import lavresRight from '../../assets/images/lavres_right.png';
 
-const HomePage = () => {
+const AboutPage = () => {
   const aboutRef = useRef(null);
   const stickyHeaderRef = useRef(null);
   const productsRef = useRef(null);
@@ -92,4 +92,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default AboutPage;
