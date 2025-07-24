@@ -52,7 +52,7 @@ jobs:
             echo "📁 Writing frontend .env file"
             echo "REACT_APP_API_URL=${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}" > .env
 
-            docker compose -f $COMPOSE_FILE down
+            docker compose -f $COMPOSE_FILE down --remove-orphans --volumes
             docker compose -f $COMPOSE_FILE up -d --build
 
             echo "✅ Frontend deployed!"
