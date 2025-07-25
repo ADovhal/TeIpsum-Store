@@ -31,6 +31,9 @@ public class UserProfile {
     @Column(nullable = false)
     private LocalDate dob;
 
+    @Column
+    private Boolean isAdmin;
+
     @Column(nullable = false, updatable = false)
     private LocalDate joinDate = LocalDate.now();
 

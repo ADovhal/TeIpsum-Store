@@ -25,7 +25,8 @@ public class UserService {
             String name,
             String surname,
             String phone,
-            LocalDate dob
+            LocalDate dob,
+            Boolean isAdmin
     ) {
         if (userRepository.existsById(userId)) {
             throw new IllegalArgumentException("User profile already exists");
@@ -38,6 +39,7 @@ public class UserService {
         profile.setSurname(surname);
         profile.setPhone(phone);
         profile.setDob(dob);
+        profile.setIsAdmin(isAdmin);
         profile.setJoinDate(LocalDate.now());
         profile.setLastLoginDate(LocalDateTime.now());
         userRepository.save(profile);

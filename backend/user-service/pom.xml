@@ -53,6 +53,10 @@
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.teipsum</groupId>
+            <artifactId>teipsum-shared-exceptions</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
