@@ -30,118 +30,118 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request,
-//                                    HttpServletResponse response,
-//                                    FilterChain filterChain) throws IOException, ServletException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws IOException, ServletException {
+
+        final String requestUri = request.getRequestURI();
+        System.out.println("\n=== JWT Filter Start ===");
+        System.out.println("Processing request to: " + requestUri);
+
+        final String authHeader = request.getHeader(AUTH_HEADER);
+        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+            System.out.println("No Bearer token found, passing to next filter");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        try {
+            final String token = authHeader.substring(BEARER_PREFIX.length());
+            String path = request.getRequestURI();
+            System.out.println("JWT token found: " + token.substring(0, 10) + "...");
+
+            if (path.contains("/refresh")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            final TokenType tokenType = jwtUtil.detectTokenTypeX(token, requestUri);
+            System.out.println("Detected token type: " + tokenType);
+
+            if (requestUri.contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
+                System.out.println("Admin endpoint requires ADMIN token");
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required");
+                return;
+            }
+
+            final String email = jwtUtil.extractEmail(token, tokenType);
+            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
+            System.out.println("Authenticating user: " + email + " with roles: " + roles);
+
+
+            DecodedJWT jwt = jwtUtil.verifyAndDecodeToken(token, tokenType);
+            if (jwt.getExpiresAt().before(new Date())) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                return;
+            }
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    jwt.getSubject(),
+                    null,
+                    jwt.getClaim("roles").asList(String.class).stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList())
+            );
+
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authToken);
+            SecurityContextHolder.setContext(context);
+
+            System.out.println("SecurityContext updated for: " + email);
+
+            filterChain.doFilter(request, response);
+
+        } catch (JWTVerificationException e) {
+            System.out.println("JWT verification failed: " + e.getMessage());
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+        } catch (Exception e) {
+            System.out.println("Unexpected error: " + e.getMessage());
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authentication error");
+        } finally {
+            System.out.println("=== JWT Filter End ===");
+        }
+    }
+//@Override
+//protected void doFilterInternal(HttpServletRequest request,
+//                                HttpServletResponse response,
+//                                FilterChain filterChain) throws IOException, ServletException {
 //
-//        final String requestUri = request.getRequestURI();
-//        System.out.println("\n=== JWT Filter Start ===");
-//        System.out.println("Processing request to: " + requestUri);
+//    System.out.println("\n=== JWT FILTER HIT ===");
+//    System.out.println("Request to: " + request.getRequestURI());
 //
-//        final String authHeader = request.getHeader(AUTH_HEADER);
-//        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-//            System.out.println("No Bearer token found, passing to next filter");
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-//
-//        try {
-//            final String token = authHeader.substring(BEARER_PREFIX.length());
-//            String path = request.getRequestURI();
-//            System.out.println("JWT token found: " + token.substring(0, 10) + "...");
-//
-//            if (path.contains("/refresh")) {
-//                filterChain.doFilter(request, response);
-//                return;
-//            }
-//
-//            final TokenType tokenType = jwtUtil.detectTokenTypeX(token, requestUri);
-//            System.out.println("Detected token type: " + tokenType);
-//
-//            if (requestUri.contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
-//                System.out.println("Admin endpoint requires ADMIN token");
-//                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required");
-//                return;
-//            }
-//
-//            final String email = jwtUtil.extractEmail(token, tokenType);
-//            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
-//            System.out.println("Authenticating user: " + email + " with roles: " + roles);
-//
-//
-//            DecodedJWT jwt = jwtUtil.verifyAndDecodeToken(token, tokenType);
-//            if (jwt.getExpiresAt().before(new Date())) {
-//                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
-//                return;
-//            }
-//
-//            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-//                    jwt.getSubject(),
-//                    null,
-//                    jwt.getClaim("roles").asList(String.class).stream()
-//                            .map(SimpleGrantedAuthority::new)
-//                            .collect(Collectors.toList())
-//            );
-//
-//            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//            SecurityContext context = SecurityContextHolder.createEmptyContext();
-//            context.setAuthentication(authToken);
-//            SecurityContextHolder.setContext(context);
-//
-//            System.out.println("SecurityContext updated for: " + email);
-//
-//            filterChain.doFilter(request, response);
-//
-//        } catch (JWTVerificationException e) {
-//            System.out.println("JWT verification failed: " + e.getMessage());
-//            SecurityContextHolder.clearContext();
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-//        } catch (Exception e) {
-//            System.out.println("Unexpected error: " + e.getMessage());
-//            SecurityContextHolder.clearContext();
-//            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authentication error");
-//        } finally {
-//            System.out.println("=== JWT Filter End ===");
-//        }
+//    String authHeader = request.getHeader("Authorization");
+//    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//        System.out.println("No Bearer token");
+//        filterChain.doFilter(request, response);
+//        return;
 //    }
-@Override
-protected void doFilterInternal(HttpServletRequest request,
-                                HttpServletResponse response,
-                                FilterChain filterChain) throws IOException, ServletException {
-
-    System.out.println("\n=== JWT FILTER HIT ===");
-    System.out.println("Request to: " + request.getRequestURI());
-
-    String authHeader = request.getHeader("Authorization");
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-        System.out.println("No Bearer token");
-        filterChain.doFilter(request, response);
-        return;
-    }
-
-    try {
-        String token = authHeader.substring(7);
-        System.out.println("Token: " + token.substring(0, 10) + "...");
-
-        DecodedJWT jwt = JWT.decode(token);
-
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                jwt.getSubject(),
-                null,
-                jwt.getClaim("roles").asList(String.class).stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        System.out.println("Auth set for: " + auth);
-
-        filterChain.doFilter(request, response);
-    } catch (Exception e) {
-        System.out.println("JWT ERROR: " + e.getMessage());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-    }
-}
+//
+//    try {
+//        String token = authHeader.substring(7);
+//        System.out.println("Token: " + token.substring(0, 10) + "...");
+//
+//        DecodedJWT jwt = JWT.decode(token);
+//
+//        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+//                jwt.getSubject(),
+//                null,
+//                jwt.getClaim("roles").asList(String.class).stream()
+//                        .map(SimpleGrantedAuthority::new)
+//                        .collect(Collectors.toList())
+//        );
+//
+//        SecurityContextHolder.getContext().setAuthentication(auth);
+//        System.out.println("Auth set for: " + auth);
+//
+//        filterChain.doFilter(request, response);
+//    } catch (Exception e) {
+//        System.out.println("JWT ERROR: " + e.getMessage());
+//        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+//    }
+//}
 }
