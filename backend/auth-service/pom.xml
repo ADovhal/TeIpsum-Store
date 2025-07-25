@@ -52,7 +52,6 @@
         <dependency>
             <groupId>com.teipsum</groupId>
             <artifactId>teipsum-shared-exceptions</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
