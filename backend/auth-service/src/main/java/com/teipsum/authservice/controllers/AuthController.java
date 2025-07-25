@@ -54,7 +54,7 @@ public class AuthController {
      * @return a ResponseEntity containing the access token or an error message
      */
     @PostMapping("/register_admin")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest request, HttpServletResponse response) {
         try {
             AuthResponse authResponse = authService.registerAdmin(request);
