@@ -1,9 +1,9 @@
-package com.teipsum.shared.product.exception.handler;
+package com.teipsum.shared.exceptions.handler;
 
-import com.teipsum.shared.product.exception.ErrorResponse;
-import com.teipsum.shared.product.exception.InvalidSortPropertyException;
-import com.teipsum.shared.product.exception.ProductNotFoundException;
-import com.teipsum.shared.product.exception.ValidationError;
+import com.teipsum.shared.exceptions.ErrorResponse;
+import com.teipsum.shared.exceptions.InvalidSortPropertyException;
+import com.teipsum.shared.exceptions.ProductNotFoundException;
+import com.teipsum.shared.exceptions.ValidationError;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

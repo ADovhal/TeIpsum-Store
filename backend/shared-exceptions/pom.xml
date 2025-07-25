@@ -11,11 +11,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.teipsum</groupId>
-    <artifactId>teipsum-shared-product-dto</artifactId>
+    <artifactId>teipsum-shared-exceptions</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>
-    <name>Shared Product DTO</name>
+    <name>Shared Exceptions</name>
 
     <developers>
         <developer>
@@ -38,11 +37,6 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.teipsum</groupId>
-            <artifactId>teipsum-shared-exceptions</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>

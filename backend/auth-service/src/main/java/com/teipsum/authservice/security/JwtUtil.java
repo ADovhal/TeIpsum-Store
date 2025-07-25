@@ -4,84 +4,98 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.teipsum.authservice.model.TokenType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
-
-    private final Algorithm accessTokenAlgorithm;
-    private final Algorithm refreshTokenAlgorithm;
+    private final Map<TokenType, Algorithm> algorithms;
+    private final Map<TokenType, Long> tokenExpirations;
 
     public JwtUtil(
             @Value("${jwt.secret}") String accessSecretKey,
-            @Value("${jwt.refresh-secret}") String refreshSecretKey
+            @Value("${jwt.refresh-secret}") String refreshSecretKey,
+            @Value("${jwt.admin-secret}") String adminSecretKey,
+            @Value("${jwt.admin-refresh-secret}") String adminRefreshSecretKey
     ) {
-        this.accessTokenAlgorithm = Algorithm.HMAC256(accessSecretKey);
-        this.refreshTokenAlgorithm = Algorithm.HMAC256(refreshSecretKey);
+        algorithms = Map.of(
+                TokenType.USER_ACCESS, Algorithm.HMAC256(accessSecretKey),
+                TokenType.USER_REFRESH, Algorithm.HMAC256(refreshSecretKey),
+                TokenType.ADMIN_ACCESS, Algorithm.HMAC256(adminSecretKey),
+                TokenType.ADMIN_REFRESH, Algorithm.HMAC256(adminRefreshSecretKey)
+        );
+
+        tokenExpirations = Map.of(
+                TokenType.USER_ACCESS, 15 * 60 * 1000L, // 15 mins
+                TokenType.USER_REFRESH, 7 * 24 * 60 * 60 * 1000L, // 7 days
+                TokenType.ADMIN_ACCESS, 15 * 60 * 1000L,
+                TokenType.ADMIN_REFRESH, 7 * 24 * 60 * 60 * 1000L
+        );
     }
 
-    public String createAccessToken(String email, List<String> roles) {
+    public String createToken(String email, List<String> roles, TokenType type) {
         return JWT.create()
                 .withSubject(email)
                 .withClaim("roles", roles)
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
-                .sign(accessTokenAlgorithm);
+                .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpirations.get(type)))
+                .sign(algorithms.get(type));
     }
 
-    public String createRefreshToken(String email) {
-        return JWT.create()
-                .withSubject(email)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000))
-                .sign(refreshTokenAlgorithm);
-    }
-
-    public String extractEmailFromAccessToken(String token) {
+    public String extractEmail(String token, TokenType type) {
         try {
-            DecodedJWT jwt = JWT.require(accessTokenAlgorithm)
+            return JWT.require(algorithms.get(type))
                     .build()
-                    .verify(token);
-            return jwt.getSubject();
+                    .verify(token)
+                    .getSubject();
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("Invalid access token", e);
+            throw new RuntimeException("Invalid " + type.name().toLowerCase().replace('_', ' ') + " token", e);
         }
     }
 
-    public String extractEmailFromRefreshToken(String token) {
+    public List<String> extractRoles(String token, TokenType type) {
         try {
-            DecodedJWT jwt = JWT.require(refreshTokenAlgorithm)
+            DecodedJWT jwt = JWT.require(algorithms.get(type))
                     .build()
                     .verify(token);
-            return jwt.getSubject();
+            return jwt.getClaim("roles").asList(String.class);
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("Invalid refresh token", e);
+            throw new RuntimeException("Failed to extract roles from token", e);
         }
     }
 
-    public boolean isAccessTokenExpired(String token) {
+    public boolean isTokenExpired(String token, TokenType type) {
         try {
-            DecodedJWT jwt = JWT.require(accessTokenAlgorithm)
+            return JWT.require(algorithms.get(type))
                     .build()
-                    .verify(token);
-            return jwt.getExpiresAt().before(new Date());
+                    .verify(token)
+                    .getExpiresAt()
+                    .before(new Date());
         } catch (JWTVerificationException e) {
             return true;
         }
     }
 
-    public boolean isRefreshTokenExpired(String token) {
-        try {
-            DecodedJWT jwt = JWT.require(refreshTokenAlgorithm)
-                    .build()
-                    .verify(token);
-            return jwt.getExpiresAt().before(new Date());
-        } catch (JWTVerificationException e) {
-            return true;
+    public TokenType detectTokenType(String token) {
+        for (TokenType adminType : List.of(TokenType.ADMIN_ACCESS, TokenType.ADMIN_REFRESH)) {
+            try {
+                JWT.require(algorithms.get(adminType)).build().verify(token);
+                return adminType;
+            } catch (JWTVerificationException ignored) {}
         }
+
+        for (TokenType userType : List.of(TokenType.USER_ACCESS, TokenType.USER_REFRESH)) {
+            try {
+                JWT.require(algorithms.get(userType)).build().verify(token);
+                return userType;
+            } catch (JWTVerificationException ignored) {}
+        }
+
+        throw new RuntimeException("Invalid token type");
     }
 }
