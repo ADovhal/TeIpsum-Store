@@ -17,7 +17,7 @@ public class RoleInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Arrays.stream(RoleName.values()).forEach(roleName -> {
-            roleRepository.findByName(roleName.name())
+            roleRepository.findByRoleValue(roleName.getValue())
                     .orElseGet(() -> roleRepository.save(new Role(roleName)));
         });
     }
