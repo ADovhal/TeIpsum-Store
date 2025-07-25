@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String token = authHeader.substring(BEARER_PREFIX.length());
-            TokenType tokenType = determineTokenType(request);
+            TokenType tokenType = jwtUtil.detectTokenTypeX(token, request.getRequestURI());
 
             String email = jwtUtil.extractEmail(token, tokenType);
             List<String> roles = jwtUtil.extractRoles(token, tokenType);
@@ -65,11 +65,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private TokenType determineTokenType(HttpServletRequest request) {
-        return request.getRequestURI().contains("/admin/")
-                ? TokenType.ADMIN_ACCESS
-                : TokenType.USER_ACCESS;
     }
 }

@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.teipsum.authservice.model.TokenType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -39,9 +40,14 @@ public class JwtUtil {
     }
 
     public String createToken(String email, List<String> roles, TokenType type) {
+
+        List<String> prefixedRoles = roles.stream()
+                .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                .toList();
+
         return JWT.create()
                 .withSubject(email)
-                .withClaim("roles", roles)
+                .withClaim("roles", prefixedRoles)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpirations.get(type)))
                 .sign(algorithms.get(type));
@@ -82,6 +88,18 @@ public class JwtUtil {
     }
 
     public TokenType detectTokenType(String token) {
+        return detectTokenTypeX(token, null);
+    }
+
+    public TokenType detectTokenTypeX(String token, @Nullable String path) {
+        TokenType detectedType = detectTokenTypeInternal(token);
+        if (path != null) {
+            validateTokenForPath(detectedType, path);
+        }
+        return detectedType;
+    }
+
+    public TokenType detectTokenTypeInternal(String token) {
         for (TokenType adminType : List.of(TokenType.ADMIN_ACCESS, TokenType.ADMIN_REFRESH)) {
             try {
                 JWT.require(algorithms.get(adminType)).build().verify(token);
@@ -97,5 +115,17 @@ public class JwtUtil {
         }
 
         throw new RuntimeException("Invalid token type");
+    }
+
+
+
+    private void validateTokenForPath(TokenType tokenType, String path) {
+        if (path.contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
+            throw new JWTVerificationException("Admin endpoint requires admin token");
+        }
+
+        if (path.contains("/refresh") && !tokenType.name().endsWith("_REFRESH")) {
+            throw new JWTVerificationException("Refresh endpoint requires refresh token");
+        }
     }
 }
