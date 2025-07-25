@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,8 +58,8 @@ public class AuthController {
     public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest request, HttpServletResponse response) {
         try {
             AuthResponse authResponse = authService.registerAdmin(request);
-            ResponseCookie refreshTokenCookie = createRefreshTokenCookie(authResponse.getRefreshToken());
-            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+//            ResponseCookie refreshTokenCookie = createRefreshTokenCookie(authResponse.getRefreshToken());
+//            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
             return ResponseEntity.ok(Map.of(
                     "accessToken", authResponse.getAccessToken()
@@ -67,6 +69,16 @@ public class AuthController {
                     .status(HttpStatus.CONFLICT)
                     .body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("/debug/auth")
+    public ResponseEntity<?> debugAuth() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(Map.of(
+                "name", auth.getName(),
+                "roles", auth.getAuthorities(),
+                "authenticated", auth.isAuthenticated()
+        ));
     }
 
     @PostMapping("/login")
