@@ -31,14 +31,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
 
+        System.out.println("=== JWT Filter Start ===");
+        System.out.println("Request URI: " + request.getRequestURI());
+
         String authHeader = request.getHeader(AUTH_HEADER);
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+            System.out.println("No Bearer token found");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
             String token = authHeader.substring(BEARER_PREFIX.length());
+            System.out.println("Token received: " + token.substring(0, 10) + "...");
             TokenType tokenType = jwtUtil.detectTokenTypeX(token, request.getRequestURI());
 
             if (request.getRequestURI().contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
