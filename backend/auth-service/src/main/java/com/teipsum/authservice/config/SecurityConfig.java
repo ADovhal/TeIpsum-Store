@@ -53,16 +53,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh").permitAll()
-//                        .requestMatchers("/api/auth/register_admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                // .oauth2ResourceServer(oauth2 -> oauth2
-                //         .jwt(jwt -> jwt
-                //                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                //         )
-                // )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -89,14 +83,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public DaoAuthenticationProvider daoAuthenticationProvider() {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder());
-//        return authProvider;
-//    }
-//
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -106,24 +92,5 @@ public class SecurityConfig {
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtUtil);
     }
-
-    // @Bean
-    // public JwtDecoder jwtDecoder(@Value("${jwt.secret}") String secretKey) {
-    //     return NimbusJwtDecoder.withSecretKey(
-    //             new SecretKeySpec(secretKey.getBytes(), "HS256")
-    //     ).build();
-    // }
-
-    // @Bean
-    // public JwtAuthenticationConverter jwtAuthenticationConverter() {
-    //     JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-    //     converter.setAuthoritiesClaimName("roles");
-    //     converter.setAuthorityPrefix("");
-
-    //     JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
-    //     jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-    //     return jwtConverter;
-    // }
-
 }
 

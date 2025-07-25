@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-//
+
         try {
             String token = authHeader.substring(BEARER_PREFIX.length());
             System.out.println("Token received: " + token.substring(0, 10) + "...");

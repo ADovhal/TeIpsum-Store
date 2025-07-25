@@ -51,7 +51,7 @@ public class AuthService {
             return generateTokens(user);
         }
 
-        @PreAuthorize("hasRole('ROLE_ADMIN')")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
         public AuthResponse registerAdmin(RegisterRequest request) {
             if (userRepository.existsByEmail(request.email())) {
                 throw new EmailExistsException(request.email());
