@@ -20,23 +20,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    // @GetMapping("/profile")
-    // public ResponseEntity<Map<String, Object>> getProfile(Authentication authentication) {
-    // if (authentication == null || authentication.getName() == null) {
-    //     return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
-    // }
-
-    //     String email = authentication.getName(); // subject from JWT
-    //     UserProfile user = userService.getByEmail(email); // ⚠️ этот метод надо создать ниже
-
-    //     return ResponseEntity.ok(Map.of(
-    //         "id", user.getId(),
-    //         "name", user.getName(),
-    //         "email", user.getEmail(),
-    //         "phone", user.getPhone()
-    //     ));
-    // }
-
     @GetMapping("/profile")
     public ResponseEntity<Map<String, Object>> getUserProfile() {
         UserProfile user = userService.getCurrentUser();

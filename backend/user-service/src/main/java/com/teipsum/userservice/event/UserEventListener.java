@@ -25,7 +25,8 @@ public class UserEventListener {
                 event.name(),
                 event.surname(),
                 event.phone(),
-                event.dob()
+                event.dob(),
+                event.isAdmin()
         );
     }
 
