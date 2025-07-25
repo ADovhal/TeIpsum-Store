@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -33,73 +34,70 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
 
-        System.out.println("=== JWT Filter Start ===");
-        System.out.println("Request URI: " + request.getRequestURI());
+        final String requestUri = request.getRequestURI();
+        System.out.println("\n=== JWT Filter Start ===");
+        System.out.println("Processing request to: " + requestUri);
 
-        String authHeader = request.getHeader(AUTH_HEADER);
+        final String authHeader = request.getHeader(AUTH_HEADER);
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            System.out.println("No Bearer token found");
+            System.out.println("No Bearer token found, passing to next filter");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String token = authHeader.substring(BEARER_PREFIX.length());
-            System.out.println("Token received: " + token.substring(0, 10) + "...");
-            TokenType tokenType = jwtUtil.detectTokenTypeX(token, request.getRequestURI());
+            final String token = authHeader.substring(BEARER_PREFIX.length());
+            System.out.println("JWT token found: " + token.substring(0, 10) + "...");
 
-            if (request.getRequestURI().contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
-                throw new JWTVerificationException("Admin endpoint requires admin token");
+            final TokenType tokenType = jwtUtil.detectTokenTypeX(token, requestUri);
+            System.out.println("Detected token type: " + tokenType);
+
+            if (requestUri.contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
+                System.out.println("Admin endpoint requires ADMIN token");
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required");
+                return;
             }
 
-            String email = jwtUtil.extractEmail(token, tokenType);
-            List<String> roles = jwtUtil.extractRoles(token, tokenType);
+            final String email = jwtUtil.extractEmail(token, tokenType);
+            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
+            System.out.println("Authenticating user: " + email + " with roles: " + roles);
 
-            System.out.println("Extracted roles: " + roles);
+            if (jwtUtil.isTokenExpired(token, tokenType)) {
+                System.out.println("Token expired for user: " + email);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                return;
+            }
 
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (!jwtUtil.isTokenExpired(token, tokenType)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+            final UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
                             email,
                             null,
                             roles.stream()
+                                    .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
                                     .map(SimpleGrantedAuthority::new)
                                     .collect(Collectors.toList())
                     );
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
-                    return;
-                }
-            }
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-            return;
-        }
-//            String token = authHeader.substring(7);
-//            System.out.println("Token: " + token.substring(0, 10) + "...");
-//
-//            // 3. Принудительная аутентификация без сложных проверок
-//            DecodedJWT jwt = JWT.decode(token); // Только декодирование без верификации
-//
-//            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-//                    jwt.getSubject(),
-//                    null,
-//                    jwt.getClaim("roles").asList(String.class).stream()
-//                            .map(SimpleGrantedAuthority::new)
-//                            .collect(Collectors.toList())
-//            );
-//
-//            SecurityContextHolder.getContext().setAuthentication(auth);
-//            System.out.println("Auth set for: " + auth);
+
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+
+            System.out.println("SecurityContext updated for: " + email);
 
             filterChain.doFilter(request, response);
 
-
-//        } catch (Exception e) {
-//            System.out.println("JWT ERROR: " + e.getMessage());
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-//        }
+        } catch (JWTVerificationException e) {
+            System.out.println("JWT verification failed: " + e.getMessage());
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+        } catch (Exception e) {
+            System.out.println("Unexpected error: " + e.getMessage());
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authentication error");
+        } finally {
+            System.out.println("=== JWT Filter End ===");
+        }
     }
 }
