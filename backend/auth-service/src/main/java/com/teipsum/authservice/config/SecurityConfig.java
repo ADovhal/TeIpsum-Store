@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,6 +27,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Configuration
@@ -49,11 +54,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register_admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                )
+                // .oauth2ResourceServer(oauth2 -> oauth2
+                //         .jwt(jwt -> jwt
+                //                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                //         )
+                // )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -95,16 +100,23 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-        converter.setAuthoritiesClaimName("roles");
-        converter.setAuthorityPrefix("");
+    // @Bean
+    // public JwtDecoder jwtDecoder(@Value("${jwt.secret}") String secretKey) {
+    //     return NimbusJwtDecoder.withSecretKey(
+    //             new SecretKeySpec(secretKey.getBytes(), "HS256")
+    //     ).build();
+    // }
 
-        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-        return jwtConverter;
-    }
+    // @Bean
+    // public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    //     JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
+    //     converter.setAuthoritiesClaimName("roles");
+    //     converter.setAuthorityPrefix("");
+
+    //     JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+    //     jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
+    //     return jwtConverter;
+    // }
 
 }
 
