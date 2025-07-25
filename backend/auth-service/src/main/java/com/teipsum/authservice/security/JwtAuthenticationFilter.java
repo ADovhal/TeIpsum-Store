@@ -44,62 +44,62 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 //
         try {
-//            String token = authHeader.substring(BEARER_PREFIX.length());
-//            System.out.println("Token received: " + token.substring(0, 10) + "...");
-//            TokenType tokenType = jwtUtil.detectTokenTypeX(token, request.getRequestURI());
-//
-//            if (request.getRequestURI().contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
-//                throw new JWTVerificationException("Admin endpoint requires admin token");
-//            }
-//
-//            String email = jwtUtil.extractEmail(token, tokenType);
-//            List<String> roles = jwtUtil.extractRoles(token, tokenType);
-//
-//            System.out.println("Extracted roles: " + roles);
-//
-//            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//                if (!jwtUtil.isTokenExpired(token, tokenType)) {
-//                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-//                            email,
-//                            null,
-//                            roles.stream()
-//                                    .map(SimpleGrantedAuthority::new)
-//                                    .collect(Collectors.toList())
-//                    );
-//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(authToken);
-//                } else {
-//                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
-//                    return;
-//                }
-//            }
-//        } catch (Exception e) {
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-//            return;
-//        }
-            String token = authHeader.substring(7);
-            System.out.println("Token: " + token.substring(0, 10) + "...");
+            String token = authHeader.substring(BEARER_PREFIX.length());
+            System.out.println("Token received: " + token.substring(0, 10) + "...");
+            TokenType tokenType = jwtUtil.detectTokenTypeX(token, request.getRequestURI());
 
-            // 3. Принудительная аутентификация без сложных проверок
-            DecodedJWT jwt = JWT.decode(token); // Только декодирование без верификации
+            if (request.getRequestURI().contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
+                throw new JWTVerificationException("Admin endpoint requires admin token");
+            }
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    jwt.getSubject(),
-                    null,
-                    jwt.getClaim("roles").asList(String.class).stream()
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList())
-            );
+            String email = jwtUtil.extractEmail(token, tokenType);
+            List<String> roles = jwtUtil.extractRoles(token, tokenType);
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            System.out.println("Auth set for: " + auth);
+            System.out.println("Extracted roles: " + roles);
+
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (!jwtUtil.isTokenExpired(token, tokenType)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            email,
+                            null,
+                            roles.stream()
+                                    .map(SimpleGrantedAuthority::new)
+                                    .collect(Collectors.toList())
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            return;
+        }
+//            String token = authHeader.substring(7);
+//            System.out.println("Token: " + token.substring(0, 10) + "...");
+//
+//            // 3. Принудительная аутентификация без сложных проверок
+//            DecodedJWT jwt = JWT.decode(token); // Только декодирование без верификации
+//
+//            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+//                    jwt.getSubject(),
+//                    null,
+//                    jwt.getClaim("roles").asList(String.class).stream()
+//                            .map(SimpleGrantedAuthority::new)
+//                            .collect(Collectors.toList())
+//            );
+//
+//            SecurityContextHolder.getContext().setAuthentication(auth);
+//            System.out.println("Auth set for: " + auth);
 
             filterChain.doFilter(request, response);
 
 
-        } catch (Exception e) {
-            System.out.println("JWT ERROR: " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        }
+//        } catch (Exception e) {
+//            System.out.println("JWT ERROR: " + e.getMessage());
+//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+//        }
     }
 }
