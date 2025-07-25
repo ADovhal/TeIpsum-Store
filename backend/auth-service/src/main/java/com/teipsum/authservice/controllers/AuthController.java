@@ -57,7 +57,11 @@ public class AuthController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest request, HttpServletResponse response) {
         try {
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            System.out.println("In controller - auth: " + auth.getAuthorities());
             AuthResponse authResponse = authService.registerAdmin(request);
+
 //            ResponseCookie refreshTokenCookie = createRefreshTokenCookie(authResponse.getRefreshToken());
 //            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
