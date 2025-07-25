@@ -13,7 +13,7 @@ jobs:
         uses: ./.github/workflows/deploy-service-reusable.yml
         with:
             SERVICE_NAME: user-service
-            SHARED_MODULES: shared-dto
+            SHARED_MODULES: shared-dto,shared-exceptions
             DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
             GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
             COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-user-service.yml
@@ -31,6 +31,6 @@ jobs:
             DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_USER || secrets.STAGE_USER_SERVICE_DB_USER }}
             DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_PASSWORD || secrets.STAGE_USER_SERVICE_DB_PASSWORD }}
             SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_KAFKA_BOOTSTRAP_SERVERS || secrets.STAGE_KAFKA_BOOTSTRAP_SERVERS }}
-            
-            JWT_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_JWT_SECRET || secrets.STAGE_USER_SERVICE_JWT_SECRET }}
+
+            JWT_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_SECRET || secrets.STAGE_JWT_SECRET }}
             CORS_ALLOWED_ORIGINS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_CORS_ALLOWED_ORIGINS || secrets.STAGE_USER_SERVICE_CORS_ALLOWED_ORIGINS }}
