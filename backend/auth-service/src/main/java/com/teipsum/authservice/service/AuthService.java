@@ -39,34 +39,34 @@ public class AuthService {
         private final RoleRepository roleRepository;
         private final AdminRepository adminRepository;
         private final SecurityContextService securityContext;
-        
+
         public AuthResponse registerUser(RegisterRequest request) {
             if (userRepository.existsByEmail(request.email())) {
                 throw new EmailExistsException(request.email());
             }
-        
+
             UserCredentials user = createUser(request, RoleName.ROLE_USER);
             sendUserEvent(user, request, false);
-        
+
             return generateTokens(user);
         }
-    
+
         @PreAuthorize("hasRole('ADMIN')")
         public AuthResponse registerAdmin(RegisterRequest request) {
             if (userRepository.existsByEmail(request.email())) {
                 throw new EmailExistsException(request.email());
             }
-        
+
             String creatorId = securityContext.getCurrentUserId()
                     .orElseThrow(() -> new AccessDeniedException("Admin not authenticated"));
-        
+
             UserCredentials admin = createUser(request, RoleName.ROLE_ADMIN);
             createAdminRecord(admin, creatorId);
             sendUserEvent(admin, request, true);
-        
+
             return generateTokens(admin);
         }
-    
+
         public AuthResponse login(AuthRequest request) {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -74,35 +74,34 @@ public class AuthService {
                             request.password()
                     )
             );
-        
+
             kafkaTemplate.send("user-login", new UserLoggedInEvent(
                     request.email(),
                     LocalDateTime.now()
             ));
-        
+
             UserCredentials user = userRepository.findByEmail(request.email())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
             return generateTokens(user);
         }
-    
-    
+
         private UserCredentials createUser(RegisterRequest request, RoleName role) {
             Role userRole = roleRepository.findByName(role.name())
                     .orElseThrow(() -> new RoleNotFoundException(role.name()));
-        
+
             return userRepository.save(UserCredentials.builder()
                     .email(request.email())
                     .password(passwordEncoder.encode(request.password()))
                     .roles(Set.of(userRole))
                     .build());
         }
-    
+
         private AuthResponse generateTokens(UserCredentials user) {
             List<String> roleNames = user.getRoles().stream()
                     .map(r -> r.getName().name())
                     .toList();
-        
+
             boolean isAdmin = adminRepository.existsByUser_Id(user.getId());
             return new AuthResponse(
                     jwtUtil.createToken(user.getEmail(), roleNames,
@@ -111,14 +110,14 @@ public class AuthService {
                             isAdmin ? TokenType.ADMIN_REFRESH : TokenType.USER_REFRESH)
             );
         }
-    
+
         private void createAdminRecord(UserCredentials user, String createdBy) {
             adminRepository.save(Admin.builder()
                     .user(user)
                     .createdBy(createdBy)
                     .build());
         }
-    
+
         private void sendUserEvent(UserCredentials user, RegisterRequest request, boolean isAdmin) {
             String topic = isAdmin ? "admin-registered" : "user-registered";
             kafkaTemplate.send(topic, new UserRegisteredEvent(
@@ -131,7 +130,7 @@ public class AuthService {
                     isAdmin
             ));
         }
-    
+
         public UserCredentials loadUserByEmail(String email) {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("User not found"));
