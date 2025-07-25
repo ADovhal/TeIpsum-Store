@@ -39,4 +39,11 @@ public class UserCredentials {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Admin adminInfo;
+
+    public void addRole(Role role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
+        this.roles.add(role);
+    }
 }

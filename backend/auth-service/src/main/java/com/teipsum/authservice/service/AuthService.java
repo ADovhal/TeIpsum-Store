@@ -89,11 +89,13 @@ public class AuthService {
         private UserCredentials createUser(RegisterRequest request, RoleName role) {
             Role userRole = roleRepository.findByName(role);
 
-            return userRepository.save(UserCredentials.builder()
+            UserCredentials user = UserCredentials.builder()
                     .email(request.email())
                     .password(passwordEncoder.encode(request.password()))
-                    .roles(Set.of(userRole))
-                    .build());
+                    .build();
+
+            user.addRole(userRole); // Используем новый метод addRole()
+            return userRepository.save(user);
         }
 
         private AuthResponse generateTokens(UserCredentials user) {
