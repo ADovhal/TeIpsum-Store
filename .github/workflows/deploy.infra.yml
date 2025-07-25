@@ -86,15 +86,18 @@ jobs:
             sed -i \
                 -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
                 -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
-                -e "s|<<PRODUCT_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_PRODUCT_SERVICE_DB_NAME }}|g" \
+                -e "s|<<ADMIN_PRODUCT_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_NAME }}|g" \
+                -e "s|<<CATALOG_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_NAME || secrets.STAGE_CATALOG_SERVICE_DB_NAME }}|g" \
                 -e "s|<<ORDER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_NAME || secrets.STAGE_ORDER_SERVICE_DB_NAME }}|g" \
                 -e "s|<<AUTH_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_USER || secrets.STAGE_AUTH_SERVICE_DB_USER }}|g" \
                 -e "s|<<USER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_USER || secrets.STAGE_USER_SERVICE_DB_USER }}|g" \
-                -e "s|<<PRODUCT_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_USER || secrets.STAGE_PRODUCT_SERVICE_DB_USER }}|g" \
+                -e "s|<<ADMIN_PRODUCT_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_USER || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_USER }}|g" \
+                -e "s|<<CATALOG_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_USER || secrets.STAGE_CATALOG_SERVICE_DB_USER }}|g" \
                 -e "s|<<ORDER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_USER || secrets.STAGE_ORDER_SERVICE_DB_USER }}|g" \
                 -e "s|<<AUTH_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_PASSWORD || secrets.STAGE_AUTH_SERVICE_DB_PASSWORD }}|g" \
                 -e "s|<<USER_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_PASSWORD || secrets.STAGE_USER_SERVICE_DB_PASSWORD }}|g" \
-                -e "s|<<PRODUCT_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_PASSWORD || secrets.STAGE_PRODUCT_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<ADMIN_PRODUCT_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_PASSWORD || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_PASSWORD }}|g" \
+                -e "s|<<CATALOG_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_PASSWORD || secrets.STAGE_CATALOG_SERVICE_DB_PASSWORD }}|g" \
                 -e "s|<<ORDER_SERVICE_DB_PASSWORD>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_PASSWORD || secrets.STAGE_ORDER_SERVICE_DB_PASSWORD }}|g" \
                 "$OUTPUT_PATH"
             echo "📄 Generated init-multiple-dbs.sql from template."
@@ -125,11 +128,13 @@ jobs:
             sed -i \
                 -e "s|<<AUTH_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_NAME || secrets.STAGE_AUTH_SERVICE_DB_NAME }}|g" \
                 -e "s|<<USER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_NAME || secrets.STAGE_USER_SERVICE_DB_NAME }}|g" \
-                -e "s|<<PRODUCT_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_PRODUCT_SERVICE_DB_NAME }}|g" \
+                -e "s|<<ADMIN_PRODUCT_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_NAME }}|g" \
+                -e "s|<<CATALOG_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_NAME || secrets.STAGE_CATALOG_SERVICE_DB_NAME }}|g" \
                 -e "s|<<ORDER_SERVICE_DB_NAME>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_NAME || secrets.STAGE_ORDER_SERVICE_DB_NAME }}|g" \
                 -e "s|<<AUTH_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_AUTH_SERVICE_DB_USER || secrets.STAGE_AUTH_SERVICE_DB_USER }}|g" \
                 -e "s|<<USER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_USER_SERVICE_DB_USER || secrets.STAGE_USER_SERVICE_DB_USER }}|g" \
-                -e "s|<<PRODUCT_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_PRODUCT_SERVICE_DB_USER || secrets.STAGE_PRODUCT_SERVICE_DB_USER }}|g" \
+                -e "s|<<ADMIN_PRODUCT_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_USER || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_USER }}|g" \
+                -e "s|<<CATALOG_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_USER || secrets.STAGE_CATALOG_SERVICE_DB_USER }}|g" \
                 -e "s|<<ORDER_SERVICE_DB_USER>>|${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_USER || secrets.STAGE_ORDER_SERVICE_DB_USER }}|g" \
                 "$OUTPUT_GRANTS_PATH"
 
