@@ -87,8 +87,7 @@ public class AuthService {
         }
 
         private UserCredentials createUser(RegisterRequest request, RoleName role) {
-            Role userRole = roleRepository.findByName(role.name())
-                    .orElseThrow(() -> new RoleNotFoundException(role.name()));
+            Role userRole = roleRepository.findByName(role);
 
             return userRepository.save(UserCredentials.builder()
                     .email(request.email())
