@@ -144,7 +144,7 @@ jobs:
               if [ ! -f "$HASH_FILE" ] || [ "$COMBINED_HASH" != "$(cat $HASH_FILE)" ]; then
                 echo "🔨 Building $module in Docker..."
                 cd "$PROJECT_DIR/backend"
-                docker build -f "$module/Dockerfile.dto" -t "${module//\//-}-builder" .
+                docker build -f "$module/Dockerfile" -t "${module//\//-}-builder" .
 
                 echo "📦 Extracting Maven .m2 cache for $module..."
                 docker rm -f tmp-${module//\//-} 2>/dev/null || true
