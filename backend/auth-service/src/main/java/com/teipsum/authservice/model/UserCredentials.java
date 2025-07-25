@@ -36,4 +36,7 @@ public class UserCredentials {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Admin adminInfo;
 }

@@ -1,4 +1,4 @@
-package com.teipsum.shared.product.exception;
+package com.teipsum.shared.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;

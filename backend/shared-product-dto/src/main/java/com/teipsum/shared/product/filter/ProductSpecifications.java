@@ -1,7 +1,7 @@
 package com.teipsum.shared.product.filter;
 
 import com.teipsum.shared.product.dto.ProductFilterRequest;
-import com.teipsum.shared.product.exception.InvalidSortPropertyException;
+import com.teipsum.shared.exceptions.InvalidSortPropertyException;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;

@@ -3,14 +3,16 @@ package com.teipsum.authservice.service;
 import com.teipsum.authservice.dto.AuthRequest;
 import com.teipsum.authservice.dto.AuthResponse;
 import com.teipsum.authservice.dto.RegisterRequest;
+import com.teipsum.authservice.model.*;
+import com.teipsum.authservice.repository.AdminRepository;
+import com.teipsum.authservice.security.SecurityContextService;
 import com.teipsum.shared.event.UserRegisteredEvent;
 import com.teipsum.shared.event.UserLoggedInEvent;
-import com.teipsum.authservice.model.Role;
-import com.teipsum.authservice.model.RoleName;
 import com.teipsum.authservice.repository.RoleRepository;
-import com.teipsum.authservice.model.UserCredentials;
 import com.teipsum.authservice.repository.UserCredentialsRepository;
 import com.teipsum.authservice.security.JwtUtil;
+import com.teipsum.shared.exceptions.EmailExistsException;
+import com.teipsum.shared.exceptions.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,47 +37,34 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final RoleRepository roleRepository;
+    private final AdminRepository adminRepository;
+    private final SecurityContextService securityContext;
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse registerUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already in use");
+            throw new EmailExistsException(request.email());
         }
 
-        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-            .orElseThrow(() -> new RuntimeException("Default role not found"));
+        UserCredentials user = createUser(request, RoleName.ROLE_USER);
+        sendUserEvent(user, request, false);
 
-        UserCredentials user = UserCredentials.builder()
-            .email(request.email())
-            .password(passwordEncoder.encode(request.password()))
-            .roles(Set.of(userRole))
-            .build();
+        return generateTokens(user);
+    }
 
-
-        try {
-                user = userRepository.save(user);
-
-                kafkaTemplate.send("user-registered",
-                        new UserRegisteredEvent(
-                                user.getId(),
-                                user.getEmail(),
-                                request.name(),
-                                request.surname(),
-                                request.phone(),
-                                request.dob()
-                        )
-                );
-
-                List<String> roleNames = user.getRoles().stream()
-                                             .map(role -> role.getName().name())
-                                             .toList();
-
-                return new AuthResponse(
-                        jwtUtil.createAccessToken(user.getEmail(), roleNames),
-                        jwtUtil.createRefreshToken(user.getEmail())
-                );
-        } catch (Exception e) {
-            throw new RuntimeException("Registration failed", e);
+    @PreAuthorize("hasRole('ADMIN')")
+    public AuthResponse registerAdmin(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new EmailExistsException(request.email());
         }
+
+        String creatorId = securityContext.getCurrentUserId()
+                .orElseThrow(() -> new AccessDeniedException("Admin not authenticated"));
+
+        UserCredentials admin = createUser(request, RoleName.ROLE_ADMIN);
+        createAdminRecord(admin, creatorId);
+        sendUserEvent(admin, request, true);
+
+        return generateTokens(admin);
     }
 
     public AuthResponse login(AuthRequest request) {
@@ -90,16 +81,56 @@ public class AuthService {
         ));
 
         UserCredentials user = userRepository.findByEmail(request.email())
-        .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        return generateTokens(user);
+    }
+
+
+    private UserCredentials createUser(RegisterRequest request, RoleName role) {
+        Role userRole = roleRepository.findByName(role.name())
+                .orElseThrow(() -> new RoleNotFoundException(role.name()));
+
+        return userRepository.save(UserCredentials.builder()
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .roles(Set.of(userRole))
+                .build());
+    }
+
+    private AuthResponse generateTokens(UserCredentials user) {
         List<String> roleNames = user.getRoles().stream()
-                                .map(role -> role.getName().name())
-                                .toList();
+                .map(r -> r.getName().name())
+                .toList();
 
+        boolean isAdmin = adminRepository.existsByUser_Id(user.getId());
         return new AuthResponse(
-                jwtUtil.createAccessToken(request.email(), roleNames),
-                jwtUtil.createRefreshToken(request.email())
+                jwtUtil.createToken(user.getEmail(), roleNames,
+                        isAdmin ? TokenType.ADMIN_ACCESS : TokenType.USER_ACCESS),
+                jwtUtil.createToken(user.getEmail(), roleNames,
+                        isAdmin ? TokenType.ADMIN_REFRESH : TokenType.USER_REFRESH)
         );
+    }
+
+
+    private void createAdminRecord(UserCredentials user, String createdBy) {
+        adminRepository.save(Admin.builder()
+                .user(user)
+                .createdBy(createdBy)
+                .build());
+    }
+
+    private void sendUserEvent(UserCredentials user, RegisterRequest request, boolean isAdmin) {
+        String topic = isAdmin ? "admin-registered" : "user-registered";
+        kafkaTemplate.send(topic, new UserRegisteredEvent(
+                user.getId(),
+                user.getEmail(),
+                request.name(),
+                request.surname(),
+                request.phone(),
+                request.dob(),
+                isAdmin
+        ));
     }
 
     public UserCredentials loadUserByEmail(String email) {

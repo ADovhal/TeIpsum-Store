@@ -1,4 +1,4 @@
-package com.teipsum.shared.product.exception;
+package com.teipsum.shared.exceptions;
 
 public class InvalidSortPropertyException extends RuntimeException {
     public InvalidSortPropertyException(String property) {
