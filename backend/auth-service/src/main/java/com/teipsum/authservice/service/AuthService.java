@@ -61,7 +61,7 @@ public class AuthService {
                     .orElseThrow(() -> new AccessDeniedException("Admin not authenticated"));
 
             UserCredentials admin = createUser(request, RoleName.ROLE_ADMIN);
-            createAdminRecord(admin, creatorId);
+            createAdminRecord(admin, creatorId, LocalDateTime.now());
             sendUserEvent(admin, request, true);
 
             return generateTokens(admin);
@@ -112,10 +112,11 @@ public class AuthService {
             );
         }
 
-        private void createAdminRecord(UserCredentials user, String createdBy) {
+        private void createAdminRecord(UserCredentials user, String createdBy, LocalDateTime createdAt) {
             adminRepository.save(Admin.builder()
                     .user(user)
                     .createdBy(createdBy)
+                    .createdAt(createdAt)
                     .build());
         }
 
