@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             final String token = authHeader.substring(BEARER_PREFIX.length());
+            String path = request.getRequestURI();
             System.out.println("JWT token found: " + token.substring(0, 10) + "...");
+
+            if (path.contains("/refresh")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             final TokenType tokenType = jwtUtil.detectTokenTypeX(token, requestUri);
             System.out.println("Detected token type: " + tokenType);
@@ -62,26 +69,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final List<String> roles = jwtUtil.extractRoles(token, tokenType);
             System.out.println("Authenticating user: " + email + " with roles: " + roles);
 
-            if (jwtUtil.isTokenExpired(token, tokenType)) {
-                System.out.println("Token expired for user: " + email);
+
+            DecodedJWT jwt = jwtUtil.verifyAndDecodeToken(token, tokenType);
+            if (jwt.getExpiresAt().before(new Date())) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
                 return;
             }
 
-            final UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            email,
-                            null,
-                            roles.stream()
-                                    .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList())
-                    );
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    jwt.getSubject(),
+                    null,
+                    jwt.getClaim("roles").asList(String.class).stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList())
+            );
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(authentication);
+            context.setAuthentication(authToken);
             SecurityContextHolder.setContext(context);
 
             System.out.println("SecurityContext updated for: " + email);

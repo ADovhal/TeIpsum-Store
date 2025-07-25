@@ -87,8 +87,14 @@ public class JwtUtil {
         }
     }
 
-    public TokenType detectTokenType(String token) {
-        return detectTokenTypeX(token, null);
+    public TokenType detectTokenType(String token) throws JWTVerificationException {
+        for (TokenType type : TokenType.values()) {
+            try {
+                JWT.require(algorithms.get(type)).build().verify(token);
+                return type;
+            } catch (JWTVerificationException ignored) {}
+        }
+        throw new JWTVerificationException("Invalid token type");
     }
 
     public TokenType detectTokenTypeX(String token, @Nullable String path) {
@@ -122,6 +128,10 @@ public class JwtUtil {
         throw new RuntimeException("Invalid token type");
     }
 
+    public DecodedJWT verifyAndDecodeToken(String token, TokenType expectedType) throws JWTVerificationException {
+        Algorithm algorithm = algorithms.get(expectedType);
+        return JWT.require(algorithm).build().verify(token);
+    }
 
 
     private void validateTokenForPath(TokenType tokenType, String path) {
