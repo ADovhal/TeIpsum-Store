@@ -95,7 +95,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("Auth set for: " + auth);
 
             filterChain.doFilter(request, response);
-            
+
 
         } catch (Exception e) {
             System.out.println("JWT ERROR: " + e.getMessage());
