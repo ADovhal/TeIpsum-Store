@@ -75,16 +75,6 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/debug/auth")
-    public ResponseEntity<?> debugAuth() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(Map.of(
-                "name", auth.getName(),
-                "roles", auth.getAuthorities(),
-                "authenticated", auth.isAuthenticated()
-        ));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletResponse response) {
         try {

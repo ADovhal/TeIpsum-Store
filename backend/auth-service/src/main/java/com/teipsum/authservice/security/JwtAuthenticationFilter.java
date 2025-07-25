@@ -65,9 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-//            final String email = jwtUtil.extractEmail(token, tokenType);
-//            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
-//            System.out.println("Authenticating user: " + email + " with roles: " + roles);
+            final String email = jwtUtil.extractEmail(token, tokenType);
+            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
+            System.out.println("Authenticating user: " + email + " with roles: " + roles);
 
 
             DecodedJWT jwt = jwtUtil.verifyAndDecodeToken(token, tokenType);
@@ -90,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             context.setAuthentication(authToken);
             SecurityContextHolder.setContext(context);
 
-//            System.out.println("SecurityContext updated for: " + email);
+            System.out.println("SecurityContext updated for: " + email);
 
             filterChain.doFilter(request, response);
 
@@ -106,42 +106,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("=== JWT Filter End ===");
         }
     }
-//@Override
-//protected void doFilterInternal(HttpServletRequest request,
-//                                HttpServletResponse response,
-//                                FilterChain filterChain) throws IOException, ServletException {
-//
-//    System.out.println("\n=== JWT FILTER HIT ===");
-//    System.out.println("Request to: " + request.getRequestURI());
-//
-//    String authHeader = request.getHeader("Authorization");
-//    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//        System.out.println("No Bearer token");
-//        filterChain.doFilter(request, response);
-//        return;
-//    }
-//
-//    try {
-//        String token = authHeader.substring(7);
-//        System.out.println("Token: " + token.substring(0, 10) + "...");
-//
-//        DecodedJWT jwt = JWT.decode(token);
-//
-//        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-//                jwt.getSubject(),
-//                null,
-//                jwt.getClaim("roles").asList(String.class).stream()
-//                        .map(SimpleGrantedAuthority::new)
-//                        .collect(Collectors.toList())
-//        );
-//
-//        SecurityContextHolder.getContext().setAuthentication(auth);
-//        System.out.println("Auth set for: " + auth);
-//
-//        filterChain.doFilter(request, response);
-//    } catch (Exception e) {
-//        System.out.println("JWT ERROR: " + e.getMessage());
-//        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-//    }
-//}
 }

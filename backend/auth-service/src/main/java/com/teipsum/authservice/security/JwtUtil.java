@@ -100,9 +100,9 @@ public class JwtUtil {
     public TokenType detectTokenTypeX(String token, @Nullable String path) {
         TokenType detectedType = detectTokenTypeInternal(token);
 
-//        if (path != null && path.contains("/admin/") && !detectedType.name().startsWith("ADMIN_")) {
-//            throw new JWTVerificationException("Admin endpoint requires admin token");
-//        }
+        if (path != null && path.contains("/admin/") && !detectedType.name().startsWith("ADMIN_")) {
+            throw new JWTVerificationException("Admin endpoint requires admin token");
+        }
 
         if (path != null) {
             validateTokenForPath(detectedType, path);
@@ -141,9 +141,9 @@ public class JwtUtil {
 
 
     private void validateTokenForPath(TokenType tokenType, String path) {
-//        if (path.contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
-//            throw new JWTVerificationException("Admin endpoint requires admin token");
-//        }
+        if (path.contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
+            throw new JWTVerificationException("Admin endpoint requires admin token");
+        }
 
         if (path.contains("/refresh") && !tokenType.name().endsWith("_REFRESH")) {
             throw new JWTVerificationException("Refresh endpoint requires refresh token");

@@ -94,7 +94,7 @@ public class AuthService {
                     .password(passwordEncoder.encode(request.password()))
                     .build();
 
-            user.addRole(userRole); // Используем новый метод addRole()
+            user.addRole(userRole);
             return userRepository.save(user);
         }
 
@@ -121,8 +121,9 @@ public class AuthService {
         }
 
         private void sendUserEvent(UserCredentials user, RegisterRequest request, boolean isAdmin) {
-            String topic = isAdmin ? "admin-registered" : "user-registered";
-            kafkaTemplate.send(topic, new UserRegisteredEvent(
+//            String topic = isAdmin ? "admin-registered" : "user-registered";
+//            kafkaTemplate.send(topic, new UserRegisteredEvent(
+              kafkaTemplate.send("user-registered", new UserRegisteredEvent(
                     user.getId(),
                     user.getEmail(),
                     request.name(),
@@ -133,8 +134,4 @@ public class AuthService {
             ));
         }
 
-        public UserCredentials loadUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-        }
 }
