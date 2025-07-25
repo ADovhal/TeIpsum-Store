@@ -65,9 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            final String email = jwtUtil.extractEmail(token, tokenType);
-            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
-            System.out.println("Authenticating user: " + email + " with roles: " + roles);
+//            final String email = jwtUtil.extractEmail(token, tokenType);
+//            final List<String> roles = jwtUtil.extractRoles(token, tokenType);
+//            System.out.println("Authenticating user: " + email + " with roles: " + roles);
 
 
             DecodedJWT jwt = jwtUtil.verifyAndDecodeToken(token, tokenType);
@@ -90,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             context.setAuthentication(authToken);
             SecurityContextHolder.setContext(context);
 
-            System.out.println("SecurityContext updated for: " + email);
+//            System.out.println("SecurityContext updated for: " + email);
 
             filterChain.doFilter(request, response);
 
