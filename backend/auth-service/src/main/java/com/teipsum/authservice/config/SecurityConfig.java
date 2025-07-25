@@ -1,6 +1,7 @@
 package com.teipsum.authservice.config;
 
 import com.teipsum.authservice.security.JwtAuthenticationFilter;
+import com.teipsum.authservice.security.JwtUtil;
 import com.teipsum.authservice.service.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtUtil jwtUtil;
 
     @Value("${cors.allowed.origins}")
     private String allowedOrigins;
@@ -60,7 +61,7 @@ public class SecurityConfig {
                 //         )
                 // )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -98,6 +99,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtil);
     }
 
     // @Bean
