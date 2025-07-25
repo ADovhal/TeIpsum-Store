@@ -10,8 +10,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class Role {
 
     @Id
@@ -21,28 +21,13 @@ public class Role {
     @Column(name = "role_value", unique = true, nullable = false)
     private String roleValue;
 
-    @Transient
-    @Enumerated(EnumType.STRING)
-    private RoleName name;
-
-    @PrePersist
-    @PreUpdate
-    private void beforeSave() {
-        if (name != null) {
-            this.roleValue = name.getValue();
-        }
-    }
-
-    @PostLoad
-    private void afterLoad() {
-        if (roleValue != null) {
-            this.name = RoleName.fromValue(roleValue);
-        }
-    }
-
     public Role(RoleName name) {
-        this.name = name;
         this.roleValue = name.getValue();
+    }
+
+    @Transient
+    public RoleName getName() {
+        return RoleName.fromValue(roleValue);
     }
 
     @Override
