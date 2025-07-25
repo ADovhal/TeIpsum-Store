@@ -93,6 +93,11 @@ public class JwtUtil {
 
     public TokenType detectTokenTypeX(String token, @Nullable String path) {
         TokenType detectedType = detectTokenTypeInternal(token);
+
+        if (path != null && path.contains("/admin/") && !detectedType.name().startsWith("ADMIN_")) {
+            throw new JWTVerificationException("Admin endpoint requires admin token");
+        }
+
         if (path != null) {
             validateTokenForPath(detectedType, path);
         }

@@ -1,5 +1,6 @@
 package com.teipsum.authservice.security;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.teipsum.authservice.model.TokenType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -39,6 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = authHeader.substring(BEARER_PREFIX.length());
             TokenType tokenType = jwtUtil.detectTokenTypeX(token, request.getRequestURI());
+
+            if (request.getRequestURI().contains("/admin/") && !tokenType.name().startsWith("ADMIN_")) {
+                throw new JWTVerificationException("Admin endpoint requires admin token");
+            }
 
             String email = jwtUtil.extractEmail(token, tokenType);
             List<String> roles = jwtUtil.extractRoles(token, tokenType);
