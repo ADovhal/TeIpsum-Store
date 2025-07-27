@@ -60,6 +60,7 @@ jobs:
             cat <<EOF > "$ENV_PATH"
             POSTGRES_USER=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_USER || secrets.STAGE_INFRA_POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_PASSWORD || secrets.STAGE_INFRA_POSTGRES_PASSWORD }}
+            PORT=${{ github.ref == 'refs/heads/main' && secrets.PROD_INFRA_POSTGRES_PORT || secrets.STAGE_INFRA_POSTGRES_PORT }}
             EOF
 
             echo "🔐 Preparing init-multiple-dbs.sql from template..."

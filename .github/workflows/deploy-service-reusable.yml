@@ -42,6 +42,7 @@ on:
         required: true
       SPRING_KAFKA_BOOTSTRAP_SERVERS:
         required: true
+
       JWT_SECRET:
         required: false
       JWT_REFRESH_SECRET:
@@ -50,6 +51,18 @@ on:
         required: false
       JWT_ADMIN_REFRESH_SECRET:
         required: false
+        
+      ARG_SALT_LENGTH:
+        required: false
+      ARG_HASH_LENGTH:
+        required: false
+      ARG_PARALLELISM:
+        required: false
+      ARG_MEMORY:
+        required: false
+      ARG_ITERATIONS:
+        required: false
+      
       CORS_ALLOWED_ORIGINS:
         required: true
 
@@ -88,10 +101,8 @@ jobs:
             
             echo "⚙️ Setting up precise file checkout..."
 
-            # Получаем список SHARED_MODULES из inputs
             IFS=',' read -ra SHARED <<< "${{ inputs.SHARED_MODULES }}"
 
-            # Формируем список путей для sparse-checkout
             MODULES="backend/$SERVICE_NAME backend/pom.xml"
             for module in "${SHARED[@]}"; do
               MODULES="$MODULES backend/$module/src backend/$module/pom.xml backend/$module/Dockerfile"
@@ -103,11 +114,9 @@ jobs:
 
             echo "📤 Syncing files to remote project dir..."
 
-            # Синхронизируем основной сервис
             mkdir -p "$PROJECT_DIR/backend/$SERVICE_NAME"
             rsync -av --delete "$TEMP_DIR/backend/$SERVICE_NAME/" "$PROJECT_DIR/backend/$SERVICE_NAME/"
 
-            # Синхронизируем shared-модули
             for module in "${SHARED[@]}"; do
               mkdir -p "$PROJECT_DIR/backend/$module"
               rsync -av --delete "$TEMP_DIR/backend/$module/src/" "$PROJECT_DIR/backend/$module/src/"
@@ -115,7 +124,6 @@ jobs:
               cp -v "$TEMP_DIR/backend/$module/Dockerfile" "$PROJECT_DIR/backend/$module/Dockerfile"
             done
 
-            # Копируем parent pom
             cp -v "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/pom.xml"
 
             echo "🔍 Verifying file structure..."
@@ -175,6 +183,12 @@ jobs:
             [ -n "${{ secrets.JWT_REFRESH_SECRET }}" ] && echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> "$ENV_PATH"
             [ -n "${{ secrets.JWT_ADMIN_SECRET }}" ] && echo "JWT_ADMIN_SECRET=${{ secrets.JWT_ADMIN_SECRET }}" >> "$ENV_PATH"
             [ -n "${{ secrets.JWT_ADMIN_REFRESH_SECRET }}" ] && echo "JWT_ADMIN_REFRESH_SECRET=${{ secrets.JWT_ADMIN_REFRESH_SECRET }}" >> "$ENV_PATH"
+
+            [ -n "${{ secrets.ARG_SALT_LENGTH }}" ] && echo "ARG_SALT_LENGTH=${{ secrets.ARG_SALT_LENGTH }}" >> "$ENV_PATH"
+            [ -n "${{ secrets.ARG_HASH_LENGTH }}" ] && echo "ARG_HASH_LENGTH=${{ secrets.ARG_HASH_LENGTH }}" >> "$ENV_PATH"
+            [ -n "${{ secrets.ARG_PARALLELISM }}" ] && echo "ARG_PARALLELISM=${{ secrets.ARG_PARALLELISM }}" >> "$ENV_PATH"
+            [ -n "${{ secrets.ARG_MEMORY }}" ] && echo "ARG_MEMORY=${{ secrets.ARG_MEMORY }}" >> "$ENV_PATH"
+            [ -n "${{ secrets.ARG_ITERATIONS }}" ] && echo "ARG_ITERATIONS=${{ secrets.ARG_ITERATIONS }}" >> "$ENV_PATH"
 
             echo "🔄 Rebuilding Docker container..."
             cd "$PROJECT_DIR/backend"
