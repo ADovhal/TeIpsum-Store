@@ -1,5 +1,5 @@
-FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
 FROM shared-exceptions-builder AS shared-exc
+FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
 
 WORKDIR /app
 
