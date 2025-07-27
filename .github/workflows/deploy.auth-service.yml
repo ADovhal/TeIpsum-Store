@@ -13,10 +13,11 @@ jobs:
     uses: ./.github/workflows/deploy-service-reusable.yml
     with:
       SERVICE_NAME: auth-service
-      SHARED_MODULES: shared-dto,shared-exceptions
+      SHARED_MODULES: shared-dto,shared-exceptions,shared-logger
       DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
       GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
       COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-auth-service.yml
+      
     secrets:
       PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
 
@@ -36,5 +37,11 @@ jobs:
       JWT_REFRESH_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_REFRESH_SECRET || secrets.STAGE_JWT_REFRESH_SECRET }}
       JWT_ADMIN_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_ADMIN_SECRET || secrets.STAGE_JWT_ADMIN_SECRET }}
       JWT_ADMIN_REFRESH_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_ADMIN_REFRESH_SECRET || secrets.STAGE_JWT_ADMIN_REFRESH_SECRET }}
+
+      ARG_SALT_LENGTH: ${{ secrets.ARG_SALT_LENGTH }}
+      ARG_HASH_LENGTH: ${{ secrets.ARG_HASH_LENGTH }}
+      ARG_PARALLELISM: ${{ secrets.ARG_PARALLELIZM }}
+      ARG_MEMORY: ${{ secrets.ARG_MEMORY }}
+      ARG_ITERATIONS: ${{ secrets.ARG_ITERATIONS }}
 
       CORS_ALLOWED_ORIGINS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CORS_ALLOWED_ORIGINS || secrets.STAGE_CORS_ALLOWED_ORIGINS }}

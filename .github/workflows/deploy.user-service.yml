@@ -13,10 +13,11 @@ jobs:
         uses: ./.github/workflows/deploy-service-reusable.yml
         with:
             SERVICE_NAME: user-service
-            SHARED_MODULES: shared-dto,shared-exceptions
+            SHARED_MODULES: shared-dto,shared-exceptions,shared-logger
             DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
             GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
             COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-user-service.yml
+            
         secrets:
             PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
 
