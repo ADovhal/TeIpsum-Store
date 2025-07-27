@@ -57,6 +57,10 @@
             <groupId>com.teipsum</groupId>
             <artifactId>teipsum-shared-exceptions</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.teipsum</groupId>
+            <artifactId>shared-logger</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <include resource="log4j2.xml"/>
+
+    <Appenders>
+        <RollingFile name="UserEventsFile"
+                     fileName="${LOG_DIR}/${sys:service.name}-users.log"
+                     filePattern="${LOG_DIR}/${sys:service.name}-users-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{ISO8601} | USER_EVENT | %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="USER_EVENTS" level="info" additivity="false">
+            <AppenderRef ref="UserEventsFile"/>
+            <Filters>
+                <MarkerFilter marker="IMPORTANT" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+            </Filters>
+        </Logger>
+        <Logger name="com.teipsum.userservice" level="debug"/>
+    </Loggers>
+</Configuration>
