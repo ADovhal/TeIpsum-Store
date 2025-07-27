@@ -1,0 +1,17 @@
+services:
+  prod-admin-product-service:
+    container_name: prod-admin-product-service
+    build:
+      context: ../..
+      dockerfile: backend/admin-product-service/Dockerfile
+      args:
+        SERVICE_NAME: admin-product-service
+    ports: ['22095:${SERVICE_SERVER_PORT}']
+    image: prod-admin-product-service:latest
+    env_file: .env
+    networks:
+      - prod-net
+
+networks:
+  prod-net:
+    external: true
