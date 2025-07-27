@@ -1,4 +1,5 @@
 FROM maven:3.9.11-eclipse-temurin-17-alpine AS builder
+FROM shared-exceptions-builder AS shared-exc
 
 WORKDIR /app
 
@@ -10,6 +11,10 @@ RUN mvn install:install-file \
     -Dversion=1.0-SNAPSHOT \
     -Dpackaging=pom \
     -DgeneratePom=false
+
+COPY --from=shared-exc /root/.m2 /tmp/m2-exc
+RUN mkdir -p /root/.m2 && \
+    cp -r /tmp/m2-exc/* /root/.m2/
 
 COPY shared-product-dto/pom.xml ./shared-product-dto/pom.xml
 COPY shared-product-dto/src ./shared-product-dto/src
