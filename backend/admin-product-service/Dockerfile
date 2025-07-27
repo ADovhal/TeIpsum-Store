@@ -9,11 +9,11 @@ ARG SERVICE_NAME
 
 COPY backend/${SERVICE_NAME}/pom.xml ${SERVICE_NAME}/pom.xml
 COPY backend/${SERVICE_NAME}/src ${SERVICE_NAME}/src
-COPY --from=shared-product-dto /root/.m2 /tmp/m2-dto
+COPY --from=shared-product-dto /root/.m2 /tmp/m2-product-dto
 COPY --from=shared-exc /root/.m2 /tmp/m2-exc
 COPY --from=shared-logger /root/.m2 /tmp/m2-logger
 RUN mkdir -p /root/.m2 && \
-    cp -r /tmp/m2-productdto/* /root/.m2/ && \
+    cp -r /tmp/m2-product-dto/* /root/.m2/ && \
     cp -r /tmp/m2-exc/* /root/.m2/ && \
     cp -r /tmp/m2-logger/* /root/.m2/
 
