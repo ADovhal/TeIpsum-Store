@@ -1,4 +1,4 @@
-name: Deploy Admin Product Service
+name: Deploy Catalog Service
 
 on:
   push:
