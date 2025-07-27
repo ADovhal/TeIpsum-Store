@@ -1,0 +1,17 @@
+services:
+  prod-catalog-service:
+    container_name: prod-catalog-service
+    build:
+      context: ../..
+      dockerfile: backend/catalog-service/Dockerfile
+      args:
+        SERVICE_NAME: catalog-service
+    ports: ['22096:${SERVICE_SERVER_PORT}']
+    image: prod-catalog-service:latest
+    env_file: .env
+    networks:
+      - prod-net
+
+networks:
+  prod-net:
+    external: true
