@@ -21,8 +21,8 @@ services:
   postgres:
     container_name: stage-teipsum-postgres
     image: postgres:15
-    ports: ["5433:5435"]
-    command: postgres -p 5435
+    ports: ["5433:${PORT}"]
+    command: postgres -p ${PORT}
     env_file:
       - .env.stage.infra
     volumes:
