@@ -34,8 +34,10 @@
       <jackson-databind.version>2.17.0</jackson-databind.version>
       <java-jwt.version>4.4.0</java-jwt.version>
       <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
+      <log4j.version>2.20.0</log4j.version>
       <shared-dto.version>1.0.0</shared-dto.version>
       <shared-exceptions.version>1.0.0</shared-exceptions.version>
+      <shared-logger.version>1.0.0</shared-logger.version>
     </properties>
 
     <dependencyManagement>
@@ -77,6 +79,16 @@
           <groupId>com.teipsum</groupId>
           <artifactId>teipsum-shared-exceptions</artifactId>
           <version>${shared-exceptions.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.teipsum</groupId>
+          <artifactId>shared-logger</artifactId>
+          <version>${shared-logger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
       </dependencies>
     </dependencyManagement>
