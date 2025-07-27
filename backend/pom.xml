@@ -38,6 +38,7 @@
       <shared-dto.version>1.0.0</shared-dto.version>
       <shared-exceptions.version>1.0.0</shared-exceptions.version>
       <shared-logger.version>1.0.0</shared-logger.version>
+      <shared-product-dto.version>1.0.0</shared-product-dto.version>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +90,11 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.teipsum</groupId>
+            <artifactId>teipsum-shared-product-dto</artifactId>
+            <version>${shared-product-dto.version}</version>
         </dependency>
       </dependencies>
     </dependencyManagement>
