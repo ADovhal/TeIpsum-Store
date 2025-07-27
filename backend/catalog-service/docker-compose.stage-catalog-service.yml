@@ -1,0 +1,17 @@
+services:
+  stage-catalog-service:
+    container_name: stage-catalog-service
+    build:
+      context: ../..
+      dockerfile: backend/catalog-service/Dockerfile
+      args:
+        SERVICE_NAME: catalog-service
+    ports: ['22096:${SERVICE_SERVER_PORT}']
+    image: stage-catalog-service:latest
+    env_file: .env
+    networks:
+      - stage-net
+
+networks:
+  stage-net:
+    external: true

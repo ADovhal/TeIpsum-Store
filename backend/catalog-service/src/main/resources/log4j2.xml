@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <include resource="log4j2.xml"/>
+
+    <Appenders>
+        <RollingFile name="CatalogFile"
+                     fileName="${LOG_DIR}/${sys:service.name}-catalog.log"
+                     filePattern="${LOG_DIR}/${sys:service.name}-catalog-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{ISO8601} | CATALOG | %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="CATALOG" level="info" additivity="false">
+            <AppenderRef ref="CatalogFile"/>
+        </Logger>
+        <Logger name="com.teipsum.catalogservice" level="debug"/>
+    </Loggers>
+</Configuration>
