@@ -1,5 +1,6 @@
 <Configuration status="WARN" monitorInterval="30">
     <Properties>
+        <Property name="log4j2.formatMsgNoLookups">true</Property>
         <Property name="LOG_DIR">logs</Property>
         <Property name="SERVICE_NAME">${sys:service.name}</Property>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %c{1.} [${sys:service.name}] - %msg%n</Property>

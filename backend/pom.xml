@@ -34,7 +34,7 @@
       <jackson-databind.version>2.17.0</jackson-databind.version>
       <java-jwt.version>4.4.0</java-jwt.version>
       <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
-      <log4j.version>2.20.0</log4j.version>
+      <log4j.version>2.23.1</log4j.version>
       <shared-dto.version>1.0.0</shared-dto.version>
       <shared-exceptions.version>1.0.0</shared-exceptions.version>
       <shared-logger.version>1.0.0</shared-logger.version>
