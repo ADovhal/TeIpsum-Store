@@ -1,160 +1,163 @@
-import React, { useState, useEffect, useRef} from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { toggleCart, closeCart } from '../../features/cart/cartSlice';
+import { logoutAsync } from '../../features/auth/authSlice';
 import { HeaderHeightContext } from '../../context/HeaderHeightContext';
-import { useContext } from 'react';
-import apiUser from '../../services/apiUser';
-import styles from './Header.module.css';
+import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
+import CartSidebar from '../../features/cart/components/CartSidebar';
 import FireButton from '../../styles/FireButton';
+import styles from './Header.module.css';
 import logo from '../../assets/images/ActualLogo.png';
 
 const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const headerRef = useRef(null);
-  const { setHeaderHeight } = useContext(HeaderHeightContext);
-  const location = useLocation();
-  const { accessToken } = useSelector((state) => state.auth);
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isOpen, items } = useSelector((state) => state.cart);
-  const cartIconRef = useRef(null);
-  const cartRef = useRef(null);
+  const { setHeaderHeight } = useContext(HeaderHeightContext);
+  const { t } = useLanguage();
+  const { theme } = useTheme();
+
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { items } = useSelector((state) => state.cart);
+
+  const handleToggleCart = () => {
+    dispatch(toggleCart());
+  };
+  const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-      const updateHeight = () => {
-          if (headerRef.current) {
-              setHeaderHeight(headerRef.current.offsetHeight);
-          }
-      };
-      updateHeight();
-      const resizeObserver = new ResizeObserver(updateHeight);
+    const updateHeaderHeight = () => {
       if (headerRef.current) {
-          resizeObserver.observe(headerRef.current);
+        setHeaderHeight(headerRef.current.offsetHeight);
       }
-      return () => resizeObserver.disconnect();
+    };
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
   }, [setHeaderHeight]);
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        cartRef.current && cartRef.current.contains(e.target) ||
-        cartIconRef.current && cartIconRef.current.contains(e.target)
-      ) {
-        return;
-      }
-      dispatch(closeCart());
-    };
+  const handleLogout = () => {
+    dispatch(logoutAsync());
+    navigate('/');
+  };
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, dispatch]);
-
-  const checkProfile = async () => {
-    if (!accessToken) {
-      navigate('/login');
-      return;
-    }else{
-      navigate('/profile')
-    }
-
-    try {
-      const response = await apiUser.get('/users/profile', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate('/store', { 
+        state: { searchQuery: searchQuery.trim() } 
       });
-
-      if (response.status === 200) {
-        navigate('/profile');
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
+      setSearchQuery('');
     }
   };
 
   const toggleMenu = () => {
-    setMenuOpen((prevState) => !prevState);
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const closeMenu = () => {
-    setMenuOpen(false);
+    setIsMenuOpen(false);
   };
 
   return (
-    <header ref={headerRef} className={styles.header}>
-      <section className={styles.headerLeft}>
-        <button className={styles.hamburger} onClick={toggleMenu} aria-label="Toggle navigation menu">
-          <span className={styles.bar}/>
-          <span className={styles.bar}/>
-          <span className={styles.bar}/>
-        </button>
-        <Link to="/" className={styles.logo} aria-label="Home">
-          <img src={logo} alt="Website Logo" />
+    <>
+      <header 
+        ref={headerRef} 
+        className={styles.header}
+        style={{
+          backgroundColor: theme.header,
+          borderBottom: `1px solid ${theme.border}`,
+          boxShadow: theme.shadow
+        }}
+      >
+        <section className={styles.headerLeft}>
+          <button 
+            className={styles.hamburger} 
+            onClick={toggleMenu}
+            aria-label="Toggle navigation menu"
+          >
+            <span className={`${styles.bar} ${isMenuOpen ? styles.active : ''}`}></span>
+            <span className={`${styles.bar} ${isMenuOpen ? styles.active : ''}`}></span>
+            <span className={`${styles.bar} ${isMenuOpen ? styles.active : ''}`}></span>
+          </button>
+        </section>
+        <Link to="/" className={styles.logo} onClick={closeMenu}>
+          <img src={logo} alt="TeIpsum Logo" />
         </Link>
-      </section>
+        <nav className={`${styles.nav} ${isMenuOpen ? styles.active : ''}`}>
+          <ul className={styles.navList}>
+            <li><FireButton><Link to="/" className={styles.navItem} onClick={closeMenu}>{t('home')}</Link></FireButton></li>
+            <li><FireButton><Link to="/pre-store" className={styles.navItem} onClick={closeMenu}>{t('store')}</Link></FireButton></li>
+            <li><FireButton><Link to="/about" className={styles.navItem} onClick={closeMenu}>{t('about')}</Link></FireButton></li>
+            <li><FireButton><Link to="/contact" className={styles.navItem} onClick={closeMenu}>{t('contact')}</Link></FireButton></li>
+            <li><FireButton><Link to="/discounts" className={styles.navItem} onClick={closeMenu}>{t('discounts')}</Link></FireButton></li>
+            <li><FireButton><Link to="/new-collection" className={styles.navItem} onClick={closeMenu}>{t('newCollection')}</Link></FireButton></li>
+          </ul>
+        </nav>
 
-      <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`} aria-label="Primary navigation">
-        <ul className={styles.navList}>
-          <li>
-              <FireButton><Link to="/" className={styles.navItem} onClick={closeMenu}>Home</Link></FireButton>
-          </li>
-          <li>
-              <FireButton><Link to="/store" className={styles.navItem} onClick={closeMenu}>Store</Link></FireButton>
-          </li>
-          <li>
-              <FireButton><Link to="/about" className={styles.navItem} onClick={closeMenu}>About</Link></FireButton>
-          </li>
-          <li>
-              <FireButton><Link to="/contact" className={styles.navItem} onClick={closeMenu}>Contact</Link></FireButton>
-          </li>
-        </ul>
-      </nav>
+        <section className={styles.headerRight}>
+          <form onSubmit={handleSearch} className={styles.searchContainer}>
+            <input
+              name="search"
+              type="text"
+              placeholder={t('searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+              style={{
+                backgroundColor: theme.input,
+                color: theme.textPrimary,
+                borderColor: theme.inputBorder
+              }}
+            />
+            <span className={styles.searchIcon}>🔍</span>
+          </form>
 
-      <section className={styles.actions}>
-        <button
-          ref={cartIconRef}
-          onClick={() => dispatch(toggleCart())}
-          className={`${styles.iconButton} ${isOpen ? styles.active : ''}`}
-          aria-label="Cart"
-        >
-        <i className="fa fa-shopping-cart"></i>
-        </button>
-        <button onClick={checkProfile} className={styles.iconButton} aria-label="Profile">
-          <i className="fa fa-user"></i>
-        </button>
-      </section>
-      {isOpen && (
-        <div ref={cartRef} className={styles.cartDropdown}>
-          {items.length === 0 ? (
-            <p>Your cart is empty</p>
-          ) : (
-            <>
-              <ul>
-                {items.map((item) => (
-                  <li key={item.id}>{item.name} — {item.quantity}</li>
-                ))}
-              </ul>
-              <Link to="/cart">
-                <button onClick={() => dispatch(closeCart())}>Open full cart</button>
+          <div className={styles.actions}>
+            <button
+              onClick={handleToggleCart}
+              className={styles.iconButton}
+              aria-label={`Shopping cart (${cartItemsCount} items)`}
+            >
+              <i className="fa fa-shopping-cart" style={{ color: theme.textPrimary }}></i>
+              {cartItemsCount > 0 && (
+                <span 
+                  className={styles.cartBadge}
+                  style={{
+                    backgroundColor: theme.accent,
+                    color: 'white'
+                  }}
+                >
+                  {cartItemsCount}
+                </span>
+              )}
+            </button>
+
+            {isAuthenticated ? (
+              <div className={styles.userMenu}>
+                <Link to="/profile" className={styles.iconButton} onClick={closeMenu}>
+                  <i className="fa fa-user" style={{ color: theme.textPrimary }}></i>
+                </Link>
+                <button onClick={handleLogout} className={styles.logoutButton}>
+                  {t('logout')}
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className={styles.iconButton} onClick={closeMenu}>
+                <i className="fa fa-user" style={{ color: theme.textPrimary }}></i>
               </Link>
-            </>
-          )}
-        </div>
-      )}
-    </header>
+            )}
+          </div>
+        </section>
+      </header>
+
+      <CartSidebar onClose={() => dispatch(closeCart())} />
+    </>
   );
 };
 
