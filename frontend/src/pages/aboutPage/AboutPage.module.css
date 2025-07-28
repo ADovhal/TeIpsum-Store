@@ -1,5 +1,6 @@
 .aboutStore {
   position: relative;
+  background-color: #E6E6E4;
 }
 
 .aboutStickyHeader {
@@ -7,6 +8,9 @@
   padding: 20px;
   will-change: transform, opacity;
   z-index: 10;
+  border-bottom: #c3c9bf 2px solid;
+  border-radius: 20px;
+  box-shadow: #c3c9bf 0px 4px 12px;
 }
 
 .lavresLeft {
@@ -19,6 +23,7 @@
   background-position: center;
   z-index: -1;
 }
+
 .lavresRight {
   position: absolute;
   right: 36rem;
@@ -35,6 +40,7 @@
   font-size: 2.5rem;
   margin: 0;
   color: #2a3a1e;
+  line-height: 1.2;
 }
 
 .aboutStickyHeader p {
@@ -42,82 +48,169 @@
   font-size: 1.6rem;
   margin: 10px 0;
   color: #2a3a1e;
+  line-height: 1.3;
 }
 
 .aboutContent {
   text-align: center;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
+.brandHistory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  margin-top: 40px;
+}
 
-@media (max-width: 1735px) {
+.historySection {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+}
 
-  .lavresLeft{
+.historySection:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.historySection h3 {
+  color: #2a3a1e;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  font-family: 'Petit Formal Script', cursive;
+  border-bottom: 2px solid #e8f4f8;
+  padding-bottom: 10px;
+  line-height: 1.3;
+}
+
+.historySection p {
+  color: #5a4b3e;
+  line-height: 1.6;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+
+/* Large Desktop */
+@media (max-width: 1920px) {
+  .lavresLeft {
+    left: 32rem;
+  }
+  .lavresRight {
+    right: 32rem;
+  }
+}
+
+/* Desktop */
+@media (max-width: 1440px) {
+  .lavresLeft {
     left: 28rem;
-    width: 10%;
+    width: 12%;
   }
-
-  .lavresRight{
+  .lavresRight {
     right: 28rem;
-    width: 10%;
+    width: 12%;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 2.3rem;
+  }
+  
+  .aboutStickyHeader p {
+    font-size: 1.5rem;
   }
 }
 
-@media (max-width: 1536px) {
-
-  .lavresLeft{
+/* Large Laptop */
+@media (max-width: 1200px) {
+  .lavresLeft {
     left: 22rem;
-    width: 10%;
+    width: 14%;
   }
-
-  .lavresRight{
+  .lavresRight {
     right: 22rem;
-    width: 10%;
+    width: 14%;
+  }
+  
+  .aboutContent {
+    max-width: 900px;
+    padding: 35px 20px;
+  }
+  
+  .brandHistory {
+    gap: 35px;
+    margin-top: 35px;
+  }
+  
+  .historySection {
+    padding: 25px;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 2.1rem;
+  }
+  
+  .aboutStickyHeader p {
+    font-size: 1.4rem;
   }
 }
 
-@media (max-width: 1280px) {
-  
-  .lavresLeft{
+/* Laptop */
+@media (max-width: 992px) {
+  .lavresLeft {
     left: 18rem;
-    width: 10%;
+    width: 16%;
   }
-
-  .lavresRight{
+  .lavresRight {
     right: 18rem;
-    width: 10%;
+    width: 16%;
+  }
+  
+  .aboutContent {
+    max-width: 800px;
+    padding: 30px 15px;
+  }
+  
+  .brandHistory {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+  }
+  
+  .historySection {
+    padding: 22px;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 2rem;
+  }
+  
+  .aboutStickyHeader p {
+    font-size: 1.3rem;
   }
 }
 
-@media (max-width: 1080px) {
-
-  .lavresLeft{
-    left: 12rem;
-    width: 10%;
-  }
-
-  .lavresRight{
-    right: 12rem;
-    width: 10%;
-  }
-}
-
-@media (max-width: 920px) {
-
-  .lavresLeft{
-    left: 8rem;
-    width: 10%;
-  }
-
-  .lavresRight{
-    right: 8rem;
-    width: 10%;
-  }
-}
-
+/* Tablet */
 @media (max-width: 768px) {
+  .lavresLeft {
+    left: 12rem;
+    width: 18%;
+  }
+  .lavresRight {
+    right: 12rem;
+    width: 18%;
+  }
+  
+  .aboutStickyHeader {
+    padding: 15px;
+  }
   
   .aboutStickyHeader h2 {
     font-size: 1.8rem;
@@ -125,119 +218,268 @@
 
   .aboutStickyHeader p {
     font-size: 1.2rem;
+    margin: 8px 0;
   }
   
-  .lavresLeft{
+  .aboutContent {
+    max-width: 100%;
+    padding: 25px 15px;
+  }
+  
+  .brandHistory {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-top: 25px;
+  }
+  
+  .historySection {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .historySection h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  
+  .historySection p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Large Mobile */
+@media (max-width: 576px) {
+  .lavresLeft {
     left: 8rem;
-    width: 15%;
+    width: 20%;
   }
-
-  .lavresRight{
+  .lavresRight {
     right: 8rem;
-    width: 15%;
+    width: 20%;
   }
-}
-
-@media (max-width: 675px ) {
+  
+  .aboutStickyHeader {
+    padding: 12px;
+  }
   
   .aboutStickyHeader h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   .aboutStickyHeader p {
+    font-size: 1.1rem;
+    margin: 6px 0;
+  }
+  
+  .aboutContent {
+    padding: 20px 12px;
+  }
+  
+  .brandHistory {
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .historySection {
+    padding: 18px;
+    border-radius: 12px;
+  }
+  
+  .historySection h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .historySection p {
+    font-size: 0.9rem;
+  }
+  
+  .historySection:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .lavresLeft {
+    left: 4rem;
+    width: 22%;
+  }
+  .lavresRight {
+    right: 4rem;
+    width: 22%;
+  }
+  
+  .aboutStickyHeader {
+    padding: 10px;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 1.4rem;
+  }
+
+  .aboutStickyHeader p {
+    font-size: 1rem;
+    margin: 5px 0;
+  }
+  
+  .aboutContent {
+    padding: 15px 10px;
+  }
+  
+  .brandHistory {
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .historySection {
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .historySection h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .historySection p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 360px) {
+  .lavresLeft {
+    left: 1rem;
+    width: 25%;
+  }
+  .lavresRight {
+    right: 1rem;
+    width: 25%;
+  }
+  
+  .aboutStickyHeader {
+    padding: 8px;
+  }
+  
+  .aboutStickyHeader h2 {
     font-size: 1.2rem;
   }
-  
-  .lavresLeft{
-    left: 6rem;
-    width: 15%;
-  }
 
-  .lavresRight{
-    right: 6rem;
-    width: 15%;
-  }
-}
-
-@media (max-width: 580px ) {
-
-  .lavresLeft{
-    left: 4rem;
-    width: 15%;
-  }
-
-  .lavresRight{
-    right: 4rem;
-    width: 15%;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .lavresLeft{
-    left: 0.2rem;
-    width: 20%;
-  }
-
-  .lavresRight{
-    right: 0.2rem;
-    width: 20%;
-  }
-}
-
-@media (max-width:390px) {
-
-  .lavresLeft{
-    left: 0.1rem;
-    width: 20%;
-  }
-
-  .lavresRight{
-    right: 0.1rem;
-    width: 20%;
-  }
-}
-
-@media (max-width:360px) {
-
-  .lavresLeft{
-    left: 0.2rem;
-    width: 20%;
-  }
-
-  .lavresRight{
-    right: 0.2rem;
-    width: 20%;
-  }
-
-  .aboutStore{
-    padding-top: 2rem;
-  }
-}
-
-@media screen and (max-width: 360px) {
-
-  .lavresLeft{
-    left: 0.2rem;
-    width: 15%;
-  }
-
-  .lavresRight{
-    right: 0.2rem;
-    width: 15%;
+  .aboutStickyHeader p {
+    font-size: 0.9rem;
+    margin: 4px 0;
   }
   
+  .aboutContent {
+    padding: 12px 8px;
+  }
+  
+  .brandHistory {
+    gap: 12px;
+    margin-top: 12px;
+  }
+  
+  .historySection {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .historySection h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+  
+  .historySection p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+  
+  .historySection:hover {
+    transform: translateY(-2px);
+  }
 }
 
-@media (max-height: 600px) {
-
-  .lavresLeft{
-    left: 0.2rem;
-    width: 20%;
+/* Landscape Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .aboutStickyHeader {
+    padding: 5px;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 1rem;
   }
 
-  .lavresRight{
-    right: 0.2rem;
-    width: 20%;
+  .aboutStickyHeader p {
+    font-size: 0.8rem;
+    margin: 2px 0;
+  }
+  
+  .lavresLeft,
+  .lavresRight {
+    display: none;
+  }
+  
+  .aboutContent {
+    padding: 10px 8px;
+  }
+  
+  .brandHistory {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .historySection {
+    padding: 8px;
+  }
+  
+  .historySection h3 {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .historySection p {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+}
+
+/* Extra Small Mobile and very small screens */
+@media (max-width: 320px) {
+  .lavresLeft,
+  .lavresRight {
+    display: none;
+  }
+  
+  .aboutStickyHeader h2 {
+    font-size: 1.1rem;
+  }
+
+  .aboutStickyHeader p {
+    font-size: 0.85rem;
+  }
+  
+  .aboutContent {
+    padding: 10px 5px;
+  }
+  
+  .brandHistory {
+    gap: 10px;
+  }
+  
+  .historySection {
+    padding: 10px;
+  }
+  
+  .historySection h3 {
+    font-size: 0.95rem;
+  }
+  
+  .historySection p {
+    font-size: 0.75rem;
   }
 }

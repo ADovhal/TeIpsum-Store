@@ -3,6 +3,7 @@ import authReducer from '../features/auth/authSlice';
 import profileReducer from '../features/profile/profileSlice';
 import productReducer from '../features/products/productSlice';
 import cartReducer from '../features/cart/cartSlice';
+import adminReducer from '../features/admin/adminSlice';
 
 const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
         profile: profileReducer,
         products: productReducer,
         cart: cartReducer,
+        admin: adminReducer,
     },
 });
 

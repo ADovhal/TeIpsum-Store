@@ -1,82 +1,802 @@
 .summerSection {
   position: relative;
-  padding: 120px 20px;
-  min-height: 100vh;
+  padding: 120px 20px 160px;
+  min-height: 150vh;
+  background: linear-gradient(135deg, #fefae0 0%, #ffe9d6 30%, #f5f5dc 70%, #fefae0 100%);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  overflow: hidden;
-  background-color: #fefae0;
+  gap: 120px;
 }
 
-.heading {
-  font-size: 4rem;
+.backgroundElements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bgShape1 {
+  position: absolute;
+  top: 10%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(209, 127, 101, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(60px);
+}
+
+.bgShape2 {
+  position: absolute;
+  bottom: 20%;
+  left: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(140, 74, 58, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+.headingContainer {
+  text-align: center;
+  margin-bottom: 80px;
+  z-index: 10;
+  position: relative;
+}
+
+.mainHeading {
+  font-size: 4.5rem;
   font-family: 'Sacramento', cursive;
   color: #4a2e1f;
-  margin-bottom: 80px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  line-height: 1.1;
+}
+
+.mainHeading::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(45deg, #d17f65, #bb5233);
+  border-radius: 2px;
+}
+
+.mainSubtext {
+  font-size: 1.4rem;
+  color: #6b4e3d;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  margin-top: 30px;
+  line-height: 1.4;
+}
+
+.collectionBlock {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 120px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* .contentGrid.reversed {
+  direction: rtl;
+} */
+
+/* .contentGrid.reversed > * {
+  direction: ltr;
+} */
+
+.imageContainer {
+  position: relative;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  /* height: 800px; */
+  /* height: 100%; */
+  /* margin-top: -25px; 
+  margin-bottom: -30px; */
+  width: 90%;
+}
+
+.imageContainer:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+}
+
+.collectionImage {
+  /* width: 80%; */
+  /* height: 100%; */
+  /* height: 800px; */
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.imageContainer:hover .collectionImage {
+  transform: scale(1.05);
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 40px 30px 30px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.imageLabel {
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.textContainer {
+  padding: 40px;
+  height: 80%;
+  display: flex;
+  align-items: center;
+}
+
+.textContent {
+  width: 100%;
+}
+
+.categoryTag {
+  display: inline-block;
+  background: linear-gradient(45deg, #d17f65, #bb5233);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+}
+
+.blockHeading {
+  font-size: 2.8rem;
+  color: #3f2d23;
+  margin-bottom: 25px;
+  font-weight: 700;
+  line-height: 1.2;
+  position: relative;
+}
+
+.blockHeading::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 60px;
+  background: linear-gradient(45deg, #d17f65, #bb5233);
+  border-radius: 3px;
+}
+
+.description {
+  font-size: 1.2rem;
+  color: #5c4b3a;
+  margin-bottom: 35px;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  color: #4a2e1f;
+  font-weight: 500;
+}
+
+.featureIcon {
+  font-size: 1.2rem;
+  width: 28px;
   text-align: center;
 }
 
-.contentWrapper {
-  display: flex;
+.discoverButton {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 60px;
-  max-width: 1200px;
+  gap: 15px;
+  padding: 18px 35px;
+  font-size: 1.1rem;
+  background: linear-gradient(45deg, #d17f65, #bb5233);
+  color: white;
+  border: none;
+  border-radius: 35px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgba(209, 127, 101, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.discoverButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
-  padding: 0 20px;
-  flex-wrap: nowrap;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
-.image {
-  height: 420px;
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  object-fit: cover;
-  max-width: 100%;
+.discoverButton:hover::before {
+  left: 100%;
 }
 
-.textBlock {
-  max-width: 500px;
-  text-align: left;
+.discoverButton:hover {
+  background: linear-gradient(45deg, #bb5233, #a04428);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(209, 127, 101, 0.4);
 }
 
-.textBlock h3 {
-  font-size: 2rem;
-  color: #3f2d23;
+.buttonIcon {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.discoverButton:hover .buttonIcon {
+  transform: translateX(5px);
+}
+
+.sectionDivider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 80px 0;
+  position: relative;
+  z-index: 10;
+}
+
+.dividerLine {
+  height: 2px;
+  width: 300px;
+  background: linear-gradient(45deg, #d17f65, #bb5233);
+  border-radius: 1px;
+  transform-origin: left;
+  
+}
+
+.ctaSection {
+  text-align: center;
+  padding: 80px 40px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.ctaHeading {
+  font-size: 2.5rem;
+  color: #4a2e1f;
   margin-bottom: 20px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-.textBlock p {
+.ctaText {
   font-size: 1.2rem;
-  color: #5c4b3a;
-  margin-bottom: 30px;
+  color: #6b4e3d;
+  margin-bottom: 35px;
   line-height: 1.6;
 }
 
-.textBlock button {
-  padding: 12px 24px;
-  font-size: 1rem;
-  background-color: #d17f65;
-  color: #fff;
+.ctaButton {
+  display: inline-block;
+  padding: 20px 40px;
+  font-size: 1.2rem;
+  background: linear-gradient(45deg, #4a2e1f, #3f2d23);
+  color: white;
   border: none;
-  border-radius: 30px;
+  border-radius: 35px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(74, 46, 31, 0.3);
 }
 
-.textBlock button:hover {
-  background-color: #bb5233;
+.ctaButton:hover {
+  background: linear-gradient(45deg, #3f2d23, #2f1f18);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(74, 46, 31, 0.4);
 }
 
-@media (max-width: 860px) {
-  .contentWrapper {
+/* Responsive Design */
+
+/* Large Desktop */
+@media (max-width: 1440px) {
+  .summerSection {
+    padding: 100px 20px 140px;
+    gap: 100px;
+  }
+  
+  .mainHeading {
+    font-size: 4rem;
+  }
+  
+  .blockHeading {
+    font-size: 2.5rem;
+  }
+  
+  .imageContainer {
+    height: 550px;
+  }
+}
+
+/* Desktop */
+@media (max-width: 1200px) {
+  .summerSection {
+    padding: 80px 20px 120px;
+    gap: 80px;
+  }
+  
+  .contentGrid {
+    gap: 60px;
+    max-width: 1100px;
+  }
+  
+  .mainHeading {
+    font-size: 3.8rem;
+  }
+  
+  .blockHeading {
+    font-size: 2.4rem;
+  }
+  
+  .imageContainer {
+    height: 500px;
+  }
+  
+  .textContainer {
+    padding: 30px;
+  }
+}
+
+/* Large Tablet */
+@media (max-width: 992px) {
+  .summerSection {
+    min-height: 120vh;
+    gap: 60px;
+    padding: 60px 20px 100px;
+  }
+  
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+  
+  .contentGrid.reversed {
+    direction: ltr;
+  }
+  
+  .imageContainer {
+    height: 450px;
+    order: -1;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+  
+  .textContainer {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .blockHeading::before {
+    display: none;
+  }
+  
+  .features {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .feature {
+    min-width: 180px;
+    justify-content: center;
+  }
+  
+  .mainHeading {
+    font-size: 3.5rem;
+  }
+  
+  .blockHeading {
+    font-size: 2.2rem;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .summerSection {
+    padding: 50px 15px 80px;
+    gap: 50px;
+    min-height: 100vh;
+  }
+  
+  .headingContainer {
+    margin-bottom: 60px;
+  }
+  
+  .mainHeading {
+    font-size: 3rem;
+  }
+  
+  .mainSubtext {
+    font-size: 1.1rem;
+  }
+  
+  .blockHeading {
+    font-size: 2rem;
+  }
+  
+  .description {
+    font-size: 1rem;
+  }
+  
+  .imageContainer {
+    height: 400px;
+  }
+  
+  .textContainer {
+    padding: 15px;
+  }
+  
+  .ctaSection {
+    padding: 50px 30px;
+  }
+  
+  .ctaHeading {
+    font-size: 2rem;
+  }
+  
+  .ctaText {
+    font-size: 1rem;
+  }
+  
+  .ctaButton {
+    padding: 15px 30px;
+    font-size: 1rem;
+  }
+  
+  .features {
     flex-direction: column;
-    text-align: center;
+    align-items: center;
+    gap: 15px;
   }
-
-  .textBlock {
-    text-align: center;
+  
+  .feature {
+    min-width: auto;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .discoverButton {
+    padding: 15px 30px;
+    font-size: 1rem;
+  }
+  
+  .collectionBlock {
+    margin-bottom: 80px;
   }
 }
+
+/* Large Mobile */
+@media (max-width: 576px) {
+  .summerSection {
+    padding: 40px 12px 60px;
+    gap: 40px;
+  }
+  
+  .headingContainer {
+    margin-bottom: 40px;
+  }
+  
+  .mainHeading {
+    font-size: 2.5rem;
+  }
+  
+  .mainHeading::after {
+    width: 80px;
+    height: 3px;
+  }
+  
+  .mainSubtext {
+    font-size: 1rem;
+    margin-top: 20px;
+  }
+  
+  .blockHeading {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .description {
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    line-height: 1.6;
+  }
+  
+  .imageContainer {
+    height: 350px;
+    border-radius: 20px;
+  }
+  
+  .imageLabel {
+    font-size: 1.1rem;
+  }
+  
+  .categoryTag {
+    font-size: 0.8rem;
+    padding: 6px 16px;
+    margin-bottom: 20px;
+  }
+  
+  .textContainer {
+    padding: 10px;
+  }
+  
+  .ctaSection {
+    padding: 40px 20px;
+    border-radius: 20px;
+  }
+  
+  .ctaHeading {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  
+  .ctaText {
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+  }
+  
+  .ctaButton {
+    padding: 12px 25px;
+    font-size: 0.9rem;
+  }
+  
+  .collectionBlock {
+    margin-bottom: 60px;
+  }
+  
+  .sectionDivider {
+    margin: 60px 0;
+  }
+  
+  .dividerLine {
+    width: 200px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .summerSection {
+    padding: 30px 8px 50px;
+    gap: 30px;
+  }
+  
+  .mainHeading {
+    font-size: 2.2rem;
+  }
+  
+  .blockHeading {
+    font-size: 1.6rem;
+  }
+  
+  .description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .imageContainer {
+    height: 300px;
+    border-radius: 15px;
+  }
+  
+  .imageLabel {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .imageOverlay {
+    padding: 30px 20px 20px;
+  }
+  
+  .textContainer {
+    padding: 5px;
+  }
+  
+  .discoverButton {
+    padding: 12px 25px;
+    font-size: 0.9rem;
+    gap: 10px;
+  }
+  
+  .buttonIcon {
+    font-size: 1.1rem;
+  }
+  
+  .features {
+    gap: 12px;
+  }
+  
+  .feature {
+    font-size: 0.9rem;
+  }
+  
+  .featureIcon {
+    font-size: 1rem;
+    width: 24px;
+  }
+  
+  .ctaSection {
+    padding: 30px 15px;
+  }
+  
+  .ctaHeading {
+    font-size: 1.6rem;
+  }
+  
+  .ctaText {
+    font-size: 0.9rem;
+  }
+  
+  .ctaButton {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 360px) {
+  .summerSection {
+    padding: 25px 5px 40px;
+    gap: 25px;
+  }
+  
+  .mainHeading {
+    font-size: 1.8rem;
+  }
+  
+  .mainSubtext {
+    font-size: 0.9rem;
+  }
+  
+  .blockHeading {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+  
+  .description {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  
+  .imageContainer {
+    height: 250px;
+  }
+  
+  .categoryTag {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+  }
+  
+  .discoverButton {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+  }
+  
+  .feature {
+    font-size: 0.85rem;
+  }
+  
+  .ctaSection {
+    padding: 25px 10px;
+  }
+  
+  .ctaHeading {
+    font-size: 1.4rem;
+  }
+  
+  .ctaText {
+    font-size: 0.85rem;
+  }
+  
+  .ctaButton {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+  
+  .collectionBlock {
+    margin-bottom: 40px;
+  }
+  
+  .sectionDivider {
+    margin: 40px 0;
+  }
+  
+  .dividerLine {
+    width: 150px;
+    height: 1px;
+  }
+}
+
+/* Landscape Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .summerSection {
+    min-height: auto;
+    padding: 30px 15px 40px;
+  }
+  
+  .headingContainer {
+    margin-bottom: 30px;
+  }
+  
+  .mainHeading {
+    font-size: 2rem;
+  }
+  
+  .mainSubtext {
+    font-size: 0.9rem;
+    margin-top: 15px;
+  }
+  
+  .imageContainer {
+    height: 280px;
+  }
+  
+  .collectionBlock {
+    margin-bottom: 40px;
+  }
+  
+  .ctaSection {
+    padding: 30px 20px;
+  }
+}
+

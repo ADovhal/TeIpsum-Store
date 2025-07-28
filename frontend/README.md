@@ -1,190 +1,278 @@
-# 🛒 Frontend do TeIpsum
+# TeIpsum Frontend - Modern E-commerce Store
 
-## 📋 Opis projektu
+A comprehensive React-based e-commerce frontend with modern UI/UX, advanced filtering, cart management, and admin functionality.
 
-To część frontendowa projektu **TeIpsum**, stworzona przy użyciu nowoczesnych technologii frontendowych (**React**, **Redux**, **JavaScript**).  
-Aplikacja umożliwia wyświetlanie produktów sklepu oraz uwierzytelnianie użytkowników, z planowanym rozszerzeniem o zarządzanie koszykiem, zamówieniami i płatnościami poprzez komunikację z backendem.
+## 🚀 Features
 
----
+### 🛍️ Store & Shopping Experience
+- **Modern Product Grid/List View** - Toggle between grid and list layouts
+- **Advanced Product Filtering** - Filter by category, price range, and ratings
+- **Real-time Search** - Search products by name with instant results
+- **Product Cards with Ratings** - Star ratings and product badges (NEW, SALE)
+- **Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- **Pagination** - Efficient product browsing with page navigation
 
-## ⚙️ Technologie użyte w projekcie
+### 🛒 Cart Management
+- **Shopping Cart Sidebar** - Slide-out cart with real-time updates
+- **Quantity Controls** - Increment/decrement product quantities
+- **Cart Persistence** - Cart items saved in Redux store
+- **Cart Total Calculation** - Automatic price calculations
+- **Bulk Actions** - Clear cart, remove individual items
 
-| Technologia     | Opis                                          |
-|-----------------|-----------------------------------------------|
-| React           | Budowa interfejsu użytkownika (SPA)           |
-| Redux           | Zarządzanie globalnym stanem aplikacji        |
-| JavaScript (ES6+)| Logika działania aplikacji klienckiej         |
-| HTML5           | Struktura dokumentów WWW                      |
-| CSS3            | Stylizacja i układ interfejsu                 |
-| React Router    | Routing i nawigacja między stronami           |
-| Axios           | Komunikacja z backendem (REST API)            |
+### 💳 Checkout & Orders
+- **Complete Checkout Flow** - Shipping and payment information forms
+- **Order Confirmation** - Success page with order details
+- **Order History** - View past orders in user profile
+- **Order Status Tracking** - Visual status indicators
 
----
+### 👤 User Management
+- **User Authentication** - Login/Register with JWT tokens
+- **Profile Management** - Update personal information
+- **Order History** - View and track past orders
+- **Settings Panel** - User preferences and account settings
 
-## 🛠 Główne funkcjonalności
+### 🔐 Admin Panel (Role-based Access)
+- **Product Management** - CRUD operations for products
+- **Bulk Operations** - Select and manage multiple products
+- **User Management** - Create and manage admin users
+- **Order Management** - View and update order statuses
+- **Analytics Dashboard** - Sales and performance metrics
+- **Role-based Security** - Admin-only access with PreAuthorize
 
-- 🛍  Dynamiczne wyświetlanie produktów sklepu.
-- 👤 Przygotowany system uwierzytelniania użytkownika.
-- 🔒 Bezpieczne przesyłanie i pobieranie danych (komunikacja z backendem).
-- 📱 Responsywny i przyjazny dla użytkownika interfejs.
-- 🔄 Przygotowana struktura globalnego zarządzania stanem (Redux Toolkit).
+## 🛠️ Technical Stack
 
----
-## 📂 Struktura katalogów
+### Frontend Technologies
+- **React 18** - Modern React with hooks and functional components
+- **Redux Toolkit** - State management with RTK Query
+- **Styled Components** - CSS-in-JS for component styling
+- **React Router** - Client-side routing
+- **Axios** - HTTP client for API communication
+
+### Backend Integration
+- **Catalog Service** - Product listing and filtering
+- **Admin Product Service** - Product management (admin only)
+- **Auth Service** - User authentication and authorization
+- **User Service** - User profile management
+
+### Key Features
+- **JWT Authentication** - Secure token-based authentication
+- **Role-based Access Control** - Admin and user role management
+- **Responsive Design** - Mobile-first approach
+- **Error Handling** - Comprehensive error management
+- **Loading States** - User feedback during operations
+
+## 📁 Project Structure
 
 ```
 frontend/
-├── public/
-│   ├── index.html
-│   └── manifest.json
 ├── src/
-│   ├── assets/
-│   │   └── images/
-│   │       └── logo.png
-│   ├── components/
-│   │   ├── Footer/
-│   │   │   ├── Footer.js
-│   │   │   └── Footer.module.css
-│   │   ├── Header/
-│   │   │   ├── Header.js
-│   │   │   └── Header.module.css
-│   │   └── store/
-│   │       ├── FilterSidebar.js
-│   │       ├── SearchBar.js
-│   │       └── StorePageComponents.module.css
-│   ├── context/
-│   │   └── ViewTypeContext.js
-│   ├── features/
-│   │   ├── auth/
-│   │   │   ├── AuthService.js
-│   │   │   ├── authSlice.js
-│   │   │   └── components/
-│   │   │       ├── AuthForm.module.css
-│   │   │       ├── LoginForm.js
-│   │   │       └── RegisterForm.js
-│   │   ├── cart/
-│   │   │   ├── cartSlice.js
-│   │   │   └── components/
-│   │   │       └── CartItem.js
-│   │   ├── orders/
-│   │   ├── products/
-│   │   │   ├── productSlice.js
-│   │   │   ├── ProductService.js
-│   │   │   └── components/
-│   │   │       ├── ProductBlock.js
-│   │   │       ├── ProductBlockStyles.js
-│   │   │       ├── ProductCard.js
-│   │   │       └── ProductCardStyles.js
-│   │   └── profile/
-│   │       ├── profileSlice.js
-│   │       ├── UserService.js
-│   │       └── components/
-│   │   │       ├── ProfileData.js
-│   │   │       ├── ProfileData.module.css
-│   │   │       ├── ProfileForm.js
-│   │   │       ├── ProfileForm.module.css
-│   ├── pages/
-│   │   ├── HomePage.js
-│   │   ├── HomePage.module.css
-│   │   ├── LoginPage.js
-│   │   ├── ProfilePage.js
-│   │   ├── RegisterPage.js
-│   │   └── StorePage.js
-│   ├── redux/
-│   │   └── store.js
-│   ├── routes/
-│   │   └── PrivateRoute.js
-│   ├── services/
-│   │   └── api.js
-│   ├── styles/
-│   │   └── GlobalStyles.js
-│   ├── utils/
-│   │   └── validation.js
-│   ├── App.js
-│   ├── App.test.js
-│   ├── index.js
-│   ├── reportWebVitals.js
-│   └── setupTests.js
-├── .gitignore
-├── docker-compose.yml
-├── Dockerfile
-├── nginx.template.conf
-├── package.json
-├── package-lock.json
-└── README.md
-
+│   ├── components/          # Reusable UI components
+│   │   ├── Header/         # Navigation and cart
+│   │   ├── Footer/         # Site footer
+│   │   └── store/          # Store-specific components
+│   ├── features/           # Feature-based modules
+│   │   ├── auth/           # Authentication
+│   │   ├── cart/           # Shopping cart
+│   │   ├── products/       # Product management
+│   │   ├── profile/        # User profile
+│   │   └── admin/          # Admin functionality
+│   ├── pages/              # Page components
+│   │   ├── StorePage.js    # Main store page
+│   │   ├── CheckoutPage.js # Checkout process
+│   │   ├── ProfilePage.js  # User profile
+│   │   └── AdminProductPage.js # Admin product management
+│   ├── services/           # API services
+│   │   ├── apiAuth.js      # Authentication API
+│   │   ├── apiProduct.js   # Product API
+│   │   ├── apiUser.js      # User API
+│   │   └── apiAdmin.js     # Admin API
+│   ├── redux/              # Redux store configuration
+│   ├── context/            # React context providers
+│   ├── styles/             # Global styles and themes
+│   └── utils/              # Utility functions
 ```
 
----
+## 🚀 Getting Started
 
-## 🚀 Szybki start
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Backend services running (see backend README)
 
-### Instalacja zależności
+### Installation
 
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd TeIpsum/frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env` file in the frontend directory:
+   ```env
+   REACT_APP_API_URL=http://localhost:8080
+   REACT_APP_ADMIN_API_URL=http://localhost:8082
+   REACT_APP_AUTH_API_URL=http://localhost:8081
+   REACT_APP_USER_API_URL=http://localhost:8083
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## 🔧 Configuration
+
+### API Endpoints
+The application connects to multiple backend services:
+
+- **Catalog Service** (Port 8080) - Product catalog and filtering
+- **Admin Product Service** (Port 8082) - Product management (admin)
+- **Auth Service** (Port 8081) - Authentication and authorization
+- **User Service** (Port 8083) - User profile management
+
+### Environment Variables
+- `REACT_APP_API_URL` - Catalog service URL
+- `REACT_APP_ADMIN_API_URL` - Admin service URL
+- `REACT_APP_AUTH_API_URL` - Auth service URL
+- `REACT_APP_USER_API_URL` - User service URL
+
+## 🎨 UI/UX Features
+
+### Design System
+- **Modern Color Palette** - Professional e-commerce colors
+- **Typography** - Clean, readable fonts
+- **Spacing** - Consistent spacing system
+- **Shadows & Effects** - Subtle depth and interactions
+- **Animations** - Smooth transitions and hover effects
+
+### Responsive Breakpoints
+- **Mobile** - < 768px
+- **Tablet** - 768px - 1024px
+- **Desktop** - > 1024px
+
+### Component Library
+- **Product Cards** - Grid and list view variants
+- **Filter Sidebar** - Advanced filtering interface
+- **Cart Sidebar** - Shopping cart overlay
+- **Form Components** - Consistent form styling
+- **Button Variants** - Primary, secondary, and action buttons
+
+## 🔐 Security Features
+
+### Authentication
+- **JWT Tokens** - Secure token-based authentication
+- **Token Refresh** - Automatic token renewal
+- **Protected Routes** - Role-based route protection
+- **Logout Handling** - Secure session termination
+
+### Authorization
+- **Role-based Access** - Admin and user role management
+- **Protected Endpoints** - Backend PreAuthorize integration
+- **Admin Panel Access** - Admin-only functionality
+
+## 📊 State Management
+
+### Redux Store Structure
+```javascript
+{
+  auth: {
+    accessToken,
+    isAuthenticated,
+    user,
+    loading,
+    error
+  },
+  products: {
+    products: [],
+    totalPages,
+    loading,
+    error
+  },
+  cart: {
+    items: [],
+    isOpen,
+    total
+  },
+  profile: {
+    profileData,
+    loading,
+    error
+  },
+  admin: {
+    products: [],
+    users: [],
+    orders: [],
+    analytics: {},
+    selectedItems: [],
+    forms: {}
+  }
+}
+```
+
+## 🧪 Testing
+
+### Available Scripts
 ```bash
-npm install
+npm test          # Run tests
+npm run test:coverage  # Run tests with coverage
+npm run build     # Build for production
+npm run eject     # Eject from Create React App
 ```
 
-### Uruchomienie projektu w trybie developerskim
+## 🚀 Deployment
 
+### Docker Deployment
 ```bash
-npm start
+# Build Docker image
+docker build -t teipsum-frontend .
+
+# Run container
+docker run -p 3000:3000 teipsum-frontend
 ```
 
-Aplikacja będzie dostępna pod adresem:
-```
-http://localhost:3000
-```
-
-### Budowanie wersji produkcyjnej
-
+### Production Build
 ```bash
 npm run build
+# Serve the build folder with a static server
 ```
 
-Wersja produkcyjna zostanie utworzona w folderze `build/`.
+## 🤝 Contributing
 
----
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-## 🐳 Uruchomienie za pomocą Dockera (rekomendowane)
-Dla łatwej konteneryzacji aplikacji rekomendowane jest użycie Dockera.
-Docker pozwala na izolację środowiska, efektywne zarządzanie pamięcią oraz szybkie wdrażanie.
+## 📝 License
 
-Jak uruchomić projekt w kontenerze:
-1. Budowanie i uruchomienie kontenera:
-```
-docker-compose up --build
-```
-2. Aplikacja będzie dostępna pod adresem:
-```
-http://localhost:3000
-```
-🧠 Dlaczego Docker?
-Kontener Dockera działa jak odizolowane środowisko, dzięki czemu zużycie zasobów jest 
-zoptymalizowane, a aplikacja zajmuje mniej pamięci i miejsca niż przy tradycyjnym uruchamianiu.
+This project is licensed under the MIT License.
 
----
+## 🆘 Support
 
-## 📈 Plany na dalszy rozwój
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the backend documentation
 
-- 🔜 Implementacja funkcjonalności koszyka zakupów (dodawanie, usuwanie produktów).
-- 🔜 Obsługa zamówień i historii zakupów dla zalogowanych użytkowników.
-- 🔜 Rozbudowa profilu użytkownika (edycja danych, zmiana hasła).
-- 🔜 Wdrożenie systemu płatności oraz opcji dostawy.
-- 🔜 Dodanie sekcji **Contact Us** z formularzem wysyłającym wiadomości e-mail do sklepu.
-- 🔜 Stworzenie strony **About Us** z opisem sklepu i lokalizacjami.
+## 🔄 Version History
 
----
-## 📝 Uwaga dotycząca uruchamiania
-
-Aplikacja jest oparta na React oraz modułach ES6, dlatego wymaga uruchomienia za pomocą 
-środowiska developerskiego (`npm start`), budowy (npm run build) lub za pomocą kontenera Docker.  
-Nie można jej uruchomić bezpośrednio poprzez otwarcie pliku `index.html` w przeglądarce.
-
-## 📬 Kontakt
-
-**Autor projektu**: Andrii Dovhal
-🔗 [GitHub — ADovhal](https://github.com/ADovhal)
-
----
-> *Frontend stworzony w ramach projektu edukacyjnego WebShopOnline.*
+### v1.0.0 (Current)
+- Complete e-commerce functionality
+- Admin panel with role-based access
+- Modern UI/UX design
+- Responsive layout
+- Cart and checkout system
+- User profile management
+- Order history and tracking
