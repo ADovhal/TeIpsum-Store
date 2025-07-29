@@ -11,8 +11,3 @@
 
 //   return <Element />;
 // }
-
-// // export default function PrivateRoute({ element: Element }) {
-// //   const isAuth = useSelector(s => s.auth.isAuthenticated);
-// //   return isAuth ? <Element /> : <Navigate to="/login" />;
-// // }
