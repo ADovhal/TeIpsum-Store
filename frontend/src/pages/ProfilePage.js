@@ -206,8 +206,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     document.title = "Profile - TeIpsum";
-    if(!profileData) dispatch(loadProfile()); // 
-  }, [dispatch, profileData]);
+     dispatch(loadProfile()); // , profileData if(!profileData)
+  }, [dispatch]);
 
   // Mock order history data
   const orderHistory = [
