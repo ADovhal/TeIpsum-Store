@@ -42,7 +42,7 @@ import ScrollToTop from './components/ScrollToTop';
 function App() {
   return (
     <HelmetProvider>
-      <Provider store={store}>
+      {/* <Provider store={store}> */}
         <ThemeProvider>
           <LanguageProvider>
             <HeaderHeightProvider>
@@ -95,7 +95,7 @@ function App() {
             </HeaderHeightProvider>
           </LanguageProvider>
         </ThemeProvider>
-      </Provider>
+      {/* </Provider> */}
     </HelmetProvider>
   );
 }
