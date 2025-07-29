@@ -12,7 +12,7 @@ const FireButton = ({ children, ...props }) => {
           className={styles.flame} 
           tabIndex="-1"
         />
-      <button className={styles.button} {...props} tabIndex={-1}>
+      <button className={styles.button} {...props} tabIndex={-1} aria-hidden="true">
         {children}
       </button>
     </div>
