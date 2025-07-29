@@ -31,7 +31,7 @@ import TermsOfServicePage from './pages/TermsOfServicePage';
 import AccessibilityPage from './pages/AccessibilityPage';
 import CareersPage from './pages/CareersPage';
 import BlogPage from './pages/BlogPage';
-// import PrivateRoute from './routes/PrivateRoute';
+import PrivateRoute from './routes/PrivateRoute';
 import { ViewTypeProvider } from './context/ViewTypeContext';
 import { GenderProvider } from './context/GenderContext';
 import { HeaderHeightProvider } from './context/HeaderHeightContext';
@@ -84,7 +84,7 @@ function App() {
                               <PrivateRoute element={<ProfilePage />} />
                           } 
                         /> */}
-                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
                       </Routes>
                       <Footer />
                     {/* </div>
