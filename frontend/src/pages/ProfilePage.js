@@ -106,37 +106,37 @@ const OrderDate = styled.span`
   font-size: 14px;
 `;
 
-// const OrderStatus = styled.span`
-//   padding: 4px 12px;
-//   border-radius: 20px;
-//   font-size: 12px;
-//   font-weight: 600;
-//   text-transform: uppercase;
-//   background: ${props => {
-//     switch (props.status) {
-//       case 'delivered': return '#27ae60';
-//       case 'shipped': return '#3498db';
-//       case 'processing': return '#f39c12';
-//       default: return '#95a5a6';
-//     }
-//   }};
-//   color: white;
-// `;
-
 const OrderStatus = styled.span`
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  background: ${({ status }) => (
-    status === 'delivered' ? '#27ae60' :
-    status === 'shipped' ? '#3498db' :
-    status === 'processing' ? '#f39c12' :
-    '#95a5a6'
-  )};
+  background: ${props => {
+    switch (props.status) {
+      case 'delivered': return '#27ae60';
+      case 'shipped': return '#3498db';
+      case 'processing': return '#f39c12';
+      default: return '#95a5a6';
+    }
+  }};
   color: white;
 `;
+
+// const OrderStatus = styled.span`
+//   padding: 4px 12px;
+//   border-radius: 20px;
+//   font-size: 12px;
+//   font-weight: 600;
+//   text-transform: uppercase;
+//   background: ${({ status }) => (
+//     status === 'delivered' ? '#27ae60' :
+//     status === 'shipped' ? '#3498db' :
+//     status === 'processing' ? '#f39c12' :
+//     '#95a5a6'
+//   )};
+//   color: white;
+// `;
 
 const OrderTotal = styled.div`
   font-size: 18px;
@@ -199,15 +199,15 @@ const AdminButton = styled.button`
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { profileData } = useSelector((state) => state.profile);
   // const { isAuthenticated } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Profile - TeIpsum";
-    // dispatch(loadProfile()); dispatch
-  }, []);
+    dispatch(loadProfile()); 
+  }, [dispatch]);
 
   // Mock order history data
   const orderHistory = [
@@ -239,11 +239,11 @@ const ProfilePage = () => {
 
   const isAdmin = profileData?.roles?.some(role => role.name === 'ADMIN');
 
-  // const renderProfileTab = () => (
-  //   <ProfileForm />
-  // );
+  const renderProfileTab = () => (
+    <ProfileForm />
+  );
 
-  const renderProfileTab = () => <div>PROFILE TAB</div>;
+  // const renderProfileTab = () => <div>PROFILE TAB</div>;
 
   const renderOrderHistoryTab = () => (
     <OrderHistoryContainer>
@@ -257,7 +257,7 @@ const ProfilePage = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <OrderStatus status={order.status}>
-                  {String(order.status)}
+                  {(order.status)}
                 </OrderStatus>
                 <OrderTotal>${order.total.toFixed(2)}</OrderTotal>
               </div>
@@ -364,9 +364,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-
-// import React from 'react';
-// export default function ProfilePage() {
-//   return <h1>PROFILE OK</h1>;
-// }
