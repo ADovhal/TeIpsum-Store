@@ -19,9 +19,6 @@ export const login = createAsyncThunk(
     async (credentials, { rejectWithValue }) => {
         try {
             const { id, email, accessToken, refreshToken } = await authLoginUser(credentials);
-
-            //localStorage.setItem('accessToken', accessToken);
-
             return { id, email, accessToken, refreshToken };
         } catch (error) {
             return rejectWithValue(error.message);
@@ -35,7 +32,6 @@ export const refreshToken = createAsyncThunk(
         try {
             const accessToken = await refreshAccessToken();
             console.log('New Access token from api.interceptor: ', accessToken);
-            //localStorage.setItem('accessToken', accessToken); 
             return accessToken;
         } catch (error) {
             return rejectWithValue(error.message);
