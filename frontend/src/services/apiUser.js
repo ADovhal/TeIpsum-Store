@@ -1,7 +1,13 @@
 import axios from 'axios';
 import apiAuth from './apiAuth';
-import store from '../redux/store';
+// import store from '../redux/store';
 import { setAccessToken, logoutAsync } from '../features/auth/authSlice';
+
+let appStore;
+
+export const injectStore = (_store) => {
+  appStore = _store;
+};
 
 const apiUser = axios.create({
   // baseURL: 'http://localhost:22080/api',
@@ -15,7 +21,7 @@ const apiUser = axios.create({
 apiUser.interceptors.request.use(
   (config) => {
     // const store = require('../redux/store').default;
-    const token = store.getState().auth.accessToken;
+    const token = appStore?.getState().auth.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -37,14 +43,14 @@ apiUser.interceptors.response.use(
         const newAccessToken = res.data.accessToken;
         // const store = require('../redux/store').default;
         // store.dispatch({ type: 'auth/setAccessToken', payload: newAccessToken });
-        store.dispatch(setAccessToken(newAccessToken));
+        appStore?.dispatch(setAccessToken(newAccessToken));
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiUser(originalRequest);
       } catch (refreshError) {
         // const store = require('../redux/store').default;
         // store.dispatch(require('../features/auth/authSlice').logoutAsync());
-        store.dispatch(logoutAsync());
+        appStore?.dispatch(logoutAsync());
         return Promise.reject(refreshError);
       }
     }
