@@ -97,6 +97,9 @@ const FooterLink = styled(Link)`
 
   @media (max-width: 480px) {
     font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `;
 

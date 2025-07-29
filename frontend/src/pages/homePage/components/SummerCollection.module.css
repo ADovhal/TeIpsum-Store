@@ -94,13 +94,6 @@
   margin: 0 auto;
 }
 
-/* .contentGrid.reversed {
-  direction: rtl;
-} */
-
-/* .contentGrid.reversed > * {
-  direction: ltr;
-} */
 
 .imageContainer {
   position: relative;
@@ -108,10 +101,6 @@
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
-  /* height: 800px; */
-  /* height: 100%; */
-  /* margin-top: -25px; 
-  margin-bottom: -30px; */
   width: 90%;
 }
 
@@ -121,9 +110,7 @@
 }
 
 .collectionImage {
-  /* width: 80%; */
-  /* height: 100%; */
-  /* height: 800px; */
+  width: 100%;
   object-fit: cover;
   object-position: center;
   transition: transform 0.5s ease;

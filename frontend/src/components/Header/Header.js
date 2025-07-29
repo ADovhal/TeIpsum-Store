@@ -24,6 +24,12 @@ const Header = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { items } = useSelector((state) => state.cart);
 
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    document.body.classList.toggle('menu-open', isMenuOpen);
+  }, [isMenuOpen]);
+
   const handleToggleCart = () => {
     dispatch(toggleCart());
   };
@@ -81,9 +87,9 @@ const Header = () => {
             onClick={toggleMenu}
             aria-label="Toggle navigation menu"
           >
-            <span className={`${styles.bar} ${isMenuOpen ? styles.active : ''}`}></span>
-            <span className={`${styles.bar} ${isMenuOpen ? styles.active : ''}`}></span>
-            <span className={`${styles.bar} ${isMenuOpen ? styles.active : ''}`}></span>
+              <span className={`${styles.icon} ${isMenuOpen ? styles.close : ''}`}>
+                {isMenuOpen ? '✕' : '☰'}
+              </span>
           </button>
         </section>
         <Link to="/" className={styles.logo} onClick={closeMenu}>
