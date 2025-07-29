@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { validateEmail, validatePassword, rateLimiter } from '../../../utils/inputValidation';
+import { validateEmail, rateLimiter } from '../../../utils/inputValidation';
 import { login } from '../authSlice';
 
 const LoginContainer = styled.div`
