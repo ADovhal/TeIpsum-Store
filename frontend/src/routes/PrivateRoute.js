@@ -2,14 +2,13 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-const PrivateRoute = ({ element: Element }) => {
-    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-    // const isLoading = useSelector((state) => state.auth.isLoading);
+export default function PrivateRoute({ element: Element }) {
+  const isAuth = useSelector(s => s.auth.isAuthenticated);
+  const profile = useSelector(s => s.profile.profileData);
+  const loadingProfile = useSelector(s => s.profile.isLoading);
 
-    // if (isLoading) {
-    //     return <div>Loading...</div>;
-    // }
-    return isAuthenticated ? <Element /> : <Navigate to="/login" />;
-};
+  if (!isAuth) return <Navigate to="/login" />;
+  if (loadingProfile || profile === null) return <div>Loading profile…</div>;
 
-export default PrivateRoute;
+  return <Element />;
+}
