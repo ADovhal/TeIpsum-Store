@@ -10,9 +10,9 @@ const FireButton = ({ children, ...props }) => {
           animationData={fireAnimation} 
           loop={true} 
           className={styles.flame} 
-          tabIndex="-1" // Добавляем это свойство
+          tabIndex="-1"
         />
-      <button className={styles.button} {...props} tabIndex={-1} aria-hidden="true">
+      <button className={styles.button} {...props} tabIndex={-1}>
         {children}
       </button>
     </div>
