@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { validateEmail, validatePassword, rateLimiter } from '../../../utils/inputValidation';
 import { login } from '../authSlice';
-import { loadProfile } from '../../profile/profileSlice';
+// import { loadProfile } from '../../profile/profileSlice';
 
 // Styled Components
 const LoginContainer = styled.div`
@@ -218,7 +218,7 @@ const LoginForm = () => {
         password: formData.password 
       })).unwrap();
       
-      dispatch(loadProfile());
+      // dispatch(loadProfile());
       setFormData({ email: '', password: '' });
       navigate('/profile');
     } catch (err) {

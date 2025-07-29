@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { loadProfile } from '../features/profile/profileSlice';
 import styled from 'styled-components';
 import ProfileForm from '../features/profile/components/ProfileForm';
 
@@ -198,13 +199,15 @@ const AdminButton = styled.button`
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
+  const dispatch = useDispatch();
   const { profileData } = useSelector((state) => state.profile);
   // const { isAuthenticated } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Profile - TeIpsum";
-  }, []);
+    dispatch(loadProfile());
+  }, [dispatch]);
 
   // Mock order history data
   const orderHistory = [
