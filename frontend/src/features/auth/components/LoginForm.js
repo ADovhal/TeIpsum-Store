@@ -210,8 +210,8 @@ const LoginForm = () => {
 
     try {
       await dispatch(login({ 
-        email: emailValidation.formData.email, 
-        password: validatePassword.formData.password 
+        email: emailValidation.value, 
+        password: formData.password 
       })).unwrap();
       
       setFormData({ email: '', password: '' });
