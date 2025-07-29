@@ -78,13 +78,13 @@ function App() {
                         <Route path="/terms" element={<TermsOfServicePage />} />
                         <Route path="/careers" element={<CareersPage />} />
                         <Route path="/blog" element={<BlogPage />} />
-                        <Route 
+                        {/* <Route 
                           path="/profile" 
                           element={
                               <PrivateRoute element={<ProfilePage />} />
                           } 
-                        />
-                        {/* <Route path="/profile" element={<ProfilePage />} /> */}
+                        /> */}
+                        <Route path="/profile" element={<ProfilePage />} />
                       </Routes>
                       <Footer />
                     {/* </div>
