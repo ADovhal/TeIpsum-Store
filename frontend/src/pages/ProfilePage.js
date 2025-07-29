@@ -239,9 +239,11 @@ const ProfilePage = () => {
 
   const isAdmin = profileData?.roles?.some(role => role.name === 'ADMIN');
 
-  const renderProfileTab = () => (
-    <ProfileForm />
-  );
+  // const renderProfileTab = () => (
+  //   <ProfileForm />
+  // );
+
+  const renderProfileTab = () => <div>PROFILE TAB</div>;
 
   const renderOrderHistoryTab = () => (
     <OrderHistoryContainer>
@@ -352,9 +354,9 @@ const ProfilePage = () => {
         </TabContainer>
 
         <TabContent>
-          {activeTab === 'profile' && renderProfileTab()}
-          {activeTab === 'orders' && renderOrderHistoryTab()}
-          {activeTab === 'admin' && isAdmin && renderAdminPanelTab()}
+          {activeTab === 'profile' ? renderProfileTab() : null}
+          {activeTab === 'orders' ? renderOrderHistoryTab() : null}
+          {activeTab === 'admin' && isAdmin ? renderAdminPanelTab() : null}
         </TabContent>
       </ProfileContent>
     </ProfileContainer>
