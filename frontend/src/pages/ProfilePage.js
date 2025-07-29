@@ -206,8 +206,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     document.title = "Profile - TeIpsum";
-    if(!profileData)dispatch(loadProfile()); 
-  }, [dispatch, profileData]);
+    dispatch(loadProfile()); //if(!profileData) , profileData
+  }, [dispatch]);
 
   // Mock order history data
   const orderHistory = [
@@ -243,8 +243,6 @@ const ProfilePage = () => {
     <ProfileForm />
   );
 
-  // const renderProfileTab = () => <div>PROFILE TAB</div>;
-
   const renderOrderHistoryTab = () => (
     <OrderHistoryContainer>
       {orderHistory.length > 0 ? (
@@ -257,7 +255,7 @@ const ProfilePage = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <OrderStatus status={order.status}>
-                  {(order.status)}
+                  {String(order.status)}
                 </OrderStatus>
                 <OrderTotal>${order.total.toFixed(2)}</OrderTotal>
               </div>
