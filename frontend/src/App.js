@@ -12,7 +12,7 @@ import AboutPage from './pages/aboutPage/AboutPage';
 import ContactPage from './pages/contactPage/ContactPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProfilePage from './pages/ProfilePage';
+// import ProfilePage from './pages/ProfilePage';
 import PreStorePage from './pages/PreStorePage';
 import SingleProductPage from './pages/SingleProductPage';
 import DiscountsPage from './pages/DiscountsPage';
@@ -31,7 +31,7 @@ import TermsOfServicePage from './pages/TermsOfServicePage';
 import AccessibilityPage from './pages/AccessibilityPage';
 import CareersPage from './pages/CareersPage';
 import BlogPage from './pages/BlogPage';
-import PrivateRoute from './routes/PrivateRoute';
+// import PrivateRoute from './routes/PrivateRoute';
 import { ViewTypeProvider } from './context/ViewTypeContext';
 import { GenderProvider } from './context/GenderContext';
 import { HeaderHeightProvider } from './context/HeaderHeightContext';
@@ -78,12 +78,12 @@ function App() {
                         <Route path="/terms" element={<TermsOfServicePage />} />
                         <Route path="/careers" element={<CareersPage />} />
                         <Route path="/blog" element={<BlogPage />} />
-                        <Route 
+                        {/* <Route 
                           path="/profile" 
                           element={
                               <PrivateRoute element={<ProfilePage />} />
                           } 
-                        />
+                        /> */}
                       </Routes>
                       <Footer />
                     {/* </div>
