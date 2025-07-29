@@ -199,15 +199,15 @@ const AdminButton = styled.button`
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { profileData } = useSelector((state) => state.profile);
   // const { isAuthenticated } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Profile - TeIpsum";
-    //  dispatch(loadProfile()); dispatch // , profileData if(!profileData)
-  }, []);
+     dispatch(loadProfile()); // , profileData if(!profileData)
+  }, [dispatch]);
 
   // Mock order history data
   const orderHistory = [
