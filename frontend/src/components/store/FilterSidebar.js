@@ -42,13 +42,13 @@ const FilterItem = styled.div`
   margin-bottom: 16px;
 `;
 
-const Label = styled.label`
-  display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #7f8c8d;
-`;
+// const Label = styled.label`
+//   display: block;
+//   margin-bottom: 6px;
+//   font-size: 14px;
+//   font-weight: 500;
+//   color: #7f8c8d;
+// `;
 
 const Select = styled.select`
   width: 100%;
@@ -103,40 +103,40 @@ const PriceSeparator = styled.span`
   font-weight: 500;
 `;
 
-const RatingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
+// const RatingContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   gap: 8px;
+// `;
 
-const RatingOption = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
+// const RatingOption = styled.label`
+//   display: flex;
+//   align-items: center;
+//   gap: 8px;
+//   cursor: pointer;
+//   padding: 8px;
+//   border-radius: 6px;
+//   transition: background-color 0.2s ease;
 
-  &:hover {
-    background: #f8f9fa;
-  }
-`;
+//   &:hover {
+//     background: #f8f9fa;
+//   }
+// `;
 
-const RadioInput = styled.input`
-  margin: 0;
-  cursor: pointer;
-`;
+// const RadioInput = styled.input`
+//   margin: 0;
+//   cursor: pointer;
+// `;
 
-const RatingText = styled.span`
-  font-size: 14px;
-  color: #2c3e50;
-`;
+// const RatingText = styled.span`
+//   font-size: 14px;
+//   color: #2c3e50;
+// `;
 
-const Stars = styled.span`
-  color: #f39c12;
-  font-size: 16px;
-`;
+// const Stars = styled.span`
+//   color: #f39c12;
+//   font-size: 16px;
+// `;
 
 const ClearFiltersButton = styled.button`
   width: 100%;
