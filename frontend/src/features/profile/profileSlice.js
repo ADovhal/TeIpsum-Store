@@ -4,25 +4,29 @@ import { fetchProfileData, deleteAccount } from '../profile/UserService';
 
 export const loadProfile = createAsyncThunk(
   'profile/loadProfile',
-  async (_, { rejectWithValue }) => {
+  async (_, thunkAPI ) => {
     try {
-      const profileData = await fetchProfileData();
+      const state = thunkAPI.getState();
+      const token = state.auth.accessToken;
+      const profileData = await fetchProfileData(token);
       console.log(profileData)
       return profileData;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
 export const deleteUserAccount = createAsyncThunk(
   'profile/deleteUserAccount',
-  async (_, { rejectWithValue }) => {
+  async (_, thunkAPI ) => {
     try {
-      await deleteAccount();
+      const state = thunkAPI.getState();
+      const token = state.auth.accessToken;
+      await deleteAccount(token);
       return true;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );

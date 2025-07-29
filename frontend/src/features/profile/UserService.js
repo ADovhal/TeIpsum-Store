@@ -1,11 +1,11 @@
 import apiUser from '../../services/apiUser';
-import store from '../../redux/store';
+// import store from '../../redux/store';
 
-export const fetchProfileData = async () => {
-    const state = store.getState();
-    const token = state.auth.accessToken;
+export const fetchProfileData = async (token) => {
+    // const state = store.getState();
+    // const token = state.auth.accessToken;
 
-    console.log('Token for fetchProfileData: ', token)
+    // console.log('Token for fetchProfileData: ', token)
   
     if (!token) {
       throw new Error('No access token found, please log in again.');
@@ -24,9 +24,9 @@ export const fetchProfileData = async () => {
     }
   };
 
-export const deleteAccount = async () => {
-    const state = store.getState();
-    const token = state.auth.accessToken;
+export const deleteAccount = async (token) => {
+    // const state = store.getState();
+    // const token = state.auth.accessToken;
     if (!token) {
         throw new Error('No token found, please log in again.');
     }
