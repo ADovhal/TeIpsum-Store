@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { ProfileForm } from '../features/profile/components/ProfileForm';
+import ProfileForm from '../features/profile/components/ProfileForm';
 
 const ProfileContainer = styled.div`
   min-height: 100vh;
@@ -252,7 +252,7 @@ const ProfilePage = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <OrderStatus status={order.status}>
-                  {order.status}
+                  {String(order.status)}
                 </OrderStatus>
                 <OrderTotal>${order.total.toFixed(2)}</OrderTotal>
               </div>
