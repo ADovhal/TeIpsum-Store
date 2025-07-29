@@ -5,9 +5,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { validateEmail, validatePassword, rateLimiter } from '../../../utils/inputValidation';
 import { login } from '../authSlice';
-// import { loadProfile } from '../../profile/profileSlice';
 
-// Styled Components
 const LoginContainer = styled.div`
   min-height: 95vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -181,7 +179,6 @@ const LoginForm = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -190,8 +187,7 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Rate limiting check
-    if (!rateLimiter.isAllowed('login_attempt', 5, 300000)) { // 5 attempts per 5 minutes
+    if (!rateLimiter.isAllowed('login_attempt', 5, 300000)) {
       setErrors({ general: 'Too many login attempts. Please try again later.' });
       return;
     }
@@ -213,12 +209,11 @@ const LoginForm = () => {
     }
 
     try {
-      const resultAction = await dispatch(login({ 
-        email: emailValidation.value, 
-        password: formData.password 
+      await dispatch(login({ 
+        email: emailValidation.formData.email, 
+        password: validatePassword.formData.password 
       })).unwrap();
       
-      // dispatch(loadProfile());
       setFormData({ email: '', password: '' });
       navigate('/profile');
     } catch (err) {
