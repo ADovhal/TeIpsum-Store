@@ -97,6 +97,7 @@ body {
 }
 
 .logo {
+	position: relative;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -105,7 +106,7 @@ body {
 	text-align: center;
 	height: 100%;
 	width: 100px;
-	position: relative;
+	margin-right: 200px;
 }
 
 .logo img {
@@ -168,7 +169,6 @@ body {
 	gap: 2.5rem;
 	list-style: none;
 	padding: 0;
-	margin-left: 200px;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
@@ -233,41 +233,20 @@ body {
 }
 
 .hamburger {
-	display: none;
-	flex-direction: column;
-	gap: 3px;
-	width: 25px;
-	height: 25px;
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	justify-content: space-between;
-	align-items: center;
-	position: absolute;
-	left: 20px;
-	top: 50%;
-	transform: translateY(-50%);
-	z-index: 10;
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--color-textPrimary, #2a3a1e);
+  cursor: pointer;
 }
 
-.bar {
-	width: 30px;
-	height: 4px;
-	background-color: var(--color-textPrimary, #2a3a1e);
-	border-radius: 2px;
-	transition: 0.3s ease;
+.icon {
+  transition: transform 0.3s ease;
 }
 
-.bar.active:nth-child(1) {
-	transform: rotate(45deg) translate(5px, 5px);
-}
-
-.bar.active:nth-child(2) {
-	opacity: 0;
-}
-
-.bar.active:nth-child(3) {
-	transform: rotate(-45deg) translate(7px, -6px);
+.icon.close {
+  transform: scale(1.2);
 }
 
 .cartBadge {
@@ -319,12 +298,29 @@ body {
   }
 }
 
+@media screen and (max-width: 1450px){
+	.logo {
+		margin-right: 50px;
+	}
+}
+
+@media screen and (max-width: 1450px){
+	.logo {
+		margin-right: 30px;
+	}
+}
+
 /* Responsive Design - Tablet and smaller screens */
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1280px) {
 	.header {
+		position: sticky;
 		padding: 0rem 2rem;
 	}
 	
+	.logo {
+		margin-right: 30px;
+	}
+
 	.nav {
 		gap: 2rem;
 	}
@@ -338,7 +334,7 @@ body {
 	}
 }
 
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 1225px) {
 
 	.logo {
 		max-width: 80px;
@@ -348,6 +344,7 @@ body {
 
 	.header {
 		padding: 0rem 1.5rem;
+		position: sticky;
 	}
 	
 	.nav {
@@ -368,14 +365,20 @@ body {
 	}
 }
 
+/* @media screen and (max-width: 1150px){
+	.logo {
+
+	}
+} */
+
 /* Mobile Design */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1000px) {
 	.header {
 		padding: 0rem 1rem;
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		height: 70px;
-		position: relative;
+		position: sticky;
 	}
 
 	.headerLeft {
@@ -387,7 +390,6 @@ body {
 
 	.logo {
 		order: 2;
-		/* width: 100%; */
 		justify-content: center;
 		position: absolute;
 		left: 50%;
@@ -433,14 +435,19 @@ body {
 	}
 
 	.navList {
+		display: grid;
 		flex-direction: column;
+		justify-items: center;
+		height: auto;
+		margin-top: 80px;
 		gap: 2rem;
 		width: 100%;
 		padding: 0 2rem;
-		height: auto;
 	}
 
 	.navList li {
+		display: flex;
+		flex-direction: column;
 		height: auto;
 		width: 100%;
 		text-align: center;
@@ -490,8 +497,9 @@ body {
 }
 
 /* Small Mobile Design */
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 480px) and (orientation: landscape) {
 	.header {
+		position: sticky;
 		padding: 0rem 0.5rem;
 		height: 60px;
 	}
@@ -538,16 +546,17 @@ body {
 /* Extra Small Mobile */
 @media screen and (max-width: 360px) {
 	.header {
+		position: sticky;
 		padding: 0rem 0.3rem;
 	}
 	
 	.logo img {
-		max-width: 60px;
-		height: 35px;
+		max-width: 70px;
+		height: 45px;
 	}
 	
 	.hamburger {
-		margin-left: 5px;
+		margin-left: 10px;
 	}
 	
 	.navItem {
@@ -556,7 +565,8 @@ body {
 	}
 	
 	.actions {
-		gap: 5px;
+		margin-right: 10px;
+		gap: 10px;
 	}
 	
 	.iconButton {
@@ -565,6 +575,21 @@ body {
 	}
 	
 	.iconButton i {
-		font-size: 1.1rem;
+		
+		font-size: 1.5rem;
 	}
 }
+
+/* @media (max-height: 600px) and (orientation: landscape) {
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .navItem {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+} */
