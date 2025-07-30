@@ -37,7 +37,7 @@ const ProfileForm = () => {
 
     return (
         <div className={`${styles.profileContainer} ${styles.profileForm}`}>
-            <h1 className={styles.title}>Welcome, {profileData?.name || 'User'}</h1>
+            {/* <h1 className={styles.title}>Welcome, {profileData?.name || 'User'}</h1> */}
             {profileData ? (
                 <div className={styles.profileContent}>
                     <h2 className={styles.subtitle}>Your Profile Information</h2>

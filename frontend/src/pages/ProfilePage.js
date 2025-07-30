@@ -64,7 +64,7 @@ const Tab = styled.button`
 `;
 
 const TabContent = styled.div`
-  padding: 40px;
+  padding: 20px;
   min-height: 400px;
 `;
 
@@ -253,18 +253,18 @@ const ProfilePage = () => {
         orderHistory.map((order) => (
           <OrderCard key={order.id}>
             <OrderHeader>
-              <div>
+              <div style={{ display: 'grid'}}>
                 <OrderNumber>{order.orderNumber}</OrderNumber>
                 <OrderDate>{new Date(order.date).toLocaleDateString()}</OrderDate>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ display: 'grid', alignItems: 'center', justifyItems: 'center', gap: '16px' }}>
                 <OrderStatus status={order.status}>
                   {String(order.status)}
                 </OrderStatus>
                 <OrderTotal>${order.total.toFixed(2)}</OrderTotal>
               </div>
             </OrderHeader>
-            <div>
+            <div style={{ display: 'grid' }}>
               <strong>Items:</strong> {order.items.join(', ')}
             </div>
           </OrderCard>
@@ -328,7 +328,8 @@ const ProfilePage = () => {
         <ProfileHeader>
           <ProfileTitle>My Profile</ProfileTitle>
           <ProfileSubtitle>
-            Welcome back, {profileData?.firstName || 'User'}!
+            Welcome back, {profileData?.name || 'User'}!
+            
           </ProfileSubtitle>
         </ProfileHeader>
 
