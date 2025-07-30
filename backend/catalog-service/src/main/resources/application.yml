@@ -14,7 +14,7 @@ spring:
       maximum-pool-size: 10
   jpa:
     hibernate:
-      ddl-auto: create # will be changed to 'validate' in production
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
