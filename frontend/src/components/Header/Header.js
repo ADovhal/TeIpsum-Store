@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleCart, closeCart } from '../../features/cart/cartSlice';
-import { logoutAsync } from '../../features/auth/authSlice';
+// import { logoutAsync } from '../../features/auth/authSlice';
 import { HeaderHeightContext } from '../../context/HeaderHeightContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -47,10 +47,10 @@ const Header = () => {
     return () => window.removeEventListener('resize', updateHeaderHeight);
   }, [setHeaderHeight]);
 
-  const handleLogout = () => {
-    dispatch(logoutAsync());
-    navigate('/');
-  };
+  // const handleLogout = () => {
+  //   dispatch(logoutAsync());
+  //   navigate('/');
+  // };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -149,9 +149,9 @@ const Header = () => {
                 <Link to="/profile" className={styles.iconButton} onClick={closeMenu}>
                   <i className="fa fa-user" style={{ color: theme.textPrimary }}></i>
                 </Link>
-                <button onClick={handleLogout} className={styles.logoutButton}>
+                {/* <button onClick={handleLogout} className={styles.logoutButton}>
                   {t('logout')}
-                </button>
+                </button> */}
               </div>
             ) : (
               <Link to="/login" className={styles.iconButton} onClick={closeMenu}>
