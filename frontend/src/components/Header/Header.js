@@ -149,9 +149,6 @@ const Header = () => {
                 <Link to="/profile" className={styles.iconButton} onClick={closeMenu}>
                   <i className="fa fa-user" style={{ color: theme.textPrimary }}></i>
                 </Link>
-                {/* <button onClick={handleLogout} className={styles.logoutButton}>
-                  {t('logout')}
-                </button> */}
               </div>
             ) : (
               <Link to="/login" className={styles.iconButton} onClick={closeMenu}>
