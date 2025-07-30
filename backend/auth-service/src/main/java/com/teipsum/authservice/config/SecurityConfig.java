@@ -73,11 +73,6 @@ public class SecurityConfig {
         return source;
     }
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder(Argon2Config config) {
         return new Argon2PasswordEncoder(
