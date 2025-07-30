@@ -45,6 +45,7 @@ public class AuthController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
     /**
      * Endpoint for admin registration.
      * This endpoint is used to register a new admin user.
@@ -53,6 +54,7 @@ public class AuthController {
      * @param response the HTTP response to set cookies
      * @return a ResponseEntity containing the access token or an error message
      */
+
     @PostMapping("/register_admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest request, HttpServletResponse response) {
@@ -61,9 +63,6 @@ public class AuthController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             System.out.println("In controller - auth: " + auth.getAuthorities());
             AuthResponse authResponse = authService.registerAdmin(request);
-
-//            ResponseCookie refreshTokenCookie = createRefreshTokenCookie(authResponse.getRefreshToken());
-//            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
             return ResponseEntity.ok(Map.of(
                     "accessToken", authResponse.getAccessToken()
