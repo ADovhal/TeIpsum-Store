@@ -14,5 +14,4 @@ public class Argon2Config {
     private int parallelism;
     private int memory;
     private int iterations;
-
 }
