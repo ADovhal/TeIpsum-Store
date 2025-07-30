@@ -246,7 +246,8 @@ body {
 }
 
 .icon.close {
-  transform: scale(1.2);
+  /* transform: scale(1.2); */
+  transition: transform 0.3s ease;
 }
 
 .cartBadge {
