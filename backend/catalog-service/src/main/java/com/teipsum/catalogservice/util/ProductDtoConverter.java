@@ -14,7 +14,7 @@ public class ProductDtoConverter {
     public CatalogProductDTO convertToDto(CatalogProduct product) {
         logger.trace("Converting product to DTO: {}", product.getId());
         return CatalogProductDTO.builder()
-                .id(product.getId())
+                .id(product.getId().toString())
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .price(product.getPrice())

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "catalog_products")
 @Getter
@@ -15,5 +17,5 @@ import lombok.experimental.SuperBuilder;
 public class CatalogProduct extends ProductBase {
 
     @Id
-    private String id;
+    private UUID id;
 }
