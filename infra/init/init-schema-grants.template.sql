@@ -21,7 +21,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO <<ADMIN_PRODUCT_SERVICE_DB_USE
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'inventory') THEN
-        EXECUTE 'CREATE SCHEMA inventory';
+        EXECUTE 'CREATE SCHEMA inventory'; 
     END IF;
 END
 $$;
