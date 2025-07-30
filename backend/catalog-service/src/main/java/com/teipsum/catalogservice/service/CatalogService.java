@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class CatalogService {
     @Transactional
     public void addProduct(ProductCreatedEvent event) {
         CatalogProduct product = CatalogProduct.builder()
-                .id(event.id())
+                .id(UUID.fromString(event.id()))
                 .title(event.title())
                 .description(event.description())
                 .price(event.price())
