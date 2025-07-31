@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { useGender } from '../context/GenderContext';
 
@@ -83,7 +84,9 @@ const GenderDescription = styled.p`
 const PreStorePage = () => {
   const navigate = useNavigate();
   const { setSelectedGender } = useGender();
-
+  
+  const { t } = useLanguage();
+  
   const genderOptions = [
     {
       id: 'MEN',

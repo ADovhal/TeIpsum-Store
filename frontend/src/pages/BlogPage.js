@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 
@@ -449,14 +450,15 @@ const LoadMoreButton = styled.button`
 const BlogPage = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [visiblePosts, setVisiblePosts] = useState(6);
+  const { t } = useLanguage();
 
   const categories = [
-    { id: 'all', label: 'All Posts' },
-    { id: 'fashion', label: 'Fashion' },
-    { id: 'sustainability', label: 'Sustainability' },
-    { id: 'style-tips', label: 'Style Tips' },
-    { id: 'company', label: 'Company News' },
-    { id: 'trends', label: 'Trends' }
+    { id: 'all', label: `${t('allPosts')}` },
+    { id: 'fashion', label: `${t('fashion')}` },
+    { id: 'sustainability', label: `${t('sustainability')}` },
+    { id: 'style-tips', label: `${t('styleTips')}` },
+    { id: 'company', label: `${t('companyNews')}` },
+    { id: 'trends', label: `${t('trends')}` }
   ];
 
   const blogPosts = [
@@ -467,7 +469,7 @@ const BlogPage = () => {
       category: "sustainability",
       author: "Emma Green",
       date: "January 15, 2025",
-      readTime: "5 min read",
+      readTime: `5 ${t('minRead')}`,
       icon: "🌱"
     },
     {
@@ -477,7 +479,7 @@ const BlogPage = () => {
       category: "trends",
       author: "Sofia Martinez",
       date: "January 12, 2025",
-      readTime: "4 min read",
+      readTime: `4 ${t('minRead')}`,
       icon: "🎨"
     },
     {
@@ -487,7 +489,7 @@ const BlogPage = () => {
       category: "style-tips",
       author: "Alex Chen",
       date: "January 10, 2025",
-      readTime: "6 min read",
+      readTime: `6 ${t('minRead')}`,
       icon: "👔"
     },
     {
@@ -497,7 +499,7 @@ const BlogPage = () => {
       category: "company",
       author: "TeIpsum Team",
       date: "January 8, 2025",
-      readTime: "3 min read",
+      readTime: `3 ${t('minRead')}`,
       icon: "🏪"
     },
     {
@@ -507,7 +509,7 @@ const BlogPage = () => {
       category: "style-tips",
       author: "Maya Patel",
       date: "January 5, 2025",
-      readTime: "5 min read",
+      readTime: `5 ${t('minRead')}`,
       icon: "🧥"
     },
     {
@@ -517,7 +519,7 @@ const BlogPage = () => {
       category: "fashion",
       author: "Design Team",
       date: "January 3, 2025",
-      readTime: "7 min read",
+      readTime: `7 ${t('minRead')}`,
       icon: "✏️"
     },
     {
@@ -527,7 +529,7 @@ const BlogPage = () => {
       category: "style-tips",
       author: "Jordan Blake",
       date: "December 28, 2024",
-      readTime: "4 min read",
+      readTime: `4 ${t('minRead')}`,
       icon: "👖"
     },
     {
@@ -537,7 +539,7 @@ const BlogPage = () => {
       category: "sustainability",
       author: "Environmental Team",
       date: "December 25, 2024",
-      readTime: "6 min read",
+      readTime: `6 ${t('minRead')}`,
       icon: "♻️"
     },
     {
@@ -547,7 +549,7 @@ const BlogPage = () => {
       category: "style-tips",
       author: "Styling Team",
       date: "December 22, 2024",
-      readTime: "5 min read",
+      readTime: `5 ${t('minRead')}`,
       icon: "💎"
     }
   ];
@@ -603,7 +605,7 @@ const BlogPage = () => {
   return (
     <BlogContainer>
       <SEO
-        title="Fashion Blog - Trends, Tips & Sustainability"
+        title={t('blogTitle')}
         description="Stay updated with the latest fashion trends, sustainability news, style tips, and behind-the-scenes stories from TeIpsum. Discover sustainable fashion insights and expert advice."
         keywords="fashion blog, style tips, sustainable fashion trends, fashion news, TeIpsum blog, fashion advice, sustainability fashion, eco-friendly fashion tips"
         canonicalUrl="/blog"
@@ -620,7 +622,7 @@ const BlogPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            TeIpsum Blog
+            TeIpsum {t('blog')}
           </Title>
           <Subtitle>
             Stay updated with the latest fashion trends, sustainability news, style tips, 
@@ -670,7 +672,7 @@ const BlogPage = () => {
                   <BlogTitle>{post.title}</BlogTitle>
                   <BlogExcerpt>{post.excerpt}</BlogExcerpt>
                   <ReadMoreButton onClick={() => handleReadMore(post.title)}>
-                    Read More
+                    {t('readMore')}
                   </ReadMoreButton>
                   <BlogMeta>
                     <AuthorInfo>
@@ -693,7 +695,7 @@ const BlogPage = () => {
         {displayedPosts.length < filteredPosts.length && (
           <LoadMoreSection>
             <LoadMoreButton onClick={handleLoadMore}>
-              Load More Articles
+              {t('loadMoreArticles')}
             </LoadMoreButton>
           </LoadMoreSection>
         )}

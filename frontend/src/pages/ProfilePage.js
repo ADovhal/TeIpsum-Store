@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../features/profile/profileSlice';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 import ProfileForm from '../features/profile/components/ProfileForm';
 
 const ProfileContainer = styled.div`

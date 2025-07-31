@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
 import SEO from '../../components/SEO';
 
 const ContactContainer = styled.div`
@@ -554,6 +555,12 @@ export default function ContactPage() {
   const [status, setStatus] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const { t } = useLanguage();
+
+  useEffect(() => {
+      document.title = `${t('contact')} - TeIpsum`;
+  }, [t]);
+
   const storeLocations = [
     {
       id: 1,
@@ -611,7 +618,7 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('loading');
+    setStatus(`${t('loading')}`);
 
     try {
       const res = await fetch('/api/contact', {
@@ -621,13 +628,13 @@ export default function ContactPage() {
       });
 
       const result = await res.json();
-      setStatus(result.success ? 'success' : 'error');
+      setStatus(result.success ? 'success' : `${t('error')}`);
       
       if (result.success) {
         setFormData({ name: '', email: '', message: '' });
       }
     } catch (error) {
-      setStatus('error');
+      setStatus(`${t('error')}`);
     }
   };
 
@@ -676,12 +683,12 @@ export default function ContactPage() {
           <SearchSection>
             <SearchInput
               type="text"
-              placeholder="Search for store locations..."
+              placeholder={t('searchStores')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </SearchSection>
-          <LocationTitle>Our Store Locations</LocationTitle>
+          <LocationTitle>{t('ourStoreLocations')}</LocationTitle>
           <StoreLocations>
             
             {filteredLocations.map((location) => (
@@ -706,23 +713,23 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Get in Touch
+            {t('getInTouch')}
           </FormTitle>
           <FormSubtitle
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            We'd love to hear from you! Send us a message and we'll respond as soon as possible.
+            {t('contactSubtitle')}
           </FormSubtitle>
 
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <Label>Name</Label>
+              <Label>{t('name')}</Label>
               <Input
                 type="text"
                 name="name"
-                placeholder="Your full name"
+                placeholder={t('fullName')}
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -730,7 +737,7 @@ export default function ContactPage() {
             </FormGroup>
 
             <FormGroup>
-              <Label>Email</Label>
+              <Label>{t('email')}</Label>
               <Input
                 type="email"
                 name="email"
@@ -742,7 +749,7 @@ export default function ContactPage() {
             </FormGroup>
 
             <FormGroup>
-              <Label>Message</Label>
+              <Label>{t('message')}</Label>
               <TextArea
                 name="message"
                 placeholder="Tell us how we can help you..."
@@ -758,7 +765,7 @@ export default function ContactPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {status === 'loading' ? 'Sending...' : 'Send Message'}
+              {status === 'loading' ? 'Sending...' : `${t('sendMessage')}`}
             </SubmitButton>
           </Form>
 

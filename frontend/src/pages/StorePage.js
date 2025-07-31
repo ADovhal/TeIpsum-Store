@@ -8,6 +8,7 @@ import FilterSidebar from '../components/store/FilterSidebar';
 import SearchBar from '../components/store/SearchBar';
 import { fetchProducts } from '../features/products/productSlice';
 import { ViewTypeContext } from '../context/ViewTypeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { useGender } from '../context/GenderContext'; 
 
 const StoreContainer = styled.div`
@@ -224,6 +225,7 @@ const StorePage = () => {
   const { selectedGender } = useGender();
   const dispatch = useDispatch();
   const location = useLocation();
+  const { t } = useLanguage();
 
   const { products, totalPages, loading, error } = useSelector((state) => state.products || {});
 
@@ -278,7 +280,7 @@ const StorePage = () => {
   const size = 12;
 
   useEffect(() => {
-    document.title = 'Store - TeIpsum';
+    document.title = `${t('storeTitle')} - TeIpsum`;
 
     const fetchProductData = () => {
       dispatch(fetchProducts({
@@ -298,7 +300,7 @@ const StorePage = () => {
     };
 
     fetchProductData();
-  }, [filters, searchQuery, page, sortBy, dispatch]);
+  }, [filters, searchQuery, page, sortBy, dispatch, t]);
 
   const handleFilterChange = (updatedFilters) => {
     setFilters((prevFilters) => ({ ...prevFilters, ...updatedFilters }));
@@ -339,28 +341,28 @@ const StorePage = () => {
         <ProductsSection>
           <ResultsInfo>
             <ResultsCount>
-              {loading ? 'Loading...' : `${products?.length || 0} products found`}
+              {loading ? `${t('loading')}` : `${products?.length || 0} ${t('productsFound')}`}
             </ResultsCount>
           <ViewToggleButton onClick={() => setViewMode(prev => prev === 'grid' ? 'list' : 'grid')}>
-            {viewMode === 'grid' ? 'List View' : 'Grid View'}
+            {viewMode === 'grid' ? `${t('listView')}` : `${t('gridView')}`}
           </ViewToggleButton>
             <SortSelect value={sortBy} onChange={handleSortChange}>
-              <option value="name">Sort by Name</option>
-              <option value="price">Sort by Price</option>
-              <option value="rating">Sort by Rating</option>
-              <option value="createdAt">Sort by Newest</option>
+              <option value="name">{t('sortByName')}</option>
+              <option value="price">{t('sortByPrice')}</option>
+              <option value="rating">{t('sortByRating')}</option>
+              <option value="createdAt">{t('sortByNewest')}</option>
             </SortSelect>
           </ResultsInfo>
 
           {loading && (
             <LoadingContainer>
-              <div>Loading products...</div>
+              <div>{t('loading')}</div>
             </LoadingContainer>
           )}
 
           {error && (
             <ErrorContainer>
-              <div>Error loading products: {error}</div>
+              <div>{t('errorLoading')} {error}</div>
             </ErrorContainer>
           )}
 
@@ -381,9 +383,9 @@ const StorePage = () => {
               ) : (
                 <EmptyState>
                   <EmptyStateIcon>🔍</EmptyStateIcon>
-                  <EmptyStateTitle>No products found</EmptyStateTitle>
+                  <EmptyStateTitle>{t('noProductsFound')}</EmptyStateTitle>
                   <EmptyStateText>
-                    Try adjusting your filters or search terms to find what you're looking for.
+                    {t('tryAdjustingFilters')}
                   </EmptyStateText>
                 </EmptyState>
               )}
@@ -396,16 +398,16 @@ const StorePage = () => {
                 onClick={handlePreviousPage} 
                 disabled={page === 0}
               >
-                Previous
+                {t('previous')}
               </PaginationButton>
               <PageInfo>
-                Page {page + 1} of {totalPages}
+                {t('page')} {page + 1} {t('of')} {totalPages}
               </PageInfo>
               <PaginationButton 
                 onClick={handleNextPage} 
                 disabled={page >= totalPages - 1}
               >
-                Next
+                {t('next')}
               </PaginationButton>
             </PaginationContainer>
           )}

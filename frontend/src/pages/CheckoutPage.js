@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { clearCart } from '../features/cart/cartSlice';
 
@@ -253,6 +254,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -486,7 +488,7 @@ const CheckoutPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <IncentiveTitle>🎁 Welcome Bonus</IncentiveTitle>
+            <IncentiveTitle>{t('welcomeBonus')}</IncentiveTitle>
             <IncentiveText>
               Join our community and enjoy exclusive benefits with your first order!
             </IncentiveText>

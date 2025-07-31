@@ -114,7 +114,7 @@ export const validateName = (name) => {
  */
 export const validatePhone = (phone) => {
   const sanitizedPhone = sanitizeInput(phone);
-  const phoneRegex = /^\+?[\d\s\-\(\)]{10,20}$/;
+  const phoneRegex = /^\+?[\d\s\-()]{10,20}$/;
   
   if (!sanitizedPhone) {
     return { isValid: false, message: 'Phone number is required' };
@@ -327,6 +327,27 @@ export const validateForm = (formData, validationRules) => {
     errors,
     sanitizedData
   };
+};
+
+export const validateDateOfBirth = (date) => {
+  if (!date) {
+    return { isValid: false, message: 'Please select your date of birth' };
+  }
+  
+  const today = new Date();
+  const birthDate = new Date(date);
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  if (age < 13) {
+    return { isValid: false, message: 'You must be at least 13 years old' };
+  }
+  
+  return { isValid: true, value: birthDate };
 };
 
 /**

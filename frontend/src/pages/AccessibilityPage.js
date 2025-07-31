@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 const AccessibilityContainer = styled.div`
   min-height: 100vh;
@@ -157,9 +158,10 @@ const StandardsText = styled.p`
 `;
 
 const AccessibilityPage = () => {
+  const  { t } = useLanguage();
   useEffect(() => {
-    document.title = "Accessibility - TeIpsum";
-  }, []);
+    document.title = `${t('accessibility')} - TeIpsum`;
+  }, [t]);
 
   const accessibilityFeatures = [
     {
@@ -202,7 +204,7 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Accessibility Statement
+          {t('accessibilityTitle')}
         </Title>
         
         <Subtitle>

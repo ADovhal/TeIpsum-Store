@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 
 const ConfirmationContainer = styled.div`
   min-height: 100vh;
