@@ -1,13 +1,13 @@
 services:
-  stage-catalog-service:
-    container_name: stage-catalog-service
+  stage-order-service:
+    container_name: stage-order-service
     build:
       context: ../..
-      dockerfile: backend/catalog-service/Dockerfile
+      dockerfile: backend/order-service/Dockerfile
       args:
-        SERVICE_NAME: catalog-service
+        SERVICE_NAME: order-service
     ports: ['22002:${SERVICE_SERVER_PORT}']
-    image: stage-catalog-service:latest
+    image: stage-order-service:latest
     env_file: .env
     networks:
       - stage-net
