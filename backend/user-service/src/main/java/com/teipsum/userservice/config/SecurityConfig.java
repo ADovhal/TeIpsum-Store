@@ -88,35 +88,18 @@ public class SecurityConfig {
         };
     }
 
-    
-    @Value("${jwt.secret}")
-    private String jwtSecret;
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        SecretKey key = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(key).build();
-
-        // decoder.setClaimSetConverter(claims -> {
-        //     Map<String, Object> newClaims = new HashMap<>(claims);
-        //     newClaims.put("email", claims.get("sub"));
-        //     System.out.println("email from token: " + claims.get("sub"));
-        //     return newClaims;
-        // });
-
-        decoder.setJwtValidator(jwt -> {
-            System.out.println("JWT Headers: " + jwt.getHeaders());
-            System.out.println("JWT Claims: " + jwt.getClaims());
-            return org.springframework.security.oauth2.core.OAuth2TokenValidatorResult.success();
-        });
-
-        return decoder;
+        return CompositeJwtDecoder.builder()
+                .withSecret("${jwt.user-access-secret}")
+                .withSecret("${jwt.admin-access-secret}")
+                .build();
     }
     
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
 
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
