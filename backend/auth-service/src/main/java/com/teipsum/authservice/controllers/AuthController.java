@@ -113,6 +113,7 @@ public class AuthController {
                         .body(Map.of("error", "Refresh token expired"));
             }
 
+            String id = jwtUtil.extractUserId(refreshToken, refreshTokenType);
             String email = jwtUtil.extractEmail(refreshToken, refreshTokenType);
             List<String> roles = jwtUtil.extractRoles(refreshToken, refreshTokenType);
 
@@ -120,8 +121,8 @@ public class AuthController {
                     ? TokenType.ADMIN_ACCESS
                     : TokenType.USER_ACCESS;
 
-            String newAccessToken = jwtUtil.createToken(email, roles, newAccessTokenType);
-            String newRefreshToken = jwtUtil.createToken(email, roles, refreshTokenType);
+            String newAccessToken = jwtUtil.createToken(id, email, roles, newAccessTokenType);
+            String newRefreshToken = jwtUtil.createToken(id, email, roles, refreshTokenType);
 
             response.addHeader("Set-Cookie", createRefreshTokenCookie(newRefreshToken).toString());
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));

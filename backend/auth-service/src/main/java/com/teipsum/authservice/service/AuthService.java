@@ -105,9 +105,9 @@ public class AuthService {
 
             boolean isAdmin = adminRepository.existsByUser_Id(user.getId());
             return new AuthResponse(
-                    jwtUtil.createToken(user.getEmail(), roleNames,
+                    jwtUtil.createToken(user.getId(), user.getEmail(), roleNames,
                             isAdmin ? TokenType.ADMIN_ACCESS : TokenType.USER_ACCESS),
-                    jwtUtil.createToken(user.getEmail(), roleNames,
+                    jwtUtil.createToken(user.getId(), user.getEmail(), roleNames,
                             isAdmin ? TokenType.ADMIN_REFRESH : TokenType.USER_REFRESH)
             );
         }
