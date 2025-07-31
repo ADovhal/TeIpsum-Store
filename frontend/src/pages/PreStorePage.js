@@ -90,22 +90,22 @@ const PreStorePage = () => {
   const genderOptions = [
     {
       id: 'MEN',
-      title: "Men's Collection",
-      description: "Discover sophisticated styles for the modern gentleman",
+      title: t('preStore.mensTitle'),
+      description: t('preStore.mensDescription'),
       icon: "👔",
       color: "#3498db"
     },
     {
       id: 'WOMEN',
-      title: "Women's Collection", 
-      description: "Explore elegant designs for the contemporary woman",
+      title: t('preStore.womensTitle'), 
+      description: t('preStore.womensDescription'),
       icon: "👗",
       color: "#e74c3c"
     },
     {
       id: 'KIDS_CLOTHING',
-      title: "Kids' Collection",
-      description: "Adorable and comfortable clothing for little ones",
+      title: t('preStore.kidsTitle'),
+      description: t('preStore.kidsDescription'),
       icon: "👶",
       color: "#f39c12"
     }
@@ -129,7 +129,7 @@ const PreStorePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Choose Your Style
+          {t('preStore.title')}
         </Title>
         
         <Subtitle
@@ -137,7 +137,7 @@ const PreStorePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Select your preferred collection to explore our curated fashion items
+          {t('preStore.subtitle')}
         </Subtitle>
 
         <GenderGrid>

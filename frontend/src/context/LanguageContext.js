@@ -279,6 +279,16 @@ const translations = {
     readyToRefresh: 'Ready to Refresh Your Wardrobe?',
     exploreCompleteCollection: 'Explore our complete collection and find your perfect style',
 
+    preStore: {
+      title: 'Choose Your Style',
+      subtitle: 'Select your preferred collection to explore our curated fashion items',
+      mensTitle: "Men's Collection",
+      mensDescription: "Discover sophisticated styles for the modern gentleman",
+      womensTitle: "Women's Collection",
+      womensDescription: "Explore elegant designs for the contemporary woman",
+      kidsTitle: "Kids' Collection",
+      kidsDescription: "Adorable and comfortable clothing for little ones"
+    },
 
     // Validation errors
     validation: {
@@ -582,6 +592,17 @@ const translations = {
     discoverCollection: 'Kollektion entdecken',
     readyToRefresh: 'Bereit, Ihre Garderobe zu erneuern?',
     exploreCompleteCollection: 'Erkunden Sie unsere komplette Kollektion und finden Sie Ihren perfekten Stil',
+
+    preStore: {
+      title: 'Entdecke deinen Stil',
+      subtitle: 'Wähle deine bevorzugte Kollektion und entdecke unsere sorgfältig ausgewählten Mode-Teile',
+      mensTitle: "Herrenkollektion",
+      mensDescription: "Entdecke raffinierte Styles für den modernen Gentleman",
+      womensTitle: "Damenkollektion",
+      womensDescription: "Erkunde elegante Designs für die moderne Frau",
+      kidsTitle: "Kindermode",
+      kidsDescription: "Bezaubernde und bequeme Kleidung für die Kleinsten"
+    },
 
     // Validation errors
     validation: {
@@ -887,6 +908,17 @@ const translations = {
     readyToRefresh: 'Gotowy odświeżyć swoją garderobę?',
     exploreCompleteCollection: 'Odkryj naszą kompletną kolekcję i znajdź swój idealny styl',
 
+    preStore: {
+      title: 'Wybierz swój styl',
+      subtitle: 'Wybierz preferowaną kolekcję, aby odkryć nasze starannie dobrane elementy mody',
+      mensTitle: "Moda Męska",
+      mensDescription: "Odkryj wyrafinowane style dla nowoczesnego dżentelmena",
+      womensTitle: "Moda Damska",
+      womensDescription: "Odkryj eleganckie projekty dla współczesnej kobiety",
+      kidsTitle: "Moda Dziecięca",
+      kidsDescription: "Urocze i wygodne ubranka dla najmłodszych"
+    },
+
     // Validation errors
     validation: {
       requiredField: 'To pole jest wymagane',
@@ -1070,11 +1102,11 @@ const translations = {
     newItems: 'Нові товари',
     categories: 'Категорії',
     allCategories: 'Всі категорії',
-    genders: 'Статі',
+    genders: 'Стать',
     allGenders: 'Всі статі',
     all: 'Всі',
-    men: 'Чоловіки',
-    women: 'Жінки',
+    men: 'Чоловіча',
+    women: 'Жіноча',
     unisex: 'Унісекс',
     minDiscount: 'Мінімальна знижка',
     sortBy: 'Сортувати за',
@@ -1168,7 +1200,7 @@ const translations = {
     featuredCollectionsTitle: 'Вибрані Колекції',
     featuredCollectionsSubtitle: 'Відібрані речі, які визначають сучасну елегантність і безчасовий стиль',
     minimalistEssentialsTitle: 'Мінімалістичні Основи',
-    minimalistEssentialsDesc: 'Чисті лінії та безчасові дизайни, які говорять до вашої внутрішньої естетики. Кожен предмет створений з наміром та метою.',
+    minimalistEssentialsDesc: 'Чисті лінії та незабутні дизайни, які підкреслюють вашу внутрішню естетику. Кожен предмет створений з наміром та метою.',
     urbanSophisticationTitle: 'Міський Шик',
     urbanSophisticationDesc: 'Сучасні силуети для сучасної душі. Універсальні речі, які плавно переходять від дня до ночі.',
     artisanCollectionTitle: 'Авторська Колекція',
@@ -1188,17 +1220,28 @@ const translations = {
     premiumLine: 'Преміум Лінія',
     lightBrightTitle: 'Легкість, Світло, Натуральний Стиль',
     lightBrightDesc: 'Зустріньте літо зі стилем завдяки пливким силуетам, землистим тонам та дихаючим тканинам, розробленим для теплих днів та прохолодних ночей. Наш підхід до сталого розвитку гарантує, що кожен елемент є одночасно красивим та екологічно свідомим.',
-    timelessEleganceTitle: 'Безчасова Елегантність, Сучасний Комфорт',
+    timelessEleganceTitle: 'Витончена Елегантність, Сучасний Комфорт',
     timelessEleganceDesc: 'Відкрийте наші фірмові речі, які поєднують класичну витонченість із сучасним комфортом, ідеально підходять для будь-якої нагоди. Кожен елемент ретельно виготовлений з увагою до деталей та практик сталого розвитку.',
     ecoFriendlyMaterials: 'Екологічні матеріали',
     breathableFabrics: 'Дихаючі тканини',
-    timelessDesign: 'Безчасовий дизайн',
+    timelessDesign: 'Позачасовий дизайн',
     premiumQuality: 'Преміум якість',
     perfectFit: 'Ідеальна посадка',
     versatileStyle: 'Універсальний стиль',
     discoverCollection: 'Відкрити колекцію',
     readyToRefresh: 'Готові оновити свій гардероб?',
     exploreCompleteCollection: 'Дослідьте нашу повну колекцію та знайдіть свій ідеальний стиль',
+
+    preStore: {
+      title: 'Обери свій стиль',
+      subtitle: 'Виберіть бажану колекцію, щоб відкрити наші ретельно відібрані елементи моди',
+      mensTitle: "Чоловіча Мода",
+      mensDescription: "Відкрий витончені стилі для сучасного джентльмена",
+      womensTitle: "Жіноча Мода",
+      womensDescription: "Досліджуй елегантні дизайни для сучасної жінки",
+      kidsTitle: "Дитяча Мода",
+      kidsDescription: "Чарівний та зручний одяг для маленьких"
+    },
 
     // Validation errors
     validation: {
