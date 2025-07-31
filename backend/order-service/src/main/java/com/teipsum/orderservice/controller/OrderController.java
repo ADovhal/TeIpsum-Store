@@ -31,7 +31,7 @@ public class OrderController {
 
     @PostMapping("/guest")
     public OrderResponse createGuest(@RequestBody OrderRequest req) {
-        return service.createOrder(null, req);
+        return OrderResponse.from(service.createOrder(null, req));
     }
 
     @GetMapping("/{id}")
