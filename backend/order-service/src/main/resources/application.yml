@@ -36,6 +36,10 @@ spring:
       properties:
         spring.json.trusted.packages: com.teipsum.shared.product.event,com.teipsum.shared.order.event
 
+jwt:
+  user-access-secret:   ${JWT_SECRET}
+  admin-access-secret:  ${JWT_ADMIN_SECRET}
+
 logging:
   system:
     service.name: ${spring.application.name}
