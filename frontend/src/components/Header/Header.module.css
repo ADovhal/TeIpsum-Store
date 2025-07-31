@@ -233,16 +233,19 @@ body {
 }
 
 .hamburger {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: var(--color-textPrimary, #2a3a1e);
-  cursor: pointer;
+  	display: none;
+  	background: none;
+  	border: none;
+  	font-size: 1.8rem;
+  	color: var(--color-textPrimary, #2a3a1e);
+  	cursor: pointer;
 }
 
 .icon {
-  transition: transform 0.3s ease;
+	display: grid;
+	align-content: center;
+	width: auto;
+  	transition: transform 0.3s ease;
 }
 
 .icon.close {
@@ -373,7 +376,12 @@ body {
 } */
 
 /* Mobile Design */
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1045px) {
+
+	* {
+		scrollbar-width: none;
+	}
+
 	.header {
 		padding: 0rem 1rem;
 		display: grid;
@@ -497,8 +505,7 @@ body {
 	}
 }
 
-/* Small Mobile Design */
-@media screen and (max-width: 480px) and (orientation: landscape) {
+@media screen and (max-width: 480px) {
 	.header {
 		position: sticky;
 		padding: 0rem 0.5rem;
@@ -510,8 +517,8 @@ body {
 		height: 40px;
 	}
 
-	.hamburger {
-		margin-left: 8px;
+	.navList {
+		margin-top: 0px;
 	}
 
 	.navItem {
@@ -533,14 +540,53 @@ body {
 		height: 20px;
 	}
 	
-	.bar {
-		width: 25px;
-		height: 3px;
+	.nav {
+		top: 60px;
+		height: calc(100vh - 60px);
+		/* padding-top: 0rem; */
+	}
+}
+
+/* Small Mobile Design */
+@media screen and (max-width: 480px) and (orientation: landscape) {
+	.header {
+		position: sticky;
+		padding: 0rem 0.5rem;
+		height: 60px;
+	}
+
+	.logo img {
+		max-width: 70px;
+		height: 40px;
+	}
+
+	.navList {
+		margin-top: 0px;
+	}
+
+	.navItem {
+		font-size: 1rem;
+		padding: 0.8rem;
+	}
+
+	.iconButton {
+		height: 30px;
+		width: 30px;
+	}
+
+	.iconButton i {
+		font-size: 1.3rem;
+	}
+	
+	.hamburger {
+		width: 20px;
+		height: 20px;
 	}
 	
 	.nav {
 		top: 60px;
 		height: calc(100vh - 60px);
+		padding-top: 0rem;
 	}
 }
 
