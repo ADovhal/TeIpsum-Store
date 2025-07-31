@@ -1,0 +1,17 @@
+services:
+  prod-order-service:
+    container_name: prod-order-service
+    build:
+      context: ../..
+      dockerfile: backend/order-service/Dockerfile
+      args:
+        SERVICE_NAME: order-service
+    ports: ['22001:${SERVICE_SERVER_PORT}']
+    image: prod-order-service:latest
+    env_file: .env
+    networks:
+      - prod-net
+
+networks:
+  prod-net:
+    external: true
