@@ -39,7 +39,7 @@ public class JwtUtil {
         );
     }
 
-    public String createToken(String email, List<String> roles, TokenType type) {
+    public String createToken(String id, String email, List<String> roles, TokenType type) {
 
         List<String> prefixedRoles = roles.stream()
                 .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
@@ -47,10 +47,23 @@ public class JwtUtil {
 
         return JWT.create()
                 .withSubject(email)
+                .withClaim("userId", id)
                 .withClaim("roles", prefixedRoles)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpirations.get(type)))
                 .sign(algorithms.get(type));
+    }
+
+    public String extractUserId(String token, TokenType type) {
+        try {
+            return JWT.require(algorithms.get(type))
+                    .build()
+                    .verify(token)
+                    .getClaim("userId")
+                    .asString();
+        } catch (JWTVerificationException e) {
+            throw new RuntimeException("Failed to extract userId from token", e);
+        }
     }
 
     public String extractEmail(String token, TokenType type) {
