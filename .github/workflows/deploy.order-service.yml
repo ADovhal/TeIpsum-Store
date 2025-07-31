@@ -1,0 +1,35 @@
+name: Deploy Order Service
+
+on:
+  push:
+    paths:
+      - 'backend/order-service/**'
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy-service-reusable.yml
+    with:
+      SERVICE_NAME: order-service
+      SHARED_MODULES: shared-exceptions,shared-logger,shared-product-dto
+      DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
+      GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
+      COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-order-service.yml
+    secrets:
+      PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
+
+      SSH_HOST: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
+      SSH_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_USER || secrets.STAGE_DEPLOY_USER }}
+      SSH_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_KEY || secrets.STAGE_DEPLOY_KEY }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+
+      SERVICE_SERVER_PORT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_SERVER_PORT || secrets.STAGE_ORDER_SERVICE_SERVER_PORT}}
+      DB_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_NAME || secrets.STAGE_ORDER_SERVICE_DB_NAME }}
+      DB_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_URL || secrets.STAGE_ORDER_SERVICE_DB_URL }}
+      DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_USER || secrets.STAGE_ORDER_SERVICE_DB_USER }}
+      DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_PASSWORD || secrets.STAGE_ORDER_SERVICE_DB_PASSWORD }}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_KAFKA_BOOTSTRAP_SERVERS || secrets.STAGE_KAFKA_BOOTSTRAP_SERVERS }}
+
+      CORS_ALLOWED_ORIGINS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CORS_ALLOWED_ORIGINS || secrets.STAGE_CORS_ALLOWED_ORIGINS }}
