@@ -17,6 +17,7 @@ jobs:
       DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
       GIT_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
       COMPOSE_FILE: docker-compose.${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}-order-service.yml
+
     secrets:
       PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
 
@@ -31,5 +32,8 @@ jobs:
       DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_USER || secrets.STAGE_ORDER_SERVICE_DB_USER }}
       DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ORDER_SERVICE_DB_PASSWORD || secrets.STAGE_ORDER_SERVICE_DB_PASSWORD }}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_KAFKA_BOOTSTRAP_SERVERS || secrets.STAGE_KAFKA_BOOTSTRAP_SERVERS }}
+
+      JWT_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_SECRET || secrets.STAGE_JWT_SECRET }}
+      JWT_ADMIN_SECRET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_JWT_ADMIN_SECRET  || secrets.STAGE_JWT_ADMIN_SECRET }}
 
       CORS_ALLOWED_ORIGINS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CORS_ALLOWED_ORIGINS || secrets.STAGE_CORS_ALLOWED_ORIGINS }}
