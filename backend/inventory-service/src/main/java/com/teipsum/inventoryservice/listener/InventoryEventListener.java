@@ -9,6 +9,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class InventoryEventListener {
@@ -22,7 +24,7 @@ public class InventoryEventListener {
         if (!repo.existsById(e.id())) {
             repo.save(
                     Inventory.builder()
-                            .productId(e.id())
+                            .productId(UUID.fromString(e.id()))
                             .quantity(0)
                             .build()
             );
