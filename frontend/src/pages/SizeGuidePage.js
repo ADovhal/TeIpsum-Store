@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 
 const SizeGuideContainer = styled.div`

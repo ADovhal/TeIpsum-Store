@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLanguage } from '../context/LanguageContext';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { fetchProducts } from '../features/products/productSlice';
@@ -171,7 +172,7 @@ const EmptyIcon = styled.div`
 const BestsellersPage = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products || {});
-  
+  const { t } = useLanguage();
   const [filters, setFilters] = useState({
     category: '',
     gender: '',
@@ -179,8 +180,8 @@ const BestsellersPage = () => {
   });
 
   useEffect(() => {
-    document.title = "Bestsellers - TeIpsum";
-  }, []);
+    document.title = `${t('bestsellersTitle')} - TeIpsum`;
+  }, [t]);
 
   useEffect(() => {
     // Fetch bestselling products (you could modify this to use a specific bestsellers endpoint)
@@ -218,7 +219,7 @@ const BestsellersPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Our Bestsellers
+            {t('bestsellersTitle')}
           </Title>
           <Subtitle>
             Discover the most loved pieces by our customers. These top-rated items have earned their place 

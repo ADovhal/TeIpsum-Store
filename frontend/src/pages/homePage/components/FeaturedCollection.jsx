@@ -1,10 +1,12 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../../context/LanguageContext';
 import styles from './FeaturedCollection.module.css';
 
 const FeaturedCollection = () => {
   const ref = useRef(null);
+  const { t } = useLanguage();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
@@ -20,26 +22,26 @@ const FeaturedCollection = () => {
   const featuredItems = [
     {
       id: 1,
-      title: "Minimalist Essentials",
-      description: "Clean lines and timeless designs that speak to your inner aesthetic. Each piece crafted with intention and purpose.",
+      title: `${ t('minimalistEssentialsTitle') }`,
+      description: `${ t('minimalistEssentialsDesc') }`,
       image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500",
-      price: "From $45",
+      price: `${ t('fromPrice') } $45`,
       category: "ESSENTIALS"
     },
     {
       id: 2,
-      title: "Urban Sophistication",
-      description: "Modern silhouettes for the contemporary soul. Versatile pieces that transition seamlessly from day to night.",
+      title: `${ t('urbanSophisticationTitle') }`,
+      description: `${ t('urbanSophisticationDesc') }`,
       image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=500",
-      price: "From $85",
+      price: `${ t('fromPrice') } $85`,
       category: "URBAN"
     },
     {
       id: 3,
-      title: "Artisan Collection",
-      description: "Handcrafted details and unique textures. Limited pieces that celebrate individual expression and artistry.",
+      title: `${ t('artisanCollectionTitle') }`,
+      description: `${ t('artisanCollectionDesc') }`,
       image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500",
-      price: "From $125",
+      price: `${ t('fromPrice') } $125`,
       category: "ARTISAN"
     }
   ];
@@ -59,14 +61,14 @@ const FeaturedCollection = () => {
         className={styles.heading} 
         style={{ opacity: headingOpacity }}
       >
-        Featured Collections
+        { t('featuredCollectionsTitle') }
       </motion.h2>
 
       <motion.p 
         className={styles.subtitle}
         style={{ opacity: headingOpacity, y: textY }}
       >
-        Curated pieces that define modern elegance and timeless style
+        { t('featuredCollectionsSubtitle') }
       </motion.p>
 
       <div className={styles.collectionsGrid}>
@@ -96,7 +98,7 @@ const FeaturedCollection = () => {
                   whileHover={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className={styles.viewCollection}>View Collection</span>
+                  <span className={styles.viewCollection}>{ t('viewCollection') }</span>
                 </motion.div>
               </div>
             </motion.div>
@@ -111,7 +113,7 @@ const FeaturedCollection = () => {
               <div className={styles.cardFooter}>
                 <span className={styles.price}>{item.price}</span>
                 <Link to="/new-collection" className={styles.exploreButton}>
-                  Explore
+                  { t('explore') }
                 </Link>
               </div>
             </motion.div>
@@ -126,12 +128,12 @@ const FeaturedCollection = () => {
         transition={{ duration: 0.8, delay: 0.6 }}
         viewport={{ once: true }}
       >
-        <h3 className={styles.ctaTitle}>Discover Your Style</h3>
+        <h3 className={styles.ctaTitle}>{ t('discoverYourStyle') }</h3>
         <p className={styles.ctaText}>
-          Explore our complete range of thoughtfully designed pieces
+          { t('exploreThoughtfulDesigns') }
         </p>
         <Link to="/pre-store" className={styles.ctaButton}>
-          Shop All Collections
+          { t('shopAllCollections') }
         </Link>
       </motion.div>
     </motion.section>

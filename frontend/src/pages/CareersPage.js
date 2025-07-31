@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 
 const CareersContainer = styled.div`
@@ -245,9 +246,11 @@ const CareersPage = () => {
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
 
+  const { t } = useLanguage();
+
   useEffect(() => {
-    document.title = "Careers - TeIpsum";
-  }, []);
+    document.title = `${t('careers')} - TeIpsum`;
+  }, [t]);
 
   const companyValues = [
     {
@@ -391,7 +394,7 @@ const CareersPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Join Our Team
+            {t('careersTitle')}
           </Title>
           <Subtitle>
             Build your career with TeIpsum and help shape the future of sustainable fashion. 

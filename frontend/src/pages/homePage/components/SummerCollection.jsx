@@ -1,12 +1,14 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../../context/LanguageContext';
 import styles from './SummerCollection.module.css';
 import dress1 from '../../../assets/images/summer_dress1.jpg';
 import dress2 from '../../../assets/images/mans_clothing1.jpg';
 
 const SummerCollection = () => {
   const sectionRef = useRef(null);
+  const { t } = useLanguage();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
@@ -57,8 +59,8 @@ const SummerCollection = () => {
         className={styles.headingContainer}
         style={{ y: headingY, opacity: headingOpacity }}
       >
-        <h2 className={styles.mainHeading}>Summer 2025 Collection</h2>
-        <p className={styles.mainSubtext}>Discover our latest sustainable fashion pieces</p>
+        <h2 className={styles.mainHeading}>{ t('summer2025Collection') }</h2>
+        <p className={styles.mainSubtext}>{ t('discoverSustainableFashion') }</p>
       </motion.div>
 
       {/* First Collection Block */}
@@ -78,7 +80,7 @@ const SummerCollection = () => {
               className={styles.collectionImage}
             />
             <div className={styles.imageOverlay}>
-              <span className={styles.imageLabel}>Women's Collection</span>
+              <span className={styles.imageLabel}>{ t('womensCollection') }</span>
             </div>
           </motion.div>
 
@@ -87,29 +89,27 @@ const SummerCollection = () => {
             style={{ x: firstTextX, opacity: firstTextOpacity }}
           >
             <div className={styles.textContent}>
-              <span className={styles.categoryTag}>New Arrivals</span>
-              <h3 className={styles.blockHeading}>Light, Bright, Effortlessly You</h3>
+              <span className={styles.categoryTag}>{ t('newArrivals') }</span>
+              <h3 className={styles.blockHeading}>{ t('lightBrightTitle') }</h3>
               <p className={styles.description}>
-                Embrace summer in style with flowing silhouettes, earthy tones, and breathable fabrics 
-                designed for warm days and cool nights. Our sustainable approach ensures every piece 
-                is both beautiful and environmentally conscious.
+                { t('lightBrightDesc') }
               </p>
               <div className={styles.features}>
                 <div className={styles.feature}>
                   <span className={styles.featureIcon}>🌱</span>
-                  <span>Eco-Friendly Materials</span>
+                  <span>{ t('ecoFriendlyMaterials') }</span>
                 </div>
                 <div className={styles.feature}>
                   <span className={styles.featureIcon}>✨</span>
-                  <span>Breathable Fabrics</span>
+                  <span>{ t('breathableFabrics') }</span>
                 </div>
                 <div className={styles.feature}>
                   <span className={styles.featureIcon}>💫</span>
-                  <span>Timeless Design</span>
+                  <span>{ t('timelessDesign') }</span>
                 </div>
               </div>
               <Link to="/new-collection" className={styles.discoverButton}>
-                <span>Discover Collection</span>
+                <span>{ t('discoverCollection') }</span>
                 <span className={styles.buttonIcon}>→</span>
               </Link>
             </div>
@@ -133,29 +133,27 @@ const SummerCollection = () => {
             style={{ x: secondTextX, opacity: secondTextOpacity }}
           >
             <div className={styles.textContent}>
-              <span className={styles.categoryTag}>Premium Line</span>
-              <h3 className={styles.blockHeading}>Timeless Elegance, Modern Comfort</h3>
+              <span className={styles.categoryTag}>{ t('premiumLine') }</span>
+              <h3 className={styles.blockHeading}>{ t('timelessEleganceTitle') }</h3>
               <p className={styles.description}>
-                Discover our signature pieces that blend classic sophistication with contemporary comfort, 
-                perfect for any occasion. Each garment is meticulously crafted with attention to detail 
-                and sustainable practices.
+                { t('timelessEleganceDesc') }
               </p>
               <div className={styles.features}>
                 <div className={styles.feature}>
                   <span className={styles.featureIcon}>👔</span>
-                  <span>Premium Quality</span>
+                  <span>{ t('premiumQuality') }</span>
                 </div>
                 <div className={styles.feature}>
                   <span className={styles.featureIcon}>🎯</span>
-                  <span>Perfect Fit</span>
+                  <span>{ t('perfectFit') }</span>
                 </div>
                 <div className={styles.feature}>
                   <span className={styles.featureIcon}>🌟</span>
-                  <span>Versatile Style</span>
+                  <span>{ t('versatileStyle') }</span>
                 </div>
               </div>
               <Link to="/new-collection" className={styles.discoverButton}>
-                <span>Discover Collection</span>
+                <span>{ t('discoverCollection') }</span>
                 <span className={styles.buttonIcon}>→</span>
               </Link>
             </div>
@@ -175,7 +173,7 @@ const SummerCollection = () => {
               className={styles.collectionImage}
             />
             <div className={styles.imageOverlay}>
-              <span className={styles.imageLabel}>Men's Collection</span>
+              <span className={styles.imageLabel}>{ t('mensCollection') }</span>
             </div>
           </motion.div>
         </div>
@@ -189,10 +187,10 @@ const SummerCollection = () => {
           y: useTransform(scrollYProgress, [0.3, 0.9], [50, 0])
         }}
       >
-        <h3 className={styles.ctaHeading}>Ready to Refresh Your Wardrobe?</h3>
-        <p className={styles.ctaText}>Explore our complete collection and find your perfect style</p>
+        <h3 className={styles.ctaHeading}>{ t('readyToRefresh') }</h3>
+        <p className={styles.ctaText}>{ t('exploreCompleteCollection') }</p>
         <Link to="/store" className={styles.ctaButton}>
-          Shop All Collections
+          { t('shopAllCollections') }
         </Link>
       </motion.div>
     </motion.section>

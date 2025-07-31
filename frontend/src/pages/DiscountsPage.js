@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../features/products/components/ProductCard';
 import { fetchProducts } from '../features/products/productSlice';
 
@@ -257,6 +258,7 @@ const PageInfo = styled.span`
 `;
 
 const DiscountsPage = () => {
+  const { t } = useLanguage();
   const dispatch = useDispatch();
   const { products, totalPages, loading, error } = useSelector((state) => state.products || {});
 
@@ -274,7 +276,7 @@ const DiscountsPage = () => {
   const size = 12;
 
   useEffect(() => {
-    document.title = 'Discounts - TeIpsum';
+    document.title = `${t('discountsTitle')} - TeIpsum`;
 
     const fetchDiscountProducts = () => {
       dispatch(fetchProducts({
@@ -292,7 +294,7 @@ const DiscountsPage = () => {
     };
 
     fetchDiscountProducts();
-  }, [filters, page, sortBy, dispatch]);
+  }, [filters, page, sortBy, dispatch, t]);
 
   const handleFilterChange = (updatedFilters) => {
     setFilters((prevFilters) => ({ ...prevFilters, ...updatedFilters }));
@@ -337,33 +339,33 @@ const DiscountsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Special Offers
+          {t('discountsTitle')}
         </DiscountsTitle>
         <DiscountsSubtitle
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Discover amazing deals on our premium collection
+          {t('discountsSubtitle')}
         </DiscountsSubtitle>
         <DiscountBadge
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          Up to 70% OFF
+          {t('upTo')} 70% {t('off')}
         </DiscountBadge>
       </DiscountsHeader>
 
       <FiltersSection>
         <FiltersGrid>
           <FilterGroup>
-            <FilterLabel>Category</FilterLabel>
+            <FilterLabel>{t('categories')}</FilterLabel>
             <FilterSelect 
               value={filters.category} 
               onChange={(e) => handleFilterChange({ category: e.target.value })}
             >
-              <option value="">All Categories</option>
+              <option value="">{t('allCategories')}</option>
               <option value="MENS_CLOTHING">Men's Clothing</option>
               <option value="WOMENS_CLOTHING">Women's Clothing</option>
               <option value="KIDS_CLOTHING">Kids' Clothing</option>
@@ -373,20 +375,20 @@ const DiscountsPage = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>Gender</FilterLabel>
+            <FilterLabel>{t('genders')}</FilterLabel>
             <FilterSelect 
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
             >
-              <option value="">All Genders</option>
-              <option value="MEN">Men</option>
-              <option value="WOMEN">Women</option>
-              <option value="UNISEX">Unisex</option>
+              <option value="">{t('allGenders')}</option>
+              <option value="MEN">{t('men')}</option>
+              <option value="WOMEN">{t('women')}</option>
+              <option value="UNISEX">{t('unisex')}</option>
             </FilterSelect>
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>Min Discount (%)</FilterLabel>
+            <FilterLabel>{t('minDiscount')} (%)</FilterLabel>
             <FilterInput
               type="number"
               value={filters.minDiscount}
@@ -397,7 +399,7 @@ const DiscountsPage = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>Max Price ($)</FilterLabel>
+            <FilterLabel>{t('maxPrice')} ($)</FilterLabel>
             <FilterInput
               type="number"
               value={filters.maxPrice}
@@ -408,7 +410,7 @@ const DiscountsPage = () => {
 
           <FilterGroup>
             <ClearFiltersButton onClick={handleClearFilters}>
-              Clear Filters
+              {t('clearFilters')}
             </ClearFiltersButton>
           </FilterGroup>
         </FiltersGrid>
@@ -417,13 +419,13 @@ const DiscountsPage = () => {
       <ProductsSection>
         <ResultsInfo>
           <ResultsCount>
-            {loading ? 'Loading...' : `${filteredProducts.length} discounted products found`}
+            {loading ? `${t('loading')}` : `${filteredProducts.length} discounted ${t('productsFound')}`}
           </ResultsCount>
           <SortSelect value={sortBy} onChange={handleSortChange}>
-            <option value="discount">Sort by Discount</option>
-            <option value="price">Sort by Price</option>
-            <option value="name">Sort by Name</option>
-            <option value="createdAt">Sort by Newest</option>
+            <option value="discount">{t('sortByDiscount')}</option>
+            <option value="price">{t('sortByPrice')}</option>
+            <option value="name">{t('sortByName')}</option>
+            <option value="createdAt">{t('sortByNewest')}</option>
           </SortSelect>
         </ResultsInfo>
 
@@ -457,9 +459,9 @@ const DiscountsPage = () => {
             ) : (
               <EmptyState>
                 <EmptyStateIcon>🎁</EmptyStateIcon>
-                <EmptyStateTitle>No discounted products found</EmptyStateTitle>
+                <EmptyStateTitle>{t('noProductsFound')}</EmptyStateTitle>
                 <EmptyStateText>
-                  Try adjusting your filters to find more deals.
+                  {t('tryAdjustingFilters')}
                 </EmptyStateText>
               </EmptyState>
             )}
@@ -472,16 +474,16 @@ const DiscountsPage = () => {
               onClick={handlePreviousPage} 
               disabled={page === 0}
             >
-              Previous
+              {t('previous')}
             </PaginationButton>
             <PageInfo>
-              Page {page + 1} of {totalPages}
+              {t('page')} {page + 1} {t('of')} {totalPages}
             </PageInfo>
             <PaginationButton 
               onClick={handleNextPage} 
               disabled={page >= totalPages - 1}
             >
-              Next
+              {t('next')}
             </PaginationButton>
           </PaginationContainer>
         )}

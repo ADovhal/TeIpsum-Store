@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../features/products/components/ProductCard';
 import { fetchProducts } from '../features/products/productSlice';
 
@@ -299,6 +300,7 @@ const PageInfo = styled.span`
 `;
 
 const NewCollectionPage = () => {
+  const { t } = useLanguage();
   const dispatch = useDispatch();
   const { products, totalPages, loading, error } = useSelector((state) => state.products || {});
 
@@ -380,21 +382,21 @@ const NewCollectionPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          New Collection 2025
+          {t('newCollectionTitle')}
         </NewCollectionTitle>
         <NewCollectionSubtitle
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Discover the latest trends and innovative designs
+          {t('newCollectionSubtitle')}
         </NewCollectionSubtitle>
         <NewCollectionBadge
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          JUST LAUNCHED
+          {t('justLaunched')}
         </NewCollectionBadge>
       </NewCollectionHeader>
 
@@ -412,11 +414,11 @@ const NewCollectionPage = () => {
         <CollectionStats>
           <StatItem>
             <StatNumber>50+</StatNumber>
-            <StatLabel>New Items</StatLabel>
+            <StatLabel>{t('newItems')}</StatLabel>
           </StatItem>
           <StatItem>
             <StatNumber>3</StatNumber>
-            <StatLabel>Categories</StatLabel>
+            <StatLabel>{t('categories')}</StatLabel>
           </StatItem>
           <StatItem>
             <StatNumber>100%</StatNumber>
@@ -432,12 +434,12 @@ const NewCollectionPage = () => {
       <FiltersSection>
         <FiltersGrid>
           <FilterGroup>
-            <FilterLabel>Category</FilterLabel>
+            <FilterLabel>{t('categories')}</FilterLabel>
             <FilterSelect 
               value={filters.category} 
               onChange={(e) => handleFilterChange({ category: e.target.value })}
             >
-              <option value="">All Categories</option>
+              <option value="">{t('allCategories')}</option>
               <option value="MENS_CLOTHING">Men's Clothing</option>
               <option value="WOMENS_CLOTHING">Women's Clothing</option>
               <option value="KIDS_CLOTHING">Kids' Clothing</option>
@@ -452,7 +454,7 @@ const NewCollectionPage = () => {
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
             >
-              <option value="">All Genders</option>
+              <option value="">{t('allGenders')}</option>
               <option value="MEN">Men</option>
               <option value="WOMEN">Women</option>
               <option value="UNISEX">Unisex</option>
@@ -475,7 +477,7 @@ const NewCollectionPage = () => {
 
           <FilterGroup>
             <ClearFiltersButton onClick={handleClearFilters}>
-              Clear Filters
+              {t('clearFilters')}
             </ClearFiltersButton>
           </FilterGroup>
         </FiltersGrid>
@@ -487,10 +489,10 @@ const NewCollectionPage = () => {
             {loading ? 'Loading...' : `${products?.length || 0} new items found`}
           </ResultsCount>
           <SortSelect value={sortBy} onChange={handleSortChange}>
-            <option value="createdAt">Sort by Newest</option>
-            <option value="price">Sort by Price</option>
-            <option value="name">Sort by Name</option>
-            <option value="discount">Sort by Discount</option>
+            <option value="createdAt">{t('sortByNewest')}</option>
+            <option value="price">{t('sortByPrice')}</option>
+            <option value="name">{t('sortByName')}</option>
+            <option value="discount">{t('sortByDiscount')}</option>
           </SortSelect>
         </ResultsInfo>
 

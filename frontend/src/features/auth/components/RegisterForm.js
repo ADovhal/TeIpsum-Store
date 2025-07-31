@@ -2,11 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from 'react-datepicker';
+import { useLanguage } from '../../../context/LanguageContext';
+import { enUS, de, pl, uk } from 'date-fns/locale';
+
 import { registerUser } from '../AuthService';
 import { 
   validateEmail, 
   validatePassword, 
-  validateName, 
+  validateName,
+  validateDateOfBirth,
   validatePhone,
   validateForm,
   rateLimiter
@@ -198,14 +205,41 @@ const LoginLink = styled.p`
   }
 `;
 
+const StyledDatePicker = styled(DatePicker)`
+  width: 100%;
+  padding: 15px;
+  border: 2px solid ${props => props.hasError ? '#e74c3c' : '#ecf0f1'};
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: ${props => props.hasError ? '#e74c3c' : '#3498db'};
+    box-shadow: 0 0 0 3px ${props => props.hasError ? 'rgba(231, 76, 60, 0.1)' : 'rgba(52, 152, 219, 0.1)'};
+  }
+
+  &::placeholder {
+    color: #bdc3c7;
+  }
+`;
+
 const RegisterForm = () => {
+
+  const { currentLanguage, t } = useLanguage();
+
   useEffect(() => {
-    document.title = "Sign Up - TeIpsum";
-  }, []);
+    document.title = `${t('registerTitle')} - TeIpsum`;
+  }, [t]);
+
+  
 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    dob: null,
     email: '',
     phone: '',
     password: '',
@@ -216,6 +250,10 @@ const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  registerLocale('en', enUS);
+  registerLocale('de', de);
+  registerLocale('pl', pl);
+  registerLocale('ua', uk);
 
   const navigate = useNavigate();
 
@@ -255,7 +293,7 @@ const RegisterForm = () => {
 
     // Rate limiting check
     if (!rateLimiter.isAllowed('register_attempt', 3, 300000)) { // 3 attempts per 5 minutes
-      setErrors({ general: 'Too many registration attempts. Please try again later.' });
+      setErrors({ general: t('validation.tooManyAttempts') });
       return;
     }
 
@@ -266,12 +304,13 @@ const RegisterForm = () => {
     const validationRules = {
       firstName: { required: true, validator: validateName },
       lastName: { required: true, validator: validateName },
+      dob: { required: true, validator: validateDateOfBirth },
       email: { required: true, validator: validateEmail },
       phone: { required: true, validator: validatePhone },
       password: { required: true, validator: validatePassword },
       confirmPassword: { required: true, validator: (value) => {
         if (value !== formData.password) {
-          return { isValid: false, message: 'Passwords do not match' };
+          return { isValid: false, message: t('validation.passwordsDontMatch') };
         }
         return { isValid: true, value };
       }}
@@ -307,9 +346,9 @@ const RegisterForm = () => {
     } catch (error) {
       console.error('Registration error:', error);
       if (error.message.includes('already exists') || error.message.includes('уже существует')) {
-        setErrors({ email: 'A user with this email already exists' });
+        setErrors({ email: t('A user with this email already exists') });
       } else {
-        setErrors({ general: 'Registration failed. Please try again.' });
+        setErrors({ general: t('Registration failed. Please try again.') });
       }
     } finally {
       setIsLoading(false);
@@ -333,15 +372,15 @@ const RegisterForm = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <h2>Welcome to TeIpsum!</h2>
-            <p>Your account has been created successfully. You can now sign in to access your profile.</p>
+            <h2>{t('welcomeTitle')}</h2>
+            <p>{t('accountCreated')}</p>
             <SubmitButton
               onClick={handleRedirectToLogin}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               style={{ marginTop: '20px' }}
             >
-              Sign In Now
+              {t('signInNow')}
             </SubmitButton>
           </SuccessMessage>
         </RegisterCard>
@@ -356,19 +395,19 @@ const RegisterForm = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <Title>Create Account</Title>
-        <Subtitle>Join TeIpsum and discover your style</Subtitle>
+        <Title>{t('registerTitle')}</Title>
+        <Subtitle>{t('registerSubtitle')}</Subtitle>
 
         <Form onSubmit={handleSubmit}>
           <FormRow>
             <FormGroup>
-              <Label>First Name</Label>
+              <Label>{t('firstName')}</Label>
               <Input
                 type="text"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                placeholder="Enter your first name"
+                placeholder={t('firstNamePlaceholder')}
                 hasError={!!errors.firstName}
                 required
               />
@@ -384,13 +423,13 @@ const RegisterForm = () => {
             </FormGroup>
 
             <FormGroup>
-              <Label>Last Name</Label>
+              <Label>{t('lastName')}</Label>
               <Input
                 type="text"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                placeholder="Enter your last name"
+                placeholder={t('lastNamePlaceholder')}
                 hasError={!!errors.lastName}
                 required
               />
@@ -407,13 +446,13 @@ const RegisterForm = () => {
           </FormRow>
 
           <FormGroup>
-            <Label>Email Address</Label>
+            <Label>{t('emailAddress')}</Label>
             <Input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder={t("emailPlaceholder")}
               hasError={!!errors.email}
               required
             />
@@ -427,37 +466,67 @@ const RegisterForm = () => {
               </ErrorMessage>
             )}
           </FormGroup>
+          <FormRow>
+            <FormGroup>
+              <Label>{t('phoneNumber')}</Label>
+              <Input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder={t('phonePlaceholder')}
+                hasError={!!errors.phone}
+                required
+              />
+              {errors.phone && (
+                <ErrorMessage
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {errors.phone}
+                </ErrorMessage>
+              )}
+            </FormGroup>
 
+            <FormGroup>
+              <Label>{t('dateOfBirth')}</Label>
+              <StyledDatePicker
+                locale={currentLanguage}
+                selected={formData.dob}
+                onChange={(date) => setFormData(prev => ({ ...prev, dob: date }))}
+                dateFormat={
+                  currentLanguage === 'en' ? 'MM/dd/yyyy' :
+                  ['ru', 'ua', 'de', 'pl'].includes(currentLanguage) ? 'dd.MM.yyyy' :
+                  'dd/MM/yyyy'
+                }
+                placeholderText={t("selectBirthDate")}
+                maxDate={new Date()}
+                showYearDropdown
+                showMonthDropdown
+                dropdownMode="select"
+                hasError={!!errors.dob}
+                required
+              />
+              {errors.dob && (
+                <ErrorMessage
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {errors.dob}
+                </ErrorMessage>
+              )}
+            </FormGroup>
+          </FormRow>
           <FormGroup>
-            <Label>Phone Number</Label>
-            <Input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
-              hasError={!!errors.phone}
-              required
-            />
-            {errors.phone && (
-              <ErrorMessage
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {errors.phone}
-              </ErrorMessage>
-            )}
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Password</Label>
+            <Label>{t('password')}</Label>
             <Input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Create a strong password"
+              placeholder={t('passwordPlaceholder')}
               hasError={!!errors.password}
               required
             />
@@ -484,13 +553,13 @@ const RegisterForm = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label>Confirm Password</Label>
+            <Label>{t('confirmPassword')}</Label>
             <Input
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              placeholder="Confirm your password"
+              placeholder={t('confirmPasswordPlaceholder')}
               hasError={!!errors.confirmPassword}
               required
             />
@@ -521,16 +590,16 @@ const RegisterForm = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+            {isLoading ? t('creatingAccount') : t('createAccount')}
           </SubmitButton>
         </Form>
 
         <Divider>
-          <span>or</span>
+          <span>{t('or')}</span>
         </Divider>
 
         <LoginLink>
-          Already have an account? <Link to="/login">Sign In</Link>
+          {t('alreadyHaveAccount')} <Link to="/login">{t('signIn')}</Link>
         </LoginLink>
       </RegisterCard>
     </RegisterContainer>

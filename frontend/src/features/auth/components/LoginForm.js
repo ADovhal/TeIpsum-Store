@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../../context/LanguageContext';
 import { validateEmail, rateLimiter } from '../../../utils/inputValidation';
 import { login } from '../authSlice';
 
@@ -159,9 +160,13 @@ const RegisterLink = styled.p`
 `;
 
 const LoginForm = () => {
+  const { t } = useLanguage();
+
   useEffect(() => {
-    document.title = "Sign In - TeIpsum";
-  }, []);
+    document.title = `${t('loginTitle')} - TeIpsum`;
+  }, [t]);
+
+  
 
   const [formData, setFormData] = useState({
     email: '',
@@ -188,7 +193,7 @@ const LoginForm = () => {
     e.preventDefault();
     
     if (!rateLimiter.isAllowed('login_attempt', 5, 300000)) {
-      setErrors({ general: 'Too many login attempts. Please try again later.' });
+      setErrors({ general: t('validation.tooManyAttempts') });
       return;
     }
 
@@ -235,18 +240,18 @@ const LoginForm = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <Title>Welcome Back</Title>
-        <Subtitle>Sign in to your account to continue</Subtitle>
+        <Title>{t('loginTitle')}</Title>
+        <Subtitle>{t('loginSubtitle')}</Subtitle>
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label>Email Address</Label>
+            <Label>{t('emailAddress')}</Label>
             <Input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder={t('emailPlaceholder')}
               hasError={!!errors.email}
               required
             />
@@ -262,13 +267,13 @@ const LoginForm = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label>Password</Label>
+            <Label>{t('password')}</Label>
             <Input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder={t('passwordPlaceholder')}
               hasError={!!errors.password}
               required
             />
@@ -299,20 +304,20 @@ const LoginForm = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? t('signingIn') : t('signIn')}
           </SubmitButton>
         </Form>
 
         <ForgotPassword onClick={handleForgotPassword}>
-          Forgot your password?
+          {t('forgotPassword')}
         </ForgotPassword>
 
         <Divider>
-          <span>or</span>
+          <span>{t('or')}</span>
         </Divider>
 
         <RegisterLink>
-          Don't have an account? <Link to="/register">Create one</Link>
+          {t('dontHaveAccount')} <Link to="/register">{t('createOne')}</Link>
         </RegisterLink>
       </LoginCard>
     </LoginContainer>

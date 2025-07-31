@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useLanguage } from '../../context/LanguageContext';
 
 const FilterContainer = styled.div`
   background: white;
@@ -157,6 +158,7 @@ const ClearFiltersButton = styled.button`
 `;
 
 const FilterSidebar = ({ filters, onFilterChange }) => {
+    const { t } = useLanguage();
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === 'minPrice' && value < 0) return;
@@ -192,14 +194,14 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
 
     return (
         <FilterContainer>
-            <FilterTitle>Filters</FilterTitle>
+            <FilterTitle>{t('filter')}</FilterTitle>
 
             <FilterSection>
-                <SectionTitle>Category</SectionTitle>
+                <SectionTitle>{t('categories')}</SectionTitle>
                 <FilterItem>
                     <Select name="category" value={filters.category} onChange={handleChange}>
-                        <option value="">All Categories</option>
-                        <option value="MENS_CLOTHING">Men's Clothing</option>
+                        <option value="">{t('allCategories')}</option>
+                        <option value="MENS_CLOTHING">{t('men')}</option>
                         <option value="WOMENS_CLOTHING">Women's Clothing</option>
                         <option value="KIDS_CLOTHING">Kids' Clothing</option>
                         <option value="ACCESSORIES">Accessories</option>
@@ -225,19 +227,19 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
             )}
 
             <FilterSection>
-                <SectionTitle>Gender</SectionTitle>
+                <SectionTitle>{t('genders')}</SectionTitle>
                 <FilterItem>
                     <Select name="gender" value={filters.gender} onChange={handleChange}>
-                        <option value="">All Genders</option>
-                        <option value="MEN">Men</option>
-                        <option value="WOMEN">Women</option>
-                        <option value="UNISEX">Unisex</option>
+                        <option value="">{t('allGenders')}</option>
+                        <option value="MEN">{t('men')}</option>
+                        <option value="WOMEN">{t('women')}</option>
+                        <option value="UNISEX">{t('unisex')}</option>
                     </Select>
                 </FilterItem>
             </FilterSection>
 
             <FilterSection>
-                <SectionTitle>Price Range</SectionTitle>
+                <SectionTitle>{t('price')}</SectionTitle>
                 <FilterItem>
                     <PriceRangeContainer>
                         <PriceInput
@@ -248,7 +250,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                             placeholder="Min"
                             min="0"
                         />
-                        <PriceSeparator>to</PriceSeparator>
+                        <PriceSeparator>{t('upTo')}</PriceSeparator>
                         <PriceInput
                             type="number"
                             name="maxPrice"
@@ -262,7 +264,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
             </FilterSection>
 
             <FilterSection>
-                <SectionTitle>Discount Range (%)</SectionTitle>
+                <SectionTitle>{t('discount')} (%)</SectionTitle>
                 <FilterItem>
                     <PriceRangeContainer>
                         <PriceInput
@@ -274,7 +276,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                             min="0"
                             max="100"
                         />
-                        <PriceSeparator>to</PriceSeparator>
+                        <PriceSeparator>{t('upTo')}</PriceSeparator>
                         <PriceInput
                             type="number"
                             name="maxDiscount"
@@ -289,18 +291,18 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
             </FilterSection>
 
             <FilterSection>
-                <SectionTitle>Availability</SectionTitle>
+                <SectionTitle>{t('availability')}</SectionTitle>
                 <FilterItem>
                     <Select name="available" value={filters.available} onChange={handleChange}>
-                        <option value="">All</option>
-                        <option value="true">In Stock</option>
-                        <option value="false">Out of Stock</option>
+                        <option value="">{t('all')}</option>
+                        <option value="true">{t('available')}</option>
+                        <option value="false">{t('notAvailable')}</option>
                     </Select>
                 </FilterItem>
             </FilterSection>
 
             <ClearFiltersButton onClick={handleClearFilters}>
-                Clear All Filters
+                {t('clearFilters')}
             </ClearFiltersButton>
         </FilterContainer>
     );
