@@ -7,6 +7,7 @@ import com.teipsum.orderservice.model.OrderStatus;
 import com.teipsum.orderservice.event.OrderEventPublisher;
 import com.teipsum.orderservice.repository.OrderRepository;
 import com.teipsum.shared.exceptions.NotFoundException;
+import com.teipsum.shared.exceptions.ConflictException;
 import com.teipsum.shared.product.event.OrderCreatedEvent;
 import com.teipsum.shared.product.event.OrderLineItem;
 import lombok.RequiredArgsConstructor;
