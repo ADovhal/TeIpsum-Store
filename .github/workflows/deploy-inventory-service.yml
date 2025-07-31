@@ -25,9 +25,9 @@ jobs:
       SSH_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_KEY || secrets.STAGE_DEPLOY_KEY }}
       DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
 
-      SERVICE_SERVER_PORT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_SERVER_PORT || secrets.STAGE_CATALOG_SERVICE_SERVER_PORT}}
-      DB_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_NAME || secrets.STAGE_CATALOG_SERVICE_DB_NAME }}
-      DB_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_URL || secrets.STAGE_CATALOG_SERVICE_DB_URL }}
-      DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_USER || secrets.STAGE_CATALOG_SERVICE_DB_USER }}
-      DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_CATALOG_SERVICE_DB_PASSWORD || secrets.STAGE_CATALOG_SERVICE_DB_PASSWORD }}
+      SERVICE_SERVER_PORT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_INVENTORY_SERVICE_SERVER_PORT || secrets.STAGE_INVENTORY_SERVICE_SERVER_PORT}}
+      DB_NAME: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_NAME || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_NAME }}
+      DB_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_URL || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_URL }}
+      DB_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_USER || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_USER }}
+      DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ADMIN_PRODUCT_SERVICE_DB_PASSWORD || secrets.STAGE_ADMIN_PRODUCT_SERVICE_DB_PASSWORD }}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ github.ref == 'refs/heads/main' && secrets.PROD_KAFKA_BOOTSTRAP_SERVERS || secrets.STAGE_KAFKA_BOOTSTRAP_SERVERS }}

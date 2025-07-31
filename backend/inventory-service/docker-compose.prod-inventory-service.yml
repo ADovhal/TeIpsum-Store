@@ -1,0 +1,17 @@
+services:
+  prod-inventory-service:
+    container_name: prod-inventory-service
+    build:
+      context: ../..
+      dockerfile: backend/inventory-service/Dockerfile
+      args:
+        SERVICE_NAME: inventory-service
+    ports: ['22097:${SERVICE_SERVER_PORT}']
+    image: prod-inventory-service:latest
+    env_file: .env
+    networks:
+      - prod-net
+
+networks:
+  prod-net:
+    external: true

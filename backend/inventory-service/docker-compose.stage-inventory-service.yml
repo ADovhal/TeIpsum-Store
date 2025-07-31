@@ -1,0 +1,17 @@
+services:
+  stage-inventory-service:
+    container_name: stage-inventory-service
+    build:
+      context: ../..
+      dockerfile: backend/inventory-service/Dockerfile
+      args:
+        SERVICE_NAME: inventory-service
+    ports: ['22097:${SERVICE_SERVER_PORT}']
+    image: stage-inventory-service:latest
+    env_file: .env
+    networks:
+      - stage-net
+
+networks:
+  stage-net:
+    external: true
