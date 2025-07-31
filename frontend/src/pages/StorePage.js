@@ -29,6 +29,7 @@ const StoreHeader = styled.header`
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+
 `;
 
 const SearchSection = styled.div`
@@ -76,7 +77,7 @@ const StoreContent = styled.div`
   max-width: 1400px;
   margin: 0 auto;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1045px) {
     flex-direction: column;
     gap: 20px;
   }
@@ -88,6 +89,13 @@ const ProductsSection = styled.main`
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 1045px) {
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  }
 `;
 
 const ProductsGrid = styled.section`
@@ -199,6 +207,11 @@ const ResultsInfo = styled.div`
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid #ecf0f1;
+
+  @media (max-width: 1045px) {
+  flex-direction: column;
+  gap: 20px;
+  }
 `;
 
 const ResultsCount = styled.span`
@@ -362,7 +375,7 @@ const StorePage = () => {
 
           {error && (
             <ErrorContainer>
-              <div>{t('errorLoading')} {error}</div>
+              <div>{t('errorLoading')}</div>
             </ErrorContainer>
           )}
 

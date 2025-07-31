@@ -12,7 +12,7 @@ const FilterContainer = styled.div`
   position: sticky;
   top: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1045px) {
     width: 100%;
     margin-bottom: 20px;
     position: static;

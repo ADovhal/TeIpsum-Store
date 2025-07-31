@@ -449,7 +449,7 @@ const NewCollectionPage = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>Gender</FilterLabel>
+            <FilterLabel>{t('genders')}</FilterLabel>
             <FilterSelect 
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
@@ -462,7 +462,7 @@ const NewCollectionPage = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>Max Price ($)</FilterLabel>
+            <FilterLabel>{t('price')} ($)</FilterLabel>
             <FilterSelect 
               value={filters.maxPrice} 
               onChange={(e) => handleFilterChange({ maxPrice: parseInt(e.target.value) || 1000 })}
