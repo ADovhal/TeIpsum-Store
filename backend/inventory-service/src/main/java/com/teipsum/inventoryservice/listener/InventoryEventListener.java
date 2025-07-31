@@ -21,7 +21,7 @@ public class InventoryEventListener {
     @KafkaListener(topics = "product-created")
     @Transactional
     public void onProductCreated(ProductCreatedEvent e) {
-        if (!repo.existsById(e.id())) {
+        if (!repo.existsById(UUID.fromString(e.id()))) {
             repo.save(
                     Inventory.builder()
                             .productId(UUID.fromString(e.id()))
@@ -35,7 +35,7 @@ public class InventoryEventListener {
     @Transactional
     public void onOrderCreated(OrderCreatedEvent e) {
         e.items().forEach(item -> {
-            repo.findById(item.productId()).ifPresent(inv -> {
+            repo.findById(UUID.fromString(item.productId())).ifPresent(inv -> {
                 inv.setQuantity(inv.getQuantity() - item.quantity());
                 var newQty = inv.getQuantity();
                 repo.save(inv);
@@ -48,7 +48,7 @@ public class InventoryEventListener {
     @Transactional
     public void onOrderCancelled(OrderCancelledEvent e) {
         e.items().forEach(item -> {
-            repo.findById(item.productId()).ifPresent(inv -> {
+            repo.findById(UUID.fromString(item.productId())).ifPresent(inv -> {
                 inv.setQuantity(inv.getQuantity() + item.quantity());
                 var newQty = inv.getQuantity();
                 repo.save(inv);
