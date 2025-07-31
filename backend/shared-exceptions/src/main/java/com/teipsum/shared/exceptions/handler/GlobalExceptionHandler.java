@@ -1,9 +1,6 @@
 package com.teipsum.shared.exceptions.handler;
 
-import com.teipsum.shared.exceptions.ErrorResponse;
-import com.teipsum.shared.exceptions.InvalidSortPropertyException;
-import com.teipsum.shared.exceptions.ProductNotFoundException;
-import com.teipsum.shared.exceptions.ValidationError;
+import com.teipsum.shared.exceptions.*;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,5 +121,40 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 null);
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex, WebRequest req) {
+        logger.warn("Not found: {}", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleStock(InsufficientStockException ex, WebRequest req) {
+        logger.warn("Stock issue: {}", ex.getMessage());
+        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, WebRequest req) {
+        logger.warn("Conflict: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex, WebRequest req) {
+        logger.warn("Unauthorized: {}", ex.getMessage());
+        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), req);
+    }
+
+    /* вспомогательный метод для сокращения кода */
+    private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String msg, WebRequest req) {
+        ErrorResponse resp = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                msg,
+                req.getDescription(false),
+                null);
+        return new ResponseEntity<>(resp, status);
     }
 }
