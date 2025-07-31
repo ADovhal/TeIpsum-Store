@@ -54,7 +54,7 @@ public class OrderService {
                 repo.save(order);
 
                 publisher.publishOrderCreated(order);
-        return order;
+                return order;
         }
 
         @Transactional
