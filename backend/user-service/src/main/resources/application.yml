@@ -45,7 +45,8 @@ logging:
     USER_EVENTS: info
 
 jwt:
-  secret: ${JWT_SECRET}
+  user-access-secret:   ${JWT_SECRET}
+  admin-access-secret:  ${JWT_ADMIN_SECRET}
 
 cors:
   allowed:
