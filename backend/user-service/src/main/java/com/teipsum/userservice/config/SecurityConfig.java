@@ -1,12 +1,7 @@
 package com.teipsum.userservice.config;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-// import java.util.HashMap;
 import java.util.List;
-// import java.util.Map;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.SecretKey;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -71,7 +66,6 @@ public class SecurityConfig {
                     @NonNull HttpServletResponse response,
                     @NonNull FilterChain filterChain
                 ) throws ServletException, IOException {
-                    System.out.println(">>> Authorization Header: " + request.getHeader("Authorization"));
                     filterChain.doFilter(request, response);
                 }
             }, UsernamePasswordAuthenticationFilter.class);
@@ -91,9 +85,12 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
+        String userAccess  = "${jwt.user-access-secret}";
+        String adminAccess = "${jwt.admin-access-secret}";
+
         return CompositeJwtDecoder.builder()
-                .withSecret("${jwt.user-access-secret}")
-                .withSecret("${jwt.admin-access-secret}")
+                .withSecret(userAccess)
+                .withSecret(adminAccess)
                 .build();
     }
     

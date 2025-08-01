@@ -68,7 +68,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
 
         user.setLastLoginDate(loginDate);
-    userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
