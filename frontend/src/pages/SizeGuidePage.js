@@ -206,6 +206,7 @@ const TipItem = styled.li`
 
 const SizeGuidePage = () => {
   const [activeCategory, setActiveCategory] = useState('womens');
+  const { t } = useLanguage();
 
   useEffect(() => {
     document.title = "Size Guide - TeIpsum";
@@ -370,7 +371,7 @@ const SizeGuidePage = () => {
                   </>
                 ) : (
                   <>
-                    <TableHeader>Size</TableHeader>
+                    <TableHeader>{t('size')}</TableHeader>
                     <TableHeader>Chest (in)</TableHeader>
                     <TableHeader>Waist (in)</TableHeader>
                     {activeCategory === 'womens' && <TableHeader>Hips (in)</TableHeader>}
