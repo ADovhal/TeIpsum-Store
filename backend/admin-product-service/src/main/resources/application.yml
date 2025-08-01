@@ -44,7 +44,7 @@ jwt:
 
 cors:
   allowed:
-    origins: ${ADMIN_CORS_ORIGINS}
+    origins: ${CORS_ALLOWED_ORIGINS}
 
 management:
   endpoints:
