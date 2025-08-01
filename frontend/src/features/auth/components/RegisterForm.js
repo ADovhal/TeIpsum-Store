@@ -251,14 +251,13 @@ const DatePickerWrapper = styled.div`
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-bottom: none;
     border-radius: 0;
-    padding: 20px 0 15px;
+    padding: 10px 15px 0 15px;
   }
 
   .react-datepicker__current-month {
     color: white;
     font-weight: 600;
     font-size: 1.1rem;
-    margin-bottom: 10px;
   }
 
   .react-datepicker__day-names {
