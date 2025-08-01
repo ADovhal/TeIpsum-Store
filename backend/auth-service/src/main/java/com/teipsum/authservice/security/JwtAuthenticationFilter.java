@@ -37,11 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String requestUri = request.getRequestURI();
         System.out.println("\n=== JWT Filter Start ===");
-        System.out.println("Processing request to: " + requestUri);
 
         final String authHeader = request.getHeader(AUTH_HEADER);
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            System.out.println("No Bearer token found, passing to next filter");
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,7 +47,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String token = authHeader.substring(BEARER_PREFIX.length());
             String path = request.getRequestURI();
-            System.out.println("JWT token found: " + token.substring(0, 10) + "...");
 
             if (path.contains("/refresh")) {
                 filterChain.doFilter(request, response);
@@ -90,16 +87,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             context.setAuthentication(authToken);
             SecurityContextHolder.setContext(context);
 
-            System.out.println("SecurityContext updated for: " + email);
-
             filterChain.doFilter(request, response);
 
         } catch (JWTVerificationException e) {
-            System.out.println("JWT verification failed: " + e.getMessage());
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
         } catch (Exception e) {
-            System.out.println("Unexpected error: " + e.getMessage());
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authentication error");
         } finally {

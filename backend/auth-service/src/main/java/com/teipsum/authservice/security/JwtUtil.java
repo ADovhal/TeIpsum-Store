@@ -127,7 +127,6 @@ public class JwtUtil {
         for (TokenType adminType : List.of(TokenType.ADMIN_ACCESS, TokenType.ADMIN_REFRESH)) {
             try {
                 JWT.require(algorithms.get(adminType)).build().verify(token);
-                System.out.println("Token verified as: " + adminType);
                 return adminType;
             } catch (JWTVerificationException e) {
                 System.out.println("Failed verification for " + adminType + ": " + e.getMessage());
@@ -137,7 +136,6 @@ public class JwtUtil {
         for (TokenType userType : List.of(TokenType.USER_ACCESS, TokenType.USER_REFRESH)) {
             try {
                 JWT.require(algorithms.get(userType)).build().verify(token);
-                System.out.println("Token verified as: " + userType);
                 return userType;
             } catch (JWTVerificationException e) {
                 System.out.println("Failed verification for " + userType + ": " + e.getMessage());
