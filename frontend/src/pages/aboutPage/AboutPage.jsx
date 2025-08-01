@@ -107,9 +107,9 @@ const AboutPage = () => {
         >
           <aside><img src={lavresLeft} alt="left" className={styles.lavresLeft} /></aside>
           <aside><img src={lavresRight} alt="right" className={styles.lavresRight} /></aside>
-          <h2>About our shop</h2>
-          <p>Thoughtful clothing for the inner dialogue.</p>
-          <p>Minimal, symbolic, and made for self-expression.</p>
+          <h2>{t('aboutOurShopTitle')}</h2>
+          <p>{t('thoughtfulClothing')}</p>
+          <p>{t('minimalSymbolic')}</p>
         </motion.div>
 
         <div className={styles.aboutContent}>
@@ -122,7 +122,7 @@ const AboutPage = () => {
               viewport={{ once: true }}
             >
               <h3>{t('ourStory')}</h3>
-              <p>Founded in 2020, TeIpsum began as a small boutique in the heart of the city, driven by a passion for creating clothing that speaks to the soul. Our founder, inspired by the philosophy of "vestments for the inner dialogue," believed that what we wear should reflect not just our style, but our inner journey.</p>
+              <p>{t('foundingStory')}</p>
             </motion.div>
 
             <motion.div 
@@ -133,7 +133,7 @@ const AboutPage = () => {
               viewport={{ once: true }}
             >
               <h3>{t('thePhilosophy')}</h3>
-              <p>Every piece in our collection is designed with intention. We believe that clothing is more than fabric and thread—it's a form of self-expression, a way to communicate who we are and who we aspire to be. Our minimalist approach focuses on quality, comfort, and timeless elegance.</p>
+              <p>{t('philosophyText')}</p>
             </motion.div>
 
             <motion.div 
@@ -144,7 +144,7 @@ const AboutPage = () => {
               viewport={{ once: true }}
             >
               <h3>{t('sustainability')}</h3>
-              <p>We're committed to ethical fashion practices, using sustainable materials and supporting fair labor conditions. Our production process prioritizes environmental responsibility while maintaining the highest quality standards.</p>
+              <p>{t('sustainabilityText')}</p>
             </motion.div>
 
             <motion.div 
@@ -155,7 +155,7 @@ const AboutPage = () => {
               viewport={{ once: true }}
             >
               <h3>{t('community')}</h3>
-              <p>TeIpsum is more than a brand—it's a community of individuals who value authenticity, creativity, and mindful living. We celebrate diversity and encourage everyone to find their unique voice through fashion.</p>
+              <p>{t('communityText')}</p>
             </motion.div>
 
             <motion.div 
@@ -166,7 +166,7 @@ const AboutPage = () => {
               viewport={{ once: true }}
             >
               <h3>{t('futureVision')}</h3>
-              <p>As we grow, we remain committed to our core values: thoughtful design, sustainable practices, and meaningful connections with our customers. We envision a future where fashion is both beautiful and purposeful.</p>
+              <p>{t('futureVisionText')}</p>
             </motion.div>
           </div>
         </div>

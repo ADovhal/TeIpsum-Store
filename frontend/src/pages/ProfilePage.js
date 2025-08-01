@@ -5,6 +5,7 @@ import { loadProfile } from '../features/profile/profileSlice';
 import styled from 'styled-components';
 import { useLanguage } from '../context/LanguageContext';
 import ProfileForm from '../features/profile/components/ProfileForm';
+import OrdersList from '../features/orders/components/OrdersList';
 
 const ProfileContainer = styled.div`
   min-height: 100vh;
@@ -249,35 +250,7 @@ const ProfilePage = () => {
   );
 
   const renderOrderHistoryTab = () => (
-    <OrderHistoryContainer>
-      {orderHistory.length > 0 ? (
-        orderHistory.map((order) => (
-          <OrderCard key={order.id}>
-            <OrderHeader>
-              <div style={{ display: 'grid'}}>
-                <OrderNumber>{order.orderNumber}</OrderNumber>
-                <OrderDate>{new Date(order.date).toLocaleDateString()}</OrderDate>
-              </div>
-              <div style={{ display: 'grid', alignItems: 'center', justifyItems: 'center', gap: '16px' }}>
-                <OrderStatus status={order.status}>
-                  {String(order.status)}
-                </OrderStatus>
-                <OrderTotal>${order.total.toFixed(2)}</OrderTotal>
-              </div>
-            </OrderHeader>
-            <div style={{ display: 'grid' }}>
-              <strong>Items:</strong> {order.items.join(', ')}
-            </div>
-          </OrderCard>
-        ))
-      ) : (
-        <EmptyState>
-          <EmptyStateIcon>📦</EmptyStateIcon>
-          <h3>No orders yet</h3>
-          <p>Start shopping to see your order history here.</p>
-        </EmptyState>
-      )}
-    </OrderHistoryContainer>
+    <OrdersList />
   );
 
   const renderAdminPanelTab = () => (

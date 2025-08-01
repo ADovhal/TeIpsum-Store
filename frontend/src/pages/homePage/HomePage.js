@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import styles from './HomePage.module.css';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import ProductCard from '../../features/products/components/ProductCard';
+// import ProductCard from '../../features/products/components/ProductCard';
 import SummerCollection from './components/SummerCollection';
 import FeaturedCollection from './components/FeaturedCollection';
 import SEO from '../../components/SEO';
@@ -27,7 +27,6 @@ const HomePage = () => {
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, window.innerHeight * 0.8], [1, 0]);
 
-  // Обновляем высоты элементов
   useEffect(() => {
     const updateStickyHeight = () => {
       if (stickyHeaderRef.current) {
@@ -44,7 +43,6 @@ const HomePage = () => {
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Логика для sticky и скрытия
   useEffect(() => {
     const handleScroll = () => {
       if (!aboutRef.current || !stickyHeaderRef.current || !productsRef.current || !headerHeight) return;
@@ -144,7 +142,6 @@ const HomePage = () => {
         structuredData={homePageStructuredData}
       />
       
-      {/* Hero Section */}
       <motion.div 
         style={{ opacity: heroOpacity }} 
         className={styles.heroSection}

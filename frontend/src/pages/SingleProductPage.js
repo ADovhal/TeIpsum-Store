@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { addToCart } from '../features/cart/cartSlice';
 import { fetchProductById } from '../features/products/productSlice';
+import useIsAdmin from '../features/admin/useIsAdmin';
 
 const ProductPageContainer = styled.div`
   min-height: 100vh;
@@ -321,10 +322,61 @@ const ErrorContainer = styled.div`
   padding: 20px;
 `;
 
+const AdminSection = styled.div`
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border: 2px solid #f39c12;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px 0;
+`;
+
+const AdminTitle = styled.h3`
+  color: #856404;
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const AdminGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const AdminField = styled.div`
+  background: rgba(255, 255, 255, 0.5);
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(133, 100, 4, 0.2);
+`;
+
+const AdminFieldLabel = styled.div`
+  font-weight: 600;
+  color: #856404;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+`;
+
+const AdminFieldValue = styled.div`
+  color: #6c5700;
+  font-family: monospace;
+  font-size: 0.95rem;
+  word-break: break-all;
+`;
+
 const SingleProductPage = () => {
   const { productId } = useParams();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isAdmin = useIsAdmin();
   
   const { selectedProduct, loading, error } = useSelector((state) => state.products);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -362,6 +414,17 @@ const SingleProductPage = () => {
   };
 
   const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   if (loading) {
     return (
@@ -430,25 +493,72 @@ const SingleProductPage = () => {
 
               <ProductDetails>
                 <DetailRow>
-                  <DetailLabel>Category:</DetailLabel>
+                  <DetailLabel>{t('category')}:</DetailLabel>
                   <DetailValue>{selectedProduct.category}</DetailValue>
                 </DetailRow>
                 <DetailRow>
-                  <DetailLabel>Subcategory:</DetailLabel>
+                  <DetailLabel>{t('subcategory')}:</DetailLabel>
                   <DetailValue>{selectedProduct.subcategory}</DetailValue>
                 </DetailRow>
                 <DetailRow>
-                  <DetailLabel>Gender:</DetailLabel>
+                  <DetailLabel>{t('gender')}:</DetailLabel>
                   <DetailValue>{selectedProduct.gender}</DetailValue>
                 </DetailRow>
                 <DetailRow>
-                  <DetailLabel>Availability:</DetailLabel>
-                  <DetailValue>{selectedProduct.available ? 'In Stock' : 'Out of Stock'}</DetailValue>
+                  <DetailLabel>{t('availability')}:</DetailLabel>
+                  <DetailValue>{selectedProduct.available ? t('inStock') : t('outOfStock')}</DetailValue>
                 </DetailRow>
               </ProductDetails>
 
+              {/* Admin Section */}
+              {isAdmin && (
+                <AdminSection>
+                  <AdminTitle>
+                    🔧 {t('adminInformation')}
+                  </AdminTitle>
+                  <AdminGrid>
+                    <AdminField>
+                      <AdminFieldLabel>{t('productId')}</AdminFieldLabel>
+                      <AdminFieldValue>{selectedProduct.id}</AdminFieldValue>
+                    </AdminField>
+                    <AdminField>
+                      <AdminFieldLabel>{t('internalCode')}</AdminFieldLabel>
+                      <AdminFieldValue>{selectedProduct.sku || 'N/A'}</AdminFieldValue>
+                    </AdminField>
+                    <AdminField>
+                      <AdminFieldLabel>{t('createdDate')}</AdminFieldLabel>
+                      <AdminFieldValue>{formatDate(selectedProduct.createdAt)}</AdminFieldValue>
+                    </AdminField>
+                    <AdminField>
+                      <AdminFieldLabel>{t('lastUpdated')}</AdminFieldLabel>
+                      <AdminFieldValue>{formatDate(selectedProduct.updatedAt)}</AdminFieldValue>
+                    </AdminField>
+                    <AdminField>
+                      <AdminFieldLabel>{t('createdBy')}</AdminFieldLabel>
+                      <AdminFieldValue>{selectedProduct.createdBy || 'System'}</AdminFieldValue>
+                    </AdminField>
+                    <AdminField>
+                      <AdminFieldLabel>{t('updatedBy')}</AdminFieldLabel>
+                      <AdminFieldValue>{selectedProduct.updatedBy || 'N/A'}</AdminFieldValue>
+                    </AdminField>
+                    {selectedProduct.inventory && (
+                      <AdminField>
+                        <AdminFieldLabel>{t('stockCount')}</AdminFieldLabel>
+                        <AdminFieldValue>{selectedProduct.inventory.quantity || 0}</AdminFieldValue>
+                      </AdminField>
+                    )}
+                    <AdminField>
+                      <AdminFieldLabel>{t('status')}</AdminFieldLabel>
+                      <AdminFieldValue>
+                        {selectedProduct.status || (selectedProduct.available ? t('active') : t('inactive'))}
+                      </AdminFieldValue>
+                    </AdminField>
+                  </AdminGrid>
+                </AdminSection>
+              )}
+
               <SizeSection>
-                <SizeTitle>Select Size</SizeTitle>
+                <SizeTitle>{t('selectSize')}</SizeTitle>
                 <SizeGrid>
                   {availableSizes.map((size) => (
                     <SizeButton
@@ -493,7 +603,7 @@ const SingleProductPage = () => {
                 onClick={handleAddToCart}
                 disabled={!selectedProduct.available}
               >
-                Add to Cart
+                {t('addToCart')}
               </AddToCartButton>
               <WishlistButton>❤</WishlistButton>
             </ActionButtons>

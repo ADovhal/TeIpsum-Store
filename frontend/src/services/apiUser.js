@@ -10,7 +10,6 @@ export const injectStore = (_store) => {
 };
 
 const apiUser = axios.create({
-  // baseURL: 'http://localhost:22080/api',
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',

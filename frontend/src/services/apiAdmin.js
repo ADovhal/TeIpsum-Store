@@ -1,4 +1,5 @@
 import axios from 'axios';
+import productApi from './apiProduct';
 
 const apiAdmin = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -35,51 +36,41 @@ apiAdmin.interceptors.response.use(
   }
 );
 
-// Product Management API calls
+// Product Management API calls using the new productApi
 export const adminProductAPI = {
   // Get all products with filtering and pagination
   getProducts: (params = {}) => {
-    const { page = 0, size = 20, name, category, minPrice, maxPrice, sort } = params;
-    return apiAdmin.get('/api/admin/products', {
-      params: {
-        page,
-        size,
-        name,
-        category,
-        minPrice,
-        maxPrice,
-        sort
-      }
-    });
+    return productApi.getAdminProducts(params);
   },
 
   // Get a single product by ID
   getProduct: (id) => {
-    return apiAdmin.get(`/api/admin/products/${id}`);
+    return productApi.getAdminProductById(id);
   },
 
   // Create a new product
   createProduct: (productData) => {
-    return apiAdmin.post('/api/admin/products', productData);
+    return productApi.createProduct(productData);
   },
 
   // Update an existing product
   updateProduct: (id, productData) => {
-    return apiAdmin.put(`/api/admin/products/${id}`, productData);
+    return productApi.updateProduct(id, productData);
   },
 
   // Delete a product
   deleteProduct: (id) => {
-    return apiAdmin.delete(`/api/admin/products/${id}`);
+    return productApi.deleteProduct(id);
   },
 
   // Bulk operations
   bulkDeleteProducts: (productIds) => {
-    return apiAdmin.post('/api/admin/products/bulk-delete', { productIds });
+    return productApi.bulkDeleteProducts(productIds);
   },
 
-  bulkUpdateProducts: (productIds, updateData) => {
-    return apiAdmin.put('/api/admin/products/bulk-update', { productIds, updateData });
+  // Health check
+  healthCheck: () => {
+    return productApi.healthCheck();
   }
 };
 
@@ -87,25 +78,25 @@ export const adminProductAPI = {
 export const adminUserAPI = {
   // Create a new admin user
   createAdminUser: (userData) => {
-    return apiAdmin.post('/api/admin/users', userData);
+    return apiAdmin.post('/admin/users', userData);
   },
 
   // Get all users
   getUsers: (params = {}) => {
     const { page = 0, size = 20, role } = params;
-    return apiAdmin.get('/api/admin/users', {
+    return apiAdmin.get('/admin/users', {
       params: { page, size, role }
     });
   },
 
   // Update user role
   updateUserRole: (userId, role) => {
-    return apiAdmin.put(`/api/admin/users/${userId}/role`, { role });
+    return apiAdmin.put(`/admin/users/${userId}/role`, { role });
   },
 
   // Delete user
   deleteUser: (userId) => {
-    return apiAdmin.delete(`/api/admin/users/${userId}`);
+    return apiAdmin.delete(`/admin/users/${userId}`);
   }
 };
 
@@ -114,25 +105,25 @@ export const adminOrderAPI = {
   // Get all orders
   getOrders: (params = {}) => {
     const { page = 0, size = 20, status, dateFrom, dateTo } = params;
-    return apiAdmin.get('/api/admin/orders', {
+    return apiAdmin.get('/admin/orders', {
       params: { page, size, status, dateFrom, dateTo }
     });
   },
 
   // Get order details
   getOrder: (orderId) => {
-    return apiAdmin.get(`/api/admin/orders/${orderId}`);
+    return apiAdmin.get(`/admin/orders/${orderId}`);
   },
 
   // Update order status
   updateOrderStatus: (orderId, status) => {
-    return apiAdmin.put(`/api/admin/orders/${orderId}/status`, { status });
+    return apiAdmin.put(`/admin/orders/${orderId}/status`, { status });
   },
 
   // Get order statistics
   getOrderStats: (params = {}) => {
     const { period = 'month' } = params;
-    return apiAdmin.get('/api/admin/orders/stats', {
+    return apiAdmin.get('/admin/orders/stats', {
       params: { period }
     });
   }
@@ -143,7 +134,7 @@ export const adminAnalyticsAPI = {
   // Get sales analytics
   getSalesAnalytics: (params = {}) => {
     const { period = 'month', groupBy = 'day' } = params;
-    return apiAdmin.get('/api/admin/analytics/sales', {
+    return apiAdmin.get('/admin/analytics/sales', {
       params: { period, groupBy }
     });
   },
@@ -151,7 +142,7 @@ export const adminAnalyticsAPI = {
   // Get product performance
   getProductPerformance: (params = {}) => {
     const { period = 'month', limit = 10 } = params;
-    return apiAdmin.get('/api/admin/analytics/products', {
+    return apiAdmin.get('/admin/analytics/products', {
       params: { period, limit }
     });
   },
@@ -159,14 +150,14 @@ export const adminAnalyticsAPI = {
   // Get user analytics
   getUserAnalytics: (params = {}) => {
     const { period = 'month' } = params;
-    return apiAdmin.get('/api/admin/analytics/users', {
+    return apiAdmin.get('/admin/analytics/users', {
       params: { period }
     });
   },
 
   // Generate reports
   generateReport: (reportType, params = {}) => {
-    return apiAdmin.post('/api/admin/reports/generate', {
+    return apiAdmin.post('/admin/reports/generate', {
       reportType,
       params
     });

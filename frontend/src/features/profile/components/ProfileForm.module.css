@@ -71,3 +71,18 @@
 .logoutButton:hover {
     background-color: #2980b9;
 }
+
+.editButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #27ae60;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.editButton:hover {
+    background-color: #229954;
+}

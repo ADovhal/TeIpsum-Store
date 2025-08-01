@@ -1,16 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchProfileData, deleteAccount } from '../profile/UserService';
+import { fetchProfileData, deleteAccount, updateProfileData } from '../profile/UserService';
 
 
 export const loadProfile = createAsyncThunk(
   'profile/loadProfile',
   async (_, thunkAPI ) => {
     try {
-      const state = thunkAPI.getState();
-      const token = state.auth.accessToken;
-      const profileData = await fetchProfileData(token);
+      const profileData = await fetchProfileData();
       console.log(profileData)
       return profileData;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateProfile = createAsyncThunk(
+  'profile/updateProfile',
+  async (profileData, thunkAPI) => {
+    try {
+      const updatedData = await updateProfileData(profileData);
+      return updatedData;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -21,27 +31,13 @@ export const deleteUserAccount = createAsyncThunk(
   'profile/deleteUserAccount',
   async (_, thunkAPI ) => {
     try {
-      const state = thunkAPI.getState();
-      const token = state.auth.accessToken;
-      await deleteAccount(token);
+      await deleteAccount();
       return true;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
-
-// export const updateProfile = createAsyncThunk(
-//   'profile/updateProfile',
-//   async (profileData, { rejectWithValue }) => {
-//     try {
-//       const updatedData = await updateProfileData(profileData);
-//       return updatedData;
-//     } catch (error) {
-//       return rejectWithValue(error.message);
-//     }
-//   }
-// );
 
 const profileSlice = createSlice({
   name: 'profile',
@@ -80,18 +76,20 @@ const profileSlice = createSlice({
     .addCase(deleteUserAccount.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
+    })
+    .addCase(updateProfile.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase(updateProfile.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.profileData = action.payload;
+      localStorage.setItem('profileData', JSON.stringify(action.payload));
+    })
+    .addCase(updateProfile.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
     });
-      // .addCase(updateProfile.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(updateProfile.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.profileData = action.payload;
-      // })
-      // .addCase(updateProfile.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.error = action.payload;
-      // });
   },
 });
 

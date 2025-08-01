@@ -332,24 +332,24 @@ const CheckoutPage = () => {
     <CheckoutContainer>
       <CheckoutContent>
         <OrderFormSection>
-          <SectionTitle>Complete Your Order</SectionTitle>
+          <SectionTitle>{t('completeYourOrder')}</SectionTitle>
           
           <OrderSummary>
-            <SummaryTitle>Order Summary</SummaryTitle>
+            <SummaryTitle>{t('orderSummary')}</SummaryTitle>
             <SummaryItem>
-              <SummaryLabel>Items ({cartItems.length})</SummaryLabel>
+              <SummaryLabel>{t('items')} ({cartItems.length})</SummaryLabel>
               <SummaryValue>${subtotal.toFixed(2)}</SummaryValue>
             </SummaryItem>
             <SummaryItem>
-              <SummaryLabel>Shipping</SummaryLabel>
+              <SummaryLabel>{t('shipping')}</SummaryLabel>
               <SummaryValue>${shipping.toFixed(2)}</SummaryValue>
             </SummaryItem>
             <SummaryItem>
-              <SummaryLabel>Tax</SummaryLabel>
+              <SummaryLabel>{t('tax')}</SummaryLabel>
               <SummaryValue>${tax.toFixed(2)}</SummaryValue>
             </SummaryItem>
             <TotalAmount>
-              <span>Total</span>
+              <span>{t('total')}</span>
               <span>${total.toFixed(2)}</span>
             </TotalAmount>
           </OrderSummary>
@@ -357,7 +357,7 @@ const CheckoutPage = () => {
           <Form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <FormGroup>
-                <Label>First Name *</Label>
+                <Label>{t('firstName')} *</Label>
                 <Input
                   type="text"
                   name="firstName"
@@ -367,7 +367,7 @@ const CheckoutPage = () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label>Last Name *</Label>
+                <Label>{t('lastName')} *</Label>
                 <Input
                   type="text"
                   name="lastName"
@@ -380,7 +380,7 @@ const CheckoutPage = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <FormGroup>
-                <Label>Email *</Label>
+                <Label>{t('email')} *</Label>
                 <Input
                   type="email"
                   name="email"
@@ -390,7 +390,7 @@ const CheckoutPage = () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label>Phone *</Label>
+                <Label>{t('phone')} *</Label>
                 <Input
                   type="tel"
                   name="phone"
@@ -402,7 +402,7 @@ const CheckoutPage = () => {
             </div>
 
             <FormGroup>
-              <Label>Address *</Label>
+              <Label>{t('address')} *</Label>
               <Input
                 type="text"
                 name="address"
@@ -414,7 +414,7 @@ const CheckoutPage = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
               <FormGroup>
-                <Label>City *</Label>
+                <Label>{t('city')} *</Label>
                 <Input
                   type="text"
                   name="city"
@@ -424,7 +424,7 @@ const CheckoutPage = () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label>Postal Code *</Label>
+                <Label>{t('postalCode')} *</Label>
                 <Input
                   type="text"
                   name="postalCode"
@@ -434,7 +434,7 @@ const CheckoutPage = () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label>Country *</Label>
+                <Label>{t('country')} *</Label>
                 <Input
                   type="text"
                   name="country"
@@ -446,12 +446,12 @@ const CheckoutPage = () => {
             </div>
 
             <FormGroup>
-              <Label>Order Notes</Label>
+              <Label>{t('orderNotes')}</Label>
               <TextArea
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Any special instructions or requests..."
+                placeholder={t('orderNotesPlaceholder')}
               />
             </FormGroup>
 
@@ -461,7 +461,7 @@ const CheckoutPage = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {status === 'loading' ? 'Processing Order...' : 'Place Order'}
+              {status === 'loading' ? t('processingOrder') : t('placeOrder')}
             </SubmitButton>
           </Form>
 
@@ -473,8 +473,8 @@ const CheckoutPage = () => {
               transition={{ duration: 0.3 }}
             >
               {status === 'success' 
-                ? 'Order placed successfully! Redirecting to confirmation...' 
-                : 'Something went wrong. Please try again.'
+                ? t('orderProcessed') + ' ' + t('redirectingToSuccess')
+                : t('errorOccurred')
               }
             </StatusMessage>
           )}

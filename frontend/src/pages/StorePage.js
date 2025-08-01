@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ProductCard from '../features/products/components/ProductCard';
 import ProductBlock from '../features/products/components/ProductBlock';
 import FilterSidebar from '../components/store/FilterSidebar';
 import SearchBar from '../components/store/SearchBar';
 import { fetchProducts } from '../features/products/productSlice';
+import useIsAdmin from '../features/admin/useIsAdmin';
 import { ViewTypeContext } from '../context/ViewTypeContext';
 import { useLanguage } from '../context/LanguageContext';
-import { useGender } from '../context/GenderContext'; 
+import { useGender } from '../context/GenderContext';
+import CustomSelect from '../components/common/Select'; 
 
 const StoreContainer = styled.div`
   min-height: 100vh;
@@ -219,25 +221,15 @@ const ResultsCount = styled.span`
   color: #7f8c8d;
 `;
 
-const SortSelect = styled.select`
-  padding: 8px 12px;
-  border: 2px solid #ecf0f1;
-  border-radius: 6px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #3498db;
-  }
-`;
+// SortSelect replaced with CustomSelect (react-select)
 
 const StorePage = () => {
   const { viewMode, setViewMode } = useContext(ViewTypeContext);
   const { selectedGender } = useGender();
   const dispatch = useDispatch();
   const location = useLocation();
+  const isAdmin = useIsAdmin();
+  const navigate = useNavigate();
   const { t } = useLanguage();
 
   const { products, totalPages, loading, error } = useSelector((state) => state.products || {});
@@ -348,9 +340,30 @@ const StorePage = () => {
         </SearchSection>
       </StoreHeader>
 
+      {isAdmin && (
+           <button
+             onClick={() => navigate('/admin/products/new')}
+             style={{
+               position: 'fixed',
+               bottom: 24,
+               right: 24,
+               zIndex: 999,
+               width: 56,
+               height: 56,
+               borderRadius: '50%',
+               background: '#3498db',
+               color: '#fff',
+               fontSize: 24,
+               boxShadow: '0 4px 12px rgba(0,0,0,.25)'
+             }}
+           >
+             +
+           </button>
+      )}
+
       <StoreContent>
         <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
-        
+
         <ProductsSection>
           <ResultsInfo>
             <ResultsCount>
@@ -359,12 +372,17 @@ const StorePage = () => {
           <ViewToggleButton onClick={() => setViewMode(prev => prev === 'grid' ? 'list' : 'grid')}>
             {viewMode === 'grid' ? `${t('listView')}` : `${t('gridView')}`}
           </ViewToggleButton>
-            <SortSelect value={sortBy} onChange={handleSortChange}>
-              <option value="name">{t('sortByName')}</option>
-              <option value="price">{t('sortByPrice')}</option>
-              <option value="rating">{t('sortByRating')}</option>
-              <option value="createdAt">{t('sortByNewest')}</option>
-            </SortSelect>
+            <CustomSelect
+              value={sortBy}
+              onChange={handleSortChange}
+              options={[
+                { value: 'name', label: t('sortByName') },
+                { value: 'price', label: t('sortByPrice') },
+                { value: 'rating', label: t('sortByRating') },
+                { value: 'createdAt', label: t('sortByNewest') }
+              ]}
+              placeholder={t('sortBy')}
+            />
           </ResultsInfo>
 
           {loading && (

@@ -18,13 +18,13 @@ const ContentWrapper = styled.div`
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    padding: 40px 30px;
+    padding: 40px 15px;
   }
 `;
 
 const Title = styled(motion.h1)`
   color: #2c3e50;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 600;
   text-align: center;
   margin-bottom: 20px;
@@ -49,6 +49,7 @@ const Section = styled(motion.section)`
 const SectionTitle = styled.h2`
   color: #2c3e50;
   font-size: 1.8rem;
+  text-align: center;
   font-weight: 600;
   margin-bottom: 20px;
   border-bottom: 3px solid #16a085;
@@ -60,6 +61,10 @@ const Text = styled.p`
   line-height: 1.6;
   margin-bottom: 15px;
   font-size: 1rem;
+  text-align: left;
+  padding: 0 15px;
+
+  
 `;
 
 const FeatureGrid = styled.div`
@@ -105,7 +110,12 @@ const List = styled.ul`
   color: #5a6c7d;
   line-height: 1.6;
   margin: 15px 0;
-  padding-left: 25px;
+  padding: 0 35px;
+
+  @media (min-width: 1050px){
+    padding: 0 60px;
+  }
+
 `;
 
 const ListItem = styled.li`
@@ -133,6 +143,7 @@ const ContactText = styled.p`
   font-size: 1rem;
   margin: 10px 0;
   line-height: 1.6;
+  text-align: left;
 `;
 
 const StandardsBox = styled.div`
@@ -276,7 +287,7 @@ const AccessibilityPage = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <SectionTitle>Assistive Technology Support</SectionTitle>
-          <Text>
+          <Text style={{textAlign:'left'}}>
             Our website has been tested with various assistive technologies and browsers:
           </Text>
           <List>
@@ -302,7 +313,7 @@ const AccessibilityPage = () => {
           transition={{ duration: 0.8, delay: 1.0 }}
         >
           <SectionTitle>Ongoing Improvements</SectionTitle>
-          <Text>
+          <Text style={{textAlign:'left'}}>
             Accessibility is an ongoing effort. We regularly:
           </Text>
           <List>
@@ -320,7 +331,7 @@ const AccessibilityPage = () => {
           transition={{ duration: 0.8, delay: 1.2 }}
         >
           <SectionTitle>Browser and Device Recommendations</SectionTitle>
-          <Text>
+          <Text style={{textAlign:'left'}}>
             For the best accessible experience, we recommend:
           </Text>
           <List>

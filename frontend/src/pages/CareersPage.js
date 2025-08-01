@@ -29,7 +29,7 @@ const HeroSection = styled.div`
 
 const Title = styled(motion.h1)`
   color: #2c3e50;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 600;
   margin-bottom: 20px;
   background: linear-gradient(45deg, #e74c3c, #c0392b);
@@ -49,7 +49,7 @@ const Subtitle = styled.p`
 const Section = styled(motion.section)`
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 40px;
+  padding: 15px;
   margin-bottom: 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 `;
