@@ -371,7 +371,7 @@ const SizeGuidePage = () => {
                 ) : (
                   <>
                     <TableHeader>Size</TableHeader>
-                    <TableHeader>Chest/Bust (in)</TableHeader>
+                    <TableHeader>Chest (in)</TableHeader>
                     <TableHeader>Waist (in)</TableHeader>
                     {activeCategory === 'womens' && <TableHeader>Hips (in)</TableHeader>}
                     <TableHeader>US Size</TableHeader>
