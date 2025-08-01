@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../features/products/components/ProductCard';
 import { fetchProducts } from '../features/products/productSlice';
+import CustomSelect from '../components/common/Select';
 
 const NewCollectionContainer = styled.div`
   min-height: 100vh;
@@ -170,8 +171,8 @@ const ProductsSection = styled.main`
 `;
 
 const ResultsInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  justify-content: center;
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
@@ -180,22 +181,12 @@ const ResultsInfo = styled.div`
 
 const ResultsCount = styled.span`
   font-size: 16px;
+  text-align: center;
   color: #7f8c8d;
+  padding-bottom: 10px;
 `;
 
-const SortSelect = styled.select`
-  padding: 8px 12px;
-  border: 2px solid #ecf0f1;
-  border-radius: 6px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #3498db;
-  }
-`;
+// SortSelect replaced with CustomSelect (react-select)
 
 const ProductsGrid = styled.div`
   display: grid;
@@ -449,15 +440,15 @@ const NewCollectionPage = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>{t('genders')}</FilterLabel>
+            <FilterLabel>{t('gender')}</FilterLabel>
             <FilterSelect 
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
             >
               <option value="">{t('allGenders')}</option>
-              <option value="MEN">Men</option>
-              <option value="WOMEN">Women</option>
-              <option value="UNISEX">Unisex</option>
+              <option value="MEN">{t('men')}</option>
+              <option value="WOMEN">{t('women')}</option>
+              <option value="UNISEX">{t('unisex')}</option>
             </FilterSelect>
           </FilterGroup>
 
@@ -468,10 +459,10 @@ const NewCollectionPage = () => {
               onChange={(e) => handleFilterChange({ maxPrice: parseInt(e.target.value) || 1000 })}
             >
               <option value="1000">Any Price</option>
-              <option value="50">Under $50</option>
-              <option value="100">Under $100</option>
-              <option value="200">Under $200</option>
-              <option value="500">Under $500</option>
+              <option value="50">{t('to')} $50</option>
+              <option value="100">{t('to')} $100</option>
+              <option value="200">{t('to')} $200</option>
+              <option value="500">{t('to')} $500</option>
             </FilterSelect>
           </FilterGroup>
 
@@ -488,12 +479,17 @@ const NewCollectionPage = () => {
           <ResultsCount>
             {loading ? 'Loading...' : `${products?.length || 0} new items found`}
           </ResultsCount>
-          <SortSelect value={sortBy} onChange={handleSortChange}>
-            <option value="createdAt">{t('sortByNewest')}</option>
-            <option value="price">{t('sortByPrice')}</option>
-            <option value="name">{t('sortByName')}</option>
-            <option value="discount">{t('sortByDiscount')}</option>
-          </SortSelect>
+          <CustomSelect
+            value={sortBy}
+            onChange={handleSortChange}
+            options={[
+              { value: 'createdAt', label: t('sortByNewest') },
+              { value: 'price', label: t('sortByPrice') },
+              { value: 'name', label: t('sortByName') },
+              { value: 'discount', label: t('sortByDiscount') }
+            ]}
+            placeholder={t('sortBy')}
+          />
         </ResultsInfo>
 
         {loading && (

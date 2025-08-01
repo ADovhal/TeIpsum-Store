@@ -1,28 +1,41 @@
-import apiProduct from '../../services/apiProduct';
+import productApi from '../../services/apiProduct';
 
-export const getProductsFiltered = async ({ name, category, subcategory, gender, minPrice, maxPrice, minDiscount, maxDiscount, available, page, size, sort }) => {
+export const getProductsFiltered = async (params) => {
     try {
-      const response = await apiProduct.get('/products', {
-        params: {
-          name,
-          category,
-          subcategory,
-          gender,
-          minPrice,
-          maxPrice,
-          minDiscount,
-          maxDiscount,
-          available,
-          page,
-          size,
-          sort
-        }
+      const {
+        name,
+        category,
+        subcategory,
+        gender,
+        minPrice,
+        maxPrice,
+        minDiscount,
+        maxDiscount,
+        available,
+        page,
+        size,
+        sort
+      } = params;
+
+      const result = await productApi.getProducts({
+        name,
+        category,
+        subcategory,
+        gender,
+        minPrice,
+        maxPrice,
+        minDiscount,
+        maxDiscount,
+        available,
+        page,
+        size,
+        sort
       });
   
-      const products = response.data._embedded?.productList || [];
-      const totalPages = response.data.page?.totalPages || 0;
-  
-      return { products, totalPages };
+      return {
+        products: result.products,
+        totalPages: result.totalPages
+      };
     } catch (error) {
       console.error('Error fetching filtered products:', error);
       throw error;
@@ -31,10 +44,9 @@ export const getProductsFiltered = async ({ name, category, subcategory, gender,
 
 export const getProductById = async (productId) => {
     try {
-      const response = await apiProduct.get(`/products/${productId}`);
-      return response.data;
+      return await productApi.getProductById(productId);
     } catch (error) {
       console.error('Error fetching product by ID:', error);
       throw error;
     }
-  };
+};

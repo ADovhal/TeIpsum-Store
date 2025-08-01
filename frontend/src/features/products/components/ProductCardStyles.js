@@ -143,3 +143,143 @@ export const RatingText = styled.span`
     color: #7f8c8d;
     margin-left: 4px;
 `;
+
+export const EditIcon = styled.button`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  z-index: 2;
+  &:hover {
+    background: rgba(0,0,0,0.8);
+  }
+`;
+
+export const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+`;
+
+export const ImageNavigation = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  ${props => props.direction === 'left' ? 'left: 10px;' : 'right: 10px;'}
+`;
+
+export const NavButton = styled.button`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+
+  ${Card}:hover & {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    background: white;
+    transform: scale(1.1);
+  }
+`;
+
+export const ImageIndicators = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  z-index: 2;
+`;
+
+export const Indicator = styled.div`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: ${props => props.active ? '#fff' : 'rgba(255, 255, 255, 0.5)'};
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: #fff;
+  }
+`;
+
+export const ProductAttributes = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+  justify-content: center;
+`;
+
+export const AttributeTag = styled.span`
+  background: ${props => {
+    switch (props.type) {
+      case 'category': return '#3498db';
+      case 'gender': return '#9b59b6';
+      case 'availability': return props.available ? '#27ae60' : '#e74c3c';
+      default: return '#95a5a6';
+    }
+  }};
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+export const AdminInfo = styled.div`
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: #6c757d;
+`;
+
+export const AdminInfoRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+export const AdminLabel = styled.span`
+  font-weight: 600;
+`;
+
+export const AdminValue = styled.span`
+  font-family: monospace;
+`;

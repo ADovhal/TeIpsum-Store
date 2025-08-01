@@ -190,64 +190,49 @@ const ContactText = styled.p`
 `;
 
 const FAQPage = () => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [openItems, setOpenItems] = useState(new Set());
 
   useEffect(() => {
-    document.title = "FAQ - TeIpsum";
-  }, []);
+    document.title = t('faqPageTitle');
+  }, [t]);
 
   const categories = [
-    { id: 'all', label: 'All Questions' },
-    { id: 'ordering', label: 'Ordering' },
-    { id: 'shipping', label: 'Shipping' },
-    { id: 'returns', label: 'Returns' },
-    { id: 'sizing', label: 'Sizing' },
-    { id: 'care', label: 'Product Care' },
-    { id: 'account', label: 'Account' }
+    { id: 'all', label: t('allQuestions') },
+    { id: 'ordering', label: t('ordering') },
+    { id: 'shipping', label: t('shipping') },
+    { id: 'returns', label: t('returns') },
+    { id: 'sizing', label: t('sizing') },
+    { id: 'care', label: t('productCare') },
+    { id: 'account', label: t('account') }
   ];
 
   const faqData = [
     {
       id: 1,
       category: 'ordering',
-      question: 'How do I place an order?',
-      answer: `<p>Placing an order is easy! Follow these simple steps:</p>
-      <ul>
-        <li>Browse our collections and add items to your cart</li>
-        <li>Click the cart icon to review your items</li>
-        <li>Proceed to checkout and enter your shipping information</li>
-        <li>Choose your payment method and complete your purchase</li>
-      </ul>
-      <p>You'll receive an order confirmation email with tracking information once your order ships.</p>`
+      question: t('howToPlaceOrder'),
+      answer: t('howToPlaceOrderAnswer')
     },
     {
       id: 2,
       category: 'ordering',
-      question: 'Can I modify or cancel my order?',
-      answer: `<p>We process orders quickly to get them to you as soon as possible. Here's what you need to know:</p>
-      <p><strong>Modifications:</strong> Contact us within 1 hour of placing your order at orders@teipsum.com</p>
-      <p><strong>Cancellations:</strong> Orders can be cancelled within 2 hours if they haven't been processed yet.</p>
-      <p>Once an order has shipped, you can use our return process if needed.</p>`
+      question: t('canModifyOrder'),
+      answer: t('canModifyOrderAnswer')
     },
     {
       id: 3,
       category: 'shipping',
-      question: 'How long does shipping take?',
-      answer: `<p>Shipping times depend on your location and chosen method:</p>
-      <ul>
-        <li><strong>Standard Shipping:</strong> 3-5 business days (FREE on orders over $75)</li>
-        <li><strong>Express Shipping:</strong> 1-2 business days ($15.99)</li>
-        <li><strong>International:</strong> 7-14 business days (varies by destination)</li>
-      </ul>
-      <p>All orders are processed within 1-2 business days before shipping.</p>`
+      question: t('shippingTime'),
+      answer: t('shippingTimeAnswer')
     },
     {
       id: 4,
       category: 'shipping',
-      question: 'Do you ship internationally?',
-      answer: `<p>Yes! We ship to most countries worldwide. International shipping costs start at $25.99 and vary by destination.</p>
+      question: t('internationalShipping'),
+      answer: t('internationalShippingAnswer') + `
       <p><strong>Important notes for international orders:</strong></p>
       <ul>
         <li>Customers are responsible for any customs duties or taxes</li>
@@ -340,7 +325,7 @@ const FAQPage = () => {
       question: 'How do I reset my password?',
       answer: `<p>To reset your password:</p>
       <ul>
-        <li>Go to the login page and click "Forgot Password"</li>
+                        <li>Go to the login page and click "${t('forgotPassword')}"</li>
         <li>Enter your email address</li>
         <li>Check your email for reset instructions</li>
         <li>Follow the link to create a new password</li>
@@ -383,8 +368,8 @@ const FAQPage = () => {
 
         <SearchBox>
           <SearchInput
-            type="text"
-            placeholder="Search for answers..."
+                          type="text"
+              placeholder={t('searchForAnswers')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

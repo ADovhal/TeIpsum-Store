@@ -4,11 +4,14 @@ import 'font-awesome/css/font-awesome.min.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
-import { injectStore } from './services/apiUser';
+import { injectStore as injectUserStore } from './services/apiUser';
+import { injectStore as injectOrderStore } from './services/apiOrder';
 import store from './redux/store';
 import { BrowserRouter as Router } from 'react-router-dom';
+import './i18n/config';
 
-injectStore(store);
+injectUserStore(store);
+injectOrderStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

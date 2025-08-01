@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   fetchAdminProducts, 
   deleteAdminProduct, 
@@ -12,7 +12,7 @@ import {
   selectAdminProductsLoading,
   selectAdminProductsError,
   selectAdminProductsPagination
-} from '../features/admin/adminSlice';
+} from '../../features/admin/adminSlice';
 
 const AdminContainer = styled.div`
   min-height: 100vh;

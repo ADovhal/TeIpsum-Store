@@ -62,14 +62,26 @@ const Text = styled.p`
   font-size: 1rem;
 `;
 
+const TableContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  
+  @media (max-width: 768px) {
+    /* Hide table on mobile and show cards instead */
+    display: none;
+  }
+`;
+
 const CookieTable = styled.table`
   width: 100%;
+  min-width: 600px; /* Ensure minimum width for proper layout */
   border-collapse: collapse;
-  margin: 20px 0;
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 `;
 
 const TableHeader = styled.th`
@@ -106,6 +118,65 @@ const HighlightText = styled.p`
   font-size: 1rem;
   margin: 0;
   line-height: 1.6;
+`;
+
+const MobileCardsContainer = styled.div`
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px 0;
+  
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+const CookieCard = styled.div`
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #f39c12;
+`;
+
+const CardHeader = styled.div`
+  background: linear-gradient(45deg, #f39c12, #e67e22);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  text-align: center;
+`;
+
+const CardRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ecf0f1;
+  
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+`;
+
+const CardLabel = styled.span`
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const CardValue = styled.span`
+  color: #5a6c7d;
+  font-size: 0.95rem;
+  line-height: 1.5;
 `;
 
 const CookiePolicyPage = () => {
@@ -195,26 +266,51 @@ const CookiePolicyPage = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <SectionTitle>Types of Cookies We Use</SectionTitle>
-          <CookieTable>
-            <thead>
-              <tr>
-                <TableHeader>Cookie Type</TableHeader>
-                <TableHeader>Purpose</TableHeader>
-                <TableHeader>Duration</TableHeader>
-                <TableHeader>Examples</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {cookieTypes.map((cookie, index) => (
-                <TableRow key={index}>
-                  <TableCell><strong>{cookie.type}</strong></TableCell>
-                  <TableCell>{cookie.purpose}</TableCell>
-                  <TableCell>{cookie.duration}</TableCell>
-                  <TableCell>{cookie.examples}</TableCell>
-                </TableRow>
-              ))}
-            </tbody>
-          </CookieTable>
+          
+          {/* Desktop Table */}
+          <TableContainer>
+            <CookieTable>
+              <thead>
+                <tr>
+                  <TableHeader>Cookie Type</TableHeader>
+                  <TableHeader>Purpose</TableHeader>
+                  <TableHeader>Duration</TableHeader>
+                  <TableHeader>Examples</TableHeader>
+                </tr>
+              </thead>
+              <tbody>
+                {cookieTypes.map((cookie, index) => (
+                  <TableRow key={index}>
+                    <TableCell><strong>{cookie.type}</strong></TableCell>
+                    <TableCell>{cookie.purpose}</TableCell>
+                    <TableCell>{cookie.duration}</TableCell>
+                    <TableCell>{cookie.examples}</TableCell>
+                  </TableRow>
+                ))}
+              </tbody>
+            </CookieTable>
+          </TableContainer>
+
+          {/* Mobile Cards */}
+          <MobileCardsContainer>
+            {cookieTypes.map((cookie, index) => (
+              <CookieCard key={index}>
+                <CardHeader>{cookie.type}</CardHeader>
+                <CardRow>
+                  <CardLabel>Purpose</CardLabel>
+                  <CardValue>{cookie.purpose}</CardValue>
+                </CardRow>
+                <CardRow>
+                  <CardLabel>Duration</CardLabel>
+                  <CardValue>{cookie.duration}</CardValue>
+                </CardRow>
+                <CardRow>
+                  <CardLabel>Examples</CardLabel>
+                  <CardValue>{cookie.examples}</CardValue>
+                </CardRow>
+              </CookieCard>
+            ))}
+          </MobileCardsContainer>
         </Section>
 
         <Section

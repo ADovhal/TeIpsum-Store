@@ -25,6 +25,16 @@ export const fetchProductById = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  'products/updateProduct',
+  async ({ id, data }) => await updateProduct(id, data)
+);
+
+export const createProduct = createAsyncThunk(
+  'products/createProduct',
+  async (data) => await createProduct(data)
+);
+
 const productSlice = createSlice({
   name: 'products',
   initialState: {

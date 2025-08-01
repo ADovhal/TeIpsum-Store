@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../features/products/components/ProductCard';
 import { fetchProducts } from '../features/products/productSlice';
+import CustomSelect from '../components/common/Select';
 
 const DiscountsContainer = styled.div`
   min-height: 100vh;
@@ -141,19 +142,7 @@ const ResultsCount = styled.span`
   color: #7f8c8d;
 `;
 
-const SortSelect = styled.select`
-  padding: 8px 12px;
-  border: 2px solid #ecf0f1;
-  border-radius: 6px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #e74c3c;
-  }
-`;
+// SortSelect replaced with CustomSelect (react-select)
 
 const ProductsGrid = styled.div`
   display: grid;
@@ -375,7 +364,7 @@ const DiscountsPage = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>{t('genders')}</FilterLabel>
+            <FilterLabel>{t('gender')}</FilterLabel>
             <FilterSelect 
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
@@ -421,12 +410,17 @@ const DiscountsPage = () => {
           <ResultsCount>
             {loading ? `${t('loading')}` : `${filteredProducts.length} discounted ${t('productsFound')}`}
           </ResultsCount>
-          <SortSelect value={sortBy} onChange={handleSortChange}>
-            <option value="discount">{t('sortByDiscount')}</option>
-            <option value="price">{t('sortByPrice')}</option>
-            <option value="name">{t('sortByName')}</option>
-            <option value="createdAt">{t('sortByNewest')}</option>
-          </SortSelect>
+          <CustomSelect
+            value={sortBy}
+            onChange={handleSortChange}
+            options={[
+              { value: 'discount', label: t('sortByDiscount') },
+              { value: 'price', label: t('sortByPrice') },
+              { value: 'name', label: t('sortByName') },
+              { value: 'createdAt', label: t('sortByNewest') }
+            ]}
+            placeholder={t('sortBy')}
+          />
         </ResultsInfo>
 
         {loading && (

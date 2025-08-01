@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authLoginUser, registerUser, refreshAccessToken } from './AuthService';
+import { jwtDecode } from 'jwt-decode';
 
 
 export const register = createAsyncThunk(
@@ -49,19 +50,22 @@ const authSlice = createSlice({
         accessToken: localStorage.getItem('accessToken') || null,
         refreshToken: localStorage.getItem('refreshToken') || null,
         profileData: JSON.parse(localStorage.getItem('profileData')) || null,
+        roles: JSON.parse(localStorage.getItem('roles')) || [],
         isLoading: false,
         error: null,
         isAuthenticated: Boolean(localStorage.getItem('accessToken')),
     },
     reducers: {
         clearAuthState: (state) => {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('profileData');
+            localStorage.removeItem('roles');
             state.user = null;
             state.accessToken = null;
             state.refreshToken = null;
             state.profileData = null;
             state.isAuthenticated = false;
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('profileData');
+            state.roles = [];
         },
         setAccessToken: (state, action) => {
             state.accessToken = action.payload;
@@ -77,8 +81,11 @@ const authSlice = createSlice({
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.accessToken = action.payload.accessToken;
+                const decoded = jwtDecode(state.accessToken); 
                 state.user = { id: action.payload.id, email: action.payload.email };
+                state.roles = decoded.roles || [];
                 localStorage.setItem('accessToken', action.payload.accessToken);
+                localStorage.setItem('roles', JSON.stringify(decoded.roles));
                 state.isAuthenticated = true;
             })
             .addCase(login.rejected, (state, action) => {

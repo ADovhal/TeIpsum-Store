@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import useIsAdmin from '../../admin/useIsAdmin';
 import { addToCart } from '../../cart/cartSlice';
+import { useLanguage } from '../../../context/LanguageContext';
 import { 
   Card, 
   CardImage, 
@@ -14,11 +16,29 @@ import {
   ProductBadge,
   RatingContainer,
   Star,
-  RatingText
+  RatingText,
+  EditIcon,
+  ImageContainer,
+  ImageNavigation,
+  NavButton,
+  ImageIndicators,
+  Indicator,
+  ProductAttributes,
+  AttributeTag,
+  AdminInfo,
+  AdminInfoRow,
+  AdminLabel,
+  AdminValue
 } from './ProductCardStyles';
 
 const ProductCard = ({ product }) => {
+  const { t } = useLanguage();
   const dispatch = useDispatch();
+  const isAdmin = useIsAdmin();
+  const navigate = useNavigate();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  const images = product.imageUrls || ["https://via.placeholder.com/280x200?text=Product+Image"];
 
   const handleAddToCart = () => {
     dispatch(addToCart({
@@ -27,9 +47,36 @@ const ProductCard = ({ product }) => {
       price: product.discount 
         ? product.price * (1 - product.discount / 100)
         : product.price,
-      image: product.imageUrls?.[0] || '',
+      image: images[currentImageIndex],
       quantity: 1
     }));
+  };
+
+  const nextImage = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const goToImage = (index, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex(index);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   const renderStars = (rating) => {
@@ -61,12 +108,52 @@ const ProductCard = ({ product }) => {
           NEW
         </ProductBadge>
       )}
+
+      {isAdmin && (
+        <EditIcon
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(`/admin/products/${product.id}/edit`);
+          }}
+          title="Edit product"
+        >
+          ✏️
+        </EditIcon>
+      )}
       
       <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <CardImage 
-          src={product.imageUrls?.[0] || "https://via.placeholder.com/280x200?text=Product+Image"} 
-          alt={product.title} 
-        />
+        <ImageContainer>
+          <CardImage 
+            src={images[currentImageIndex]} 
+            alt={product.title} 
+          />
+          
+          {images.length > 1 && (
+            <>
+              <ImageNavigation direction="left">
+                <NavButton onClick={prevImage}>
+                  ‹
+                </NavButton>
+              </ImageNavigation>
+              
+              <ImageNavigation direction="right">
+                <NavButton onClick={nextImage}>
+                  ›
+                </NavButton>
+              </ImageNavigation>
+              
+              <ImageIndicators>
+                {images.map((_, index) => (
+                  <Indicator
+                    key={index}
+                    active={index === currentImageIndex}
+                    onClick={(e) => goToImage(index, e)}
+                  />
+                ))}
+              </ImageIndicators>
+            </>
+          )}
+        </ImageContainer>
       </Link>
       
       <CardContent>
@@ -77,6 +164,51 @@ const ProductCard = ({ product }) => {
         {product.description && (
           <CardDescription>{product.description}</CardDescription>
         )}
+
+        {/* Product Attributes */}
+        <ProductAttributes>
+          {product.category && (
+            <AttributeTag type="category">
+              {product.category}
+            </AttributeTag>
+          )}
+          {product.gender && (
+            <AttributeTag type="gender">
+              {product.gender}
+            </AttributeTag>
+          )}
+          <AttributeTag type="availability" available={product.available}>
+            {product.available ? t('inStock') : t('outOfStock')}
+          </AttributeTag>
+        </ProductAttributes>
+
+        {/* Admin Information */}
+        {isAdmin && (
+          <AdminInfo>
+            <AdminInfoRow>
+              <AdminLabel>ID:</AdminLabel>
+              <AdminValue>{product.id}</AdminValue>
+            </AdminInfoRow>
+            {product.createdAt && (
+              <AdminInfoRow>
+                <AdminLabel>Created:</AdminLabel>
+                <AdminValue>{formatDate(product.createdAt)}</AdminValue>
+              </AdminInfoRow>
+            )}
+            {product.updatedAt && (
+              <AdminInfoRow>
+                <AdminLabel>Updated:</AdminLabel>
+                <AdminValue>{formatDate(product.updatedAt)}</AdminValue>
+              </AdminInfoRow>
+            )}
+            {product.subcategory && (
+              <AdminInfoRow>
+                <AdminLabel>Subcategory:</AdminLabel>
+                <AdminValue>{product.subcategory}</AdminValue>
+              </AdminInfoRow>
+            )}
+          </AdminInfo>
+        )}
         
         {product.rating && (
           <RatingContainer>
@@ -86,7 +218,7 @@ const ProductCard = ({ product }) => {
         )}
         
         <CardPrice>
-          <PriceLabel>Price:</PriceLabel>
+          <PriceLabel>{t('price') || 'Price'}:</PriceLabel>
           ${product.discount 
             ? (product.price * (1 - product.discount / 100)).toFixed(2)
             : product.price.toFixed(2)
@@ -103,8 +235,8 @@ const ProductCard = ({ product }) => {
           )}
         </CardPrice>
         
-        <AddToCartButton onClick={handleAddToCart}>
-          Add to Cart
+        <AddToCartButton onClick={handleAddToCart} disabled={!product.available}>
+          {t('addToCart') || 'Add to Cart'}
         </AddToCartButton>
       </CardContent>
     </Card>

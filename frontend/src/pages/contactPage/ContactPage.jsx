@@ -741,7 +741,7 @@ export default function ContactPage() {
               <Input
                 type="email"
                 name="email"
-                placeholder="your.email@example.com"
+                placeholder={t('emailPlaceholder')}
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -752,7 +752,7 @@ export default function ContactPage() {
               <Label>{t('message')}</Label>
               <TextArea
                 name="message"
-                placeholder="Tell us how we can help you..."
+                placeholder={t('messagePlaceholder')}
                 value={formData.message}
                 onChange={handleChange}
                 required
@@ -765,7 +765,7 @@ export default function ContactPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {status === 'loading' ? 'Sending...' : `${t('sendMessage')}`}
+              {status === 'loading' ? t('sending') : t('sendMessage')}
             </SubmitButton>
           </Form>
 
@@ -777,8 +777,8 @@ export default function ContactPage() {
               transition={{ duration: 0.3 }}
             >
               {status === 'success' 
-                ? 'Thank you for your message! We\'ll get back to you soon.' 
-                : 'Something went wrong. Please try again later.'
+                ? t('messageSuccess')
+                : t('messageError')
               }
             </StatusMessage>
           )}

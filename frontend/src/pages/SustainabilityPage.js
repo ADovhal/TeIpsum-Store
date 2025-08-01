@@ -180,57 +180,59 @@ const HighlightText = styled.p`
 `;
 
 const SustainabilityPage = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
-    document.title = "Sustainability - TeIpsum";
-  }, []);
+    document.title = t('sustainabilityPageTitle');
+  }, [t]);
 
   const initiatives = [
     {
       icon: "🌱",
-      title: "Organic Materials",
-      description: "We prioritize organic cotton, hemp, and other sustainable materials in our production process. 80% of our new collections feature eco-friendly fabrics."
+      title: t('organicMaterials'),
+      description: t('organicMaterialsDesc')
     },
     {
       icon: "♻️",
-      title: "Circular Fashion",
-      description: "Our take-back program allows customers to return old garments for recycling. We turn textile waste into new products, reducing landfill impact."
+      title: t('circularFashion'),
+      description: t('circularFashionDesc')
     },
     {
       icon: "💧",
-      title: "Water Conservation",
-      description: "We've reduced water usage in our production by 40% through innovative dyeing techniques and water recycling systems in our partner facilities."
+      title: t('waterConservation'),
+      description: t('waterConservationDesc')
     },
     {
       icon: "⚡",
-      title: "Renewable Energy",
-      description: "Our facilities run on 100% renewable energy. Solar panels and wind power fuel our operations, reducing our carbon footprint significantly."
+      title: t('renewableEnergy'),
+      description: t('renewableEnergyDesc')
     },
     {
       icon: "📦",
-      title: "Sustainable Packaging",
-      description: "All our packaging is biodegradable or recyclable. We use minimal packaging and plant-based inks for printing on all our materials."
+      title: t('sustainablePackaging'),
+      description: t('sustainablePackagingDesc')
     },
     {
       icon: "🤝",
-      title: "Fair Labor",
-      description: "We ensure fair wages and safe working conditions throughout our supply chain. Regular audits guarantee ethical manufacturing practices."
+      title: t('fairLabor'),
+      description: t('fairLaborDesc')
     }
   ];
 
   const stats = [
-    { number: "80%", label: "Sustainable Materials" },
-    { number: "40%", label: "Water Reduction" },
-    { number: "100%", label: "Renewable Energy" },
-    { number: "0%", label: "Textile Waste" }
+    { number: "80%", label: t('sustainableMaterials') },
+    { number: "40%", label: t('waterReduction') },
+    { number: "100%", label: t('renewableEnergyLabel') },
+    { number: "0%", label: t('textileWaste') }
   ];
 
   const goals = [
-    { icon: "🎯", text: "Achieve carbon neutrality by 2030" },
-    { icon: "🌿", text: "Use 100% sustainable materials by 2028" },
-    { icon: "💚", text: "Implement zero-waste manufacturing processes" },
-    { icon: "🔄", text: "Establish global garment recycling network" },
-    { icon: "📈", text: "Reduce supply chain emissions by 50%" },
-    { icon: "🌍", text: "Support reforestation projects worldwide" }
+    { icon: "🎯", text: t('carbonNeutrality2030') },
+    { icon: "🌿", text: t('sustainableMaterials2028') },
+    { icon: "💚", text: t('zeroWasteManufacturing') },
+    { icon: "🔄", text: t('globalRecyclingNetwork') },
+    { icon: "📈", text: t('supplyChainEmissions') },
+    { icon: "🌍", text: t('reforestationProjects') }
   ];
 
   return (

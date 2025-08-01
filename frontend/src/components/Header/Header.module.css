@@ -110,7 +110,7 @@ body {
 }
 
 .logo img {
-	max-width: 100px;
+	/* max-width: 100px; */
 	height: 65px;
 	object-fit: contain;
 }
@@ -342,7 +342,7 @@ body {
 
 	.logo {
 		max-width: 80px;
-		height: 80px;
+		/* height: 80px; */
 		flex-direction: center;
 	}
 
@@ -376,7 +376,7 @@ body {
 } */
 
 /* Mobile Design */
-@media screen and (max-width: 1045px) {
+@media screen and (max-width: 1050px) {
 
 	* {
 		scrollbar-width: none;
@@ -405,6 +405,7 @@ body {
 		top: 50%;
 		transform: translate(-50%, -50%);
 		z-index: 5;
+		height: 50px,
 	}
 	
 	.logo img {

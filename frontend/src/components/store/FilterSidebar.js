@@ -227,7 +227,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
             )}
 
             <FilterSection>
-                <SectionTitle>{t('genders')}</SectionTitle>
+                <SectionTitle>{t('gender')}</SectionTitle>
                 <FilterItem>
                     <Select name="gender" value={filters.gender} onChange={handleChange}>
                         <option value="">{t('allGenders')}</option>
@@ -295,8 +295,8 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                 <FilterItem>
                     <Select name="available" value={filters.available} onChange={handleChange}>
                         <option value="">{t('all')}</option>
-                        <option value="true">{t('available')}</option>
-                        <option value="false">{t('notAvailable')}</option>
+                        <option value="true">{t('inStock')}</option>
+                        <option value="false">{t('outOfStock')}</option>
                     </Select>
                 </FilterItem>
             </FilterSection>

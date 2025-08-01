@@ -205,26 +205,196 @@ const LoginLink = styled.p`
   }
 `;
 
-const StyledDatePicker = styled(DatePicker)`
+const DatePickerWrapper = styled.div`
+  position: relative;
   width: 100%;
-  padding: 15px;
-  border: 2px solid ${props => props.hasError ? '#e74c3c' : '#ecf0f1'};
-  border-radius: 10px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: white;
-  cursor: pointer;
 
-  &:focus {
-    outline: none;
-    border-color: ${props => props.hasError ? '#e74c3c' : '#3498db'};
-    box-shadow: 0 0 0 3px ${props => props.hasError ? 'rgba(231, 76, 60, 0.1)' : 'rgba(52, 152, 219, 0.1)'};
+  .react-datepicker-wrapper {
+    width: 100%;
   }
 
-  &::placeholder {
+  .react-datepicker__input-container {
+    width: 100%;
+  }
+
+  .react-datepicker__input-container input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid ${props => props.hasError ? '#e74c3c' : '#ecf0f1'};
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: ${props => props.hasError ? '#e74c3c' : '#3498db'};
+      box-shadow: 0 0 0 3px ${props => props.hasError ? 'rgba(231, 76, 60, 0.1)' : 'rgba(52, 152, 219, 0.1)'};
+    }
+
+    &::placeholder {
+      color: #bdc3c7;
+    }
+  }
+
+  .react-datepicker {
+    font-family: inherit;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .react-datepicker__header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: none;
+    border-radius: 0;
+    padding: 20px 0 15px;
+  }
+
+  .react-datepicker__current-month {
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .react-datepicker__day-names {
+    margin-bottom: 0;
+  }
+
+  .react-datepicker__day-name {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    width: 2.2rem;
+    line-height: 2.2rem;
+  }
+
+  .react-datepicker__navigation {
+    top: 22px;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+  }
+
+  .react-datepicker__navigation-icon::before {
+    border-color: white;
+    border-width: 2px 2px 0 0;
+    width: 7px;
+    height: 7px;
+  }
+
+  .react-datepicker__month-container {
+    background: white;
+  }
+
+  .react-datepicker__month {
+    margin: 15px;
+  }
+
+  .react-datepicker__day {
+    width: 2.2rem;
+    line-height: 2.2rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    margin: 2px;
+    color: #2c3e50;
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      transform: scale(1.1);
+    }
+  }
+
+  .react-datepicker__day--selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    transform: scale(1.1);
+
+    &:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      transform: scale(1.1);
+    }
+  }
+
+  .react-datepicker__day--today {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    font-weight: 600;
+  }
+
+  .react-datepicker__day--outside-month {
     color: #bdc3c7;
   }
+
+  .react-datepicker__day--disabled {
+    color: #ecf0f1;
+    cursor: not-allowed;
+
+    &:hover {
+      background: transparent;
+      transform: none;
+    }
+  }
+
+  .react-datepicker__year-dropdown,
+  .react-datepicker__month-dropdown {
+    background: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+  }
+
+  .react-datepicker__year-option,
+  .react-datepicker__month-option {
+    padding: 8px 15px;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+    }
+  }
+
+  .react-datepicker__year-option--selected,
+  .react-datepicker__month-option--selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .react-datepicker__triangle {
+    display: none;
+  }
+
+  .react-datepicker-popper {
+    z-index: 9999;
+  }
+
+  .react-datepicker-popper[data-placement^="bottom"] {
+    margin-top: 10px;
+  }
+
+  .react-datepicker-popper[data-placement^="top"] {
+    margin-bottom: 10px;
+  }
 `;
+
+const StyledDatePicker = styled(DatePicker)``;
 
 const RegisterForm = () => {
 
@@ -491,23 +661,24 @@ const RegisterForm = () => {
 
             <FormGroup>
               <Label>{t('dateOfBirth')}</Label>
-              <StyledDatePicker
-                locale={currentLanguage}
-                selected={formData.dob}
-                onChange={(date) => setFormData(prev => ({ ...prev, dob: date }))}
-                dateFormat={
-                  currentLanguage === 'en' ? 'MM/dd/yyyy' :
-                  ['ru', 'ua', 'de', 'pl'].includes(currentLanguage) ? 'dd.MM.yyyy' :
-                  'dd/MM/yyyy'
-                }
-                placeholderText={t("selectBirthDate")}
-                maxDate={new Date()}
-                showYearDropdown
-                showMonthDropdown
-                dropdownMode="select"
-                hasError={!!errors.dob}
-                required
-              />
+              <DatePickerWrapper hasError={!!errors.dob}>
+                <StyledDatePicker
+                  locale={currentLanguage}
+                  selected={formData.dob}
+                  onChange={(date) => setFormData(prev => ({ ...prev, dob: date }))}
+                  dateFormat={
+                    currentLanguage === 'en' ? 'MM/dd/yyyy' :
+                    ['ru', 'ua', 'de', 'pl'].includes(currentLanguage) ? 'dd.MM.yyyy' :
+                    'dd/MM/yyyy'
+                  }
+                  placeholderText={t("selectBirthDate")}
+                  maxDate={new Date()}
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  required
+                />
+              </DatePickerWrapper>
               {errors.dob && (
                 <ErrorMessage
                   initial={{ opacity: 0, y: -10 }}

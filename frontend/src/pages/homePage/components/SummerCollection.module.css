@@ -276,11 +276,10 @@
 
 .dividerLine {
   height: 2px;
-  width: 300px;
+  width: 600px;
   background: linear-gradient(45deg, #d17f65, #bb5233);
   border-radius: 1px;
-  transform-origin: left;
-  
+  transform-origin: center;
 }
 
 .ctaSection {
