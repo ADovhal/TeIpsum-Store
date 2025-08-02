@@ -1,9 +1,9 @@
-FROM node:23-slim AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . .
-RUN npm run build
+RUN npm run build 
 
 FROM nginx:alpine
 ARG NGINX_CONFIG=nginx.stage.conf
