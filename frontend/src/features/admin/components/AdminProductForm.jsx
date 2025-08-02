@@ -42,6 +42,10 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+
+  @media (max-width: 768px){
+    justify-content: center;
+  }
 `;
 
 const Button = styled.button`

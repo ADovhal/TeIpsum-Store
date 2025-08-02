@@ -373,5 +373,6 @@
   "orderWillBeProcessed": "Your order will be processed shortly.",
   "redirectingToSuccess": "Redirecting to success page...",
   "required": "required",
-  "errorOccurred": "Something went wrong. Please try again."
+  "errorOccurred": "Something went wrong. Please try again.",
+  "addNewProduct": "Add new product"
 }
