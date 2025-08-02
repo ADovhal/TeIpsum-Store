@@ -2,8 +2,12 @@ package com.teipsum.userservice.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -82,15 +86,17 @@ public class SecurityConfig {
         };
     }
 
+    @Autowired
+    private Environment env;
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String userAccess  = "${jwt.user-access-secret}";
-        String adminAccess = "${jwt.admin-access-secret}";
+        String userAccess  = env.getProperty("jwt.user-access-secret");
+        String adminAccess = env.getProperty("jwt.admin-access-secret");
 
         return CompositeJwtDecoder.builder()
-                .withSecret(userAccess)
-                .withSecret(adminAccess)
+                .withSecret(Objects.requireNonNull(userAccess))
+                .withSecret(Objects.requireNonNull(adminAccess))
                 .build();
     }
     
