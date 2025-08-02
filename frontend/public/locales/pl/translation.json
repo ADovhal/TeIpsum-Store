@@ -373,5 +373,6 @@
   "orderWillBeProcessed": "Twoje zamówienie zostanie wkrótce przetworzone.",
   "redirectingToSuccess": "Przekierowanie na stronę sukcesu...",
   "required": "wymagane",
-  "errorOccurred": "Coś poszło nie tak. Spróbuj ponownie."
+  "errorOccurred": "Coś poszło nie tak. Spróbuj ponownie.",
+  "addNewProduct": "Dodać nowy produkt"
 }

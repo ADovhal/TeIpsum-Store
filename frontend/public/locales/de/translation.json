@@ -374,5 +374,6 @@
   "orderWillBeProcessed": "Ihre Bestellung wird in Kürze bearbeitet.",
   "redirectingToSuccess": "Weiterleitung zur Erfolgsseite...",
   "required": "erforderlich",
-  "errorOccurred": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+  "errorOccurred": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+  "addNewProduct": "Neues Produkt hinzufügen"
 }
