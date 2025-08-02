@@ -89,6 +89,7 @@
 
 @media (max-width: 768px) {
     .buttonContainer{
+        display: inline-flex;
         flex-direction: column;
     }
 }
