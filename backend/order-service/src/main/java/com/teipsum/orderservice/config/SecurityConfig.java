@@ -1,5 +1,6 @@
 package com.teipsum.orderservice.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import java.util.Objects;
 
 @Configuration
 @EnableWebSecurity
@@ -48,11 +50,16 @@ public class SecurityConfig {
         return source;
     }
 
+    @Value("${jwt.user-access-secret}")
+    private String userAccessSecret;
+    @Value("${jwt.admin-access-secret}")
+    private String adminAccessSecret;
+
     @Bean
     public JwtDecoder jwtDecoder() {
         return CompositeJwtDecoder.builder()
-                .withSecret("${jwt.user-access-secret}")
-                .withSecret("${jwt.admin-access-secret}")
+                .withSecret(Objects.requireNonNull(userAccessSecret))
+                .withSecret(Objects.requireNonNull(adminAccessSecret))
                 .build();
     }
 }
