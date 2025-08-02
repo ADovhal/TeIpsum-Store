@@ -13,7 +13,7 @@ import AdminRoutes   from './routes/AdminRoutes';
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
-  const isAdmin = useSelector(s => s.auth.roles?.includes('ADMIN'));
+  const isAdmin = useSelector(s => s.auth.roles?.includes('ROLE_ADMIN'));
   return (
     <HelmetProvider>
       <ThemeProvider>

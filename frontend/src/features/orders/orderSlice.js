@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchUserOrders, fetchOrderById } from '../../services/apiOrder';
+// import { fetchUserOrders, fetchOrderById } from '../../services/apiOrder';
+import { getMyOrders, getOrderById } from '../../services/OrderService';
 
 export const loadUserOrders = createAsyncThunk(
   'orders/loadUserOrders',
   async (_, thunkAPI) => {
     try {
-      const orders = await fetchUserOrders();
+      const orders = await getMyOrders();
       return orders;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -17,7 +18,7 @@ export const loadOrderDetails = createAsyncThunk(
   'orders/loadOrderDetails',
   async (orderId, thunkAPI) => {
     try {
-      const orderDetails = await fetchOrderById(orderId);
+      const orderDetails = await getOrderById(orderId);
       return orderDetails;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
