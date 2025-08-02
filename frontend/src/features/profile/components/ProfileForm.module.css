@@ -86,3 +86,9 @@
 .editButton:hover {
     background-color: #229954;
 }
+
+@media (max-width: 768px) {
+    .buttonContainer{
+        flex-direction: column;
+    }
+}
