@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import { fetchUserOrders, fetchOrderById } from '../../services/apiOrder';
-import { getMyOrders, getOrderById } from '../../services/OrderService';
+import { getMyOrders, getOrderById } from './OrderService';
 
 export const loadUserOrders = createAsyncThunk(
   'orders/loadUserOrders',
