@@ -92,8 +92,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        System.out.println(">>> User secret: " + userAccessSecret);
-        System.out.println(">>> Admin secret: " + adminAccessSecret);
         return CompositeJwtDecoder.builder()
                 .withSecret(Objects.requireNonNull(userAccessSecret))
                 .withSecret(Objects.requireNonNull(adminAccessSecret))
