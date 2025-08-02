@@ -243,7 +243,7 @@ const ProfilePage = () => {
     }
   ];
 
-  const isAdmin = profileData?.roles?.some(role => role.name === 'ADMIN');
+  const isAdmin = profileData?.roles?.some(role => role.name === 'ROLE_ADMIN');
 
   const renderProfileTab = () => (
     <ProfileForm />
