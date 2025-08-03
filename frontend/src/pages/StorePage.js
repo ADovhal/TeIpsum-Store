@@ -238,7 +238,7 @@ const StorePage = () => {
     const locationState = location.state;
     if (locationState?.filters) {
       return {
-        name: '',
+        title: '',
         category: '',
         subcategory: '',
         gender: locationState.filters.gender || '',
