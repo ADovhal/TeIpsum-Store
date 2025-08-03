@@ -282,7 +282,7 @@ const BestsellersPage = () => {
                 <option value="popularity">Most Popular</option>
                 <option value="rating">Highest Rated</option>
                 <option value="price">Price: Low to High</option>
-                <option value="name">Name A-Z</option>
+                <option value="title">Name A-Z</option>
               </FilterSelect>
             </FilterGroup>
           </FilterSection>

@@ -416,7 +416,7 @@ const DiscountsPage = () => {
             options={[
               { value: 'discount', label: t('sortByDiscount') },
               { value: 'price', label: t('sortByPrice') },
-              { value: 'name', label: t('sortByName') },
+              { value: 'title', label: t('sortByName') },
               { value: 'createdAt', label: t('sortByNewest') }
             ]}
             placeholder={t('sortBy')}

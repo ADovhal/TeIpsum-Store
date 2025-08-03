@@ -281,7 +281,7 @@ const StorePage = () => {
     return locationState?.searchQuery || '';
   });
   const [page, setPage] = useState(0);
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('title');
   const size = 12;
 
   useEffect(() => {

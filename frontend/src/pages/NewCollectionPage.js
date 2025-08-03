@@ -485,7 +485,7 @@ const NewCollectionPage = () => {
             options={[
               { value: 'createdAt', label: t('sortByNewest') },
               { value: 'price', label: t('sortByPrice') },
-              { value: 'name', label: t('sortByName') },
+              { value: 'title', label: t('sortByName') },
               { value: 'discount', label: t('sortByDiscount') }
             ]}
             placeholder={t('sortBy')}
