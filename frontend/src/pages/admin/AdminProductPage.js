@@ -416,9 +416,9 @@ const AdminProductPage = () => {
                     />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <ProductImage src={product.imageUrl} alt={product.name} />
+                    <ProductImage src={product.imageUrls[0]} alt={product.title} />
                     <ProductInfo>
-                      <ProductName>{product.name}</ProductName>
+                      <ProductName>{product.title}</ProductName>
                       <ProductCategory>{product.category}</ProductCategory>
                     </ProductInfo>
                   </div>

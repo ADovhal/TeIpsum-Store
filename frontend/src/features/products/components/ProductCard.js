@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  const images = product.imageUrls || ["https://via.placeholder.com/280x200?text=Product+Image"];
+  const images = product.imageUrls[0] || ["https://via.placeholder.com/280x200?text=Product+Image"];
 
   const handleAddToCart = () => {
     dispatch(addToCart({

@@ -4,9 +4,9 @@ import { Block, BlockImage, BlockContent, BlockTitle, BlockDescription, BlockPri
 const ProductBlock = ({ product }) => {
     return (
         <Block>
-            <BlockImage src={product.image} alt={product.name} />
+            <BlockImage src={product.imageUrls[0]} alt={product.title} />
             <BlockContent>
-                <BlockTitle>{product.name}</BlockTitle>
+                <BlockTitle>{product.title}</BlockTitle>
                 <BlockDescription>{product.description}</BlockDescription>
                 <BlockPrice>${product.price}</BlockPrice>
             </BlockContent>

@@ -252,7 +252,7 @@ const StorePage = () => {
     // Use context gender if available
     if (selectedGender) {
       return {
-        name: '',
+        title: '',
         category: '',
         subcategory: '',
         gender: selectedGender,
@@ -264,7 +264,7 @@ const StorePage = () => {
       };
     }
     return {
-      name: '',
+      title: '',
       category: '',
       subcategory: '',
       gender: '',
@@ -289,7 +289,7 @@ const StorePage = () => {
 
     const fetchProductData = () => {
       dispatch(fetchProducts({
-        name: searchQuery.toLowerCase(),
+        title: searchQuery.toLowerCase(),
         category: filters.category,
         subcategory: filters.subcategory,
         gender: filters.gender,
@@ -376,9 +376,9 @@ const StorePage = () => {
               value={sortBy}
               onChange={handleSortChange}
               options={[
-                { value: 'name', label: t('sortByName') },
+                { value: 'title', label: t('sortByName') },
                 { value: 'price', label: t('sortByPrice') },
-                { value: 'rating', label: t('sortByRating') },
+                // { value: 'rating', label: t('sortByRating') },
                 { value: 'createdAt', label: t('sortByNewest') }
               ]}
               placeholder={t('sortBy')}
