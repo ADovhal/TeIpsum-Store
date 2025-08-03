@@ -483,7 +483,7 @@ const NewCollectionPage = () => {
             value={sortBy}
             onChange={handleSortChange}
             options={[
-              { value: 'createdAt', label: t('sortByNewest') },
+              // { value: 'createdAt', label: t('sortByNewest') },
               { value: 'price', label: t('sortByPrice') },
               { value: 'title', label: t('sortByName') },
               { value: 'discount', label: t('sortByDiscount') }
