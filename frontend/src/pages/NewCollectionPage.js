@@ -306,7 +306,7 @@ const NewCollectionPage = () => {
     available: true,
   });
   const [page, setPage] = useState(0);
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortBy, setSortBy] = useState('title');
   const size = 12;
 
   useEffect(() => {
