@@ -14,7 +14,7 @@ spring:
       maximum-pool-size: 10
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
@@ -47,14 +47,10 @@ logging:
     org.springframework.security: info
     org.hibernate.SQL: warn
     CATALOG: info
-#    org.springframework.data.elasticsearch: warn
 
 cors:
   allowed:
     origins: ${CORS_ALLOWED_ORIGINS}
-    # methods: "GET,OPTIONS"
-    # headers: "Content-Type,Authorization"  #Already set by Spring Security (SecurityConfig)
-    # max-age: 3600
 
 management:
   endpoints:
