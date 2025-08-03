@@ -379,7 +379,7 @@ const StorePage = () => {
                 { value: 'title', label: t('sortByName') },
                 { value: 'price', label: t('sortByPrice') },
                 // { value: 'rating', label: t('sortByRating') },
-                { value: 'createdAt', label: t('sortByNewest') }
+                // { value: 'createdAt', label: t('sortByNewest') }
               ]}
               placeholder={t('sortBy')}
             />
