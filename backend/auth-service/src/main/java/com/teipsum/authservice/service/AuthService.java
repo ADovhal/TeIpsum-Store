@@ -121,8 +121,6 @@ public class AuthService {
         }
 
         private void sendUserEvent(UserCredentials user, RegisterRequest request, boolean isAdmin) {
-//            String topic = isAdmin ? "admin-registered" : "user-registered";
-//            kafkaTemplate.send(topic, new UserRegisteredEvent(
               kafkaTemplate.send("user-registered", new UserRegisteredEvent(
                     user.getId(),
                     user.getEmail(),
