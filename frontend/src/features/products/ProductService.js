@@ -3,7 +3,7 @@ import productApi from '../../services/apiProduct';
 export const getProductsFiltered = async (params) => {
     try {
       const {
-        name,
+        title,
         category,
         subcategory,
         gender,
@@ -18,7 +18,7 @@ export const getProductsFiltered = async (params) => {
       } = params;
 
       const result = await productApi.getProducts({
-        name,
+        title,
         category,
         subcategory,
         gender,
