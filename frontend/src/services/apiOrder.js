@@ -35,7 +35,7 @@ apiOrder.interceptors.response.use(
 
       try {
         // Try to refresh token
-        const res = await axios.post('/auth/refresh');
+        const res = await apiOrder.post('/auth/refresh');
         const newAccessToken = res.data.accessToken;
         appStore?.dispatch({ type: 'auth/setAccessToken', payload: newAccessToken });
 
