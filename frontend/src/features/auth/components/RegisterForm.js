@@ -498,7 +498,7 @@ const RegisterForm = () => {
       await registerUser({
         name: validation.sanitizedData.firstName,
         surname: validation.sanitizedData.lastName,
-        dob: validation.sanitizedData.dob,
+        dob: validation.sanitizedData.dob.toISOString().slice(0,10),
         email: validation.sanitizedData.email,
         phone: validation.sanitizedData.phone,
         password: validation.sanitizedData.password
