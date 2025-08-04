@@ -1,6 +1,6 @@
 # TeIpsum - Sustainable Fashion E-Commerce Platform
 
-![TeIpsum Logo](frontend/public/favicon.ico)
+![TeIpsum Logo](frontend/src/assets/images/ActualLogo.png)
 
 ## 🌿 About TeIpsum
 
