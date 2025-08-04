@@ -88,7 +88,7 @@ TeIpsum follows a microservices architecture pattern with the following componen
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/TeIpsum.git
+   git clone https://github.com/ADovhal/TeIpsum.git
    cd TeIpsum
    ```
 
