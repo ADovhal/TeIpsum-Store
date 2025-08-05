@@ -42,7 +42,7 @@ export const deleteUserAccount = createAsyncThunk(
 const profileSlice = createSlice({
   name: 'profile',
   initialState: {
-    profileData: null, //JSON.parse(localStorage.getItem('profileData')) || 
+    profileData: JSON.parse(localStorage.getItem('profileData')) || null,
     isLoading: false,
     error: null,
     isDeleted: false,
