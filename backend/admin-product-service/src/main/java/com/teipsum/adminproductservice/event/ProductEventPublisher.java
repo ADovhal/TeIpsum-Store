@@ -40,6 +40,7 @@ public class ProductEventPublisher {
                         product.getSubcategory(),
                         product.getGender(),
                         product.getImageUrls(),
+                        product.getSizes(),
                         product.isAvailable()
                 )
         );
@@ -61,6 +62,7 @@ public class ProductEventPublisher {
                         product.getSubcategory(),
                         product.getGender(),
                         product.getImageUrls(),
+                        product.getSizes(),
                         product.isAvailable()
                 )
         );

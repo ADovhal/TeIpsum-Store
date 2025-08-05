@@ -8,6 +8,7 @@ import com.teipsum.adminproductservice.dto.ProductResponse;
 import com.teipsum.adminproductservice.event.ProductEventPublisher;
 import com.teipsum.adminproductservice.model.Product;
 import com.teipsum.adminproductservice.repository.AdminProductRepository;
+import com.teipsum.adminproductservice.util.SkuGenerator;
 import com.teipsum.shared.product.filter.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class AdminProductService {
     private final AdminProductRepository repository;
     private final ProductEventPublisher eventPublisher;
     private final ImageService imageService;
+    private final SkuGenerator skuGenerator;
 
     @Transactional
     public ProductResponse createProduct(ProductRequest dto, List<MultipartFile> images) {
@@ -98,7 +100,10 @@ public class AdminProductService {
 
 
     private Product mapToEntity(ProductRequest request) {
+        String sku = skuGenerator.generateSku(request.category(), request.subcategory(), request.gender());
+        
         return Product.builder()
+                .sku(sku)
                 .title(request.title())
                 .description(request.description())
                 .price(request.price())
@@ -107,6 +112,7 @@ public class AdminProductService {
                 .subcategory(request.subcategory())
                 .gender(request.gender())
                 .imageUrls(request.imageUrls())
+                .sizes(request.sizes())
                 .available(request.available())
                 .build();
     }
@@ -120,6 +126,7 @@ public class AdminProductService {
         product.setSubcategory(request.subcategory());
         product.setGender(request.gender());
         product.setImageUrls(request.imageUrls());
+        product.setSizes(request.sizes());
         product.setAvailable(request.available());
     }
 }

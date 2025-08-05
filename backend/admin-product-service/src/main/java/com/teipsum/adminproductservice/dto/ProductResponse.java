@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public record ProductResponse(
         UUID id,
+        String sku,
         String title,
         String description,
         BigDecimal price,
@@ -18,13 +19,17 @@ public record ProductResponse(
         ProductSubcategory subcategory,
         Gender gender,
         List<String> imageUrls,
+        List<String> sizes,
         boolean available,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String createdBy,
+        String updatedBy
 ) {
     public static ProductResponse fromEntity(Product product) {
         return new ProductResponse(
                 product.getId(),
+                product.getSku(),
                 product.getTitle(),
                 product.getDescription(),
                 product.getPrice(),
@@ -33,9 +38,12 @@ public record ProductResponse(
                 product.getSubcategory(),
                 product.getGender(),
                 product.getImageUrls(),
+                product.getSizes(),
                 product.isAvailable(),
                 product.getCreatedAt(),
-                product.getUpdatedAt()
+                product.getUpdatedAt(),
+                product.getCreatedBy(),
+                product.getUpdatedBy()
         );
     }
 }
