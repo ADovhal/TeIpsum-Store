@@ -75,7 +75,6 @@ public class SecurityConfig {
                     @NonNull HttpServletResponse response,
                     @NonNull FilterChain filterChain
             ) throws ServletException, IOException {
-                System.out.println(">>> [ADMIN] Authorization: " + request.getHeader("Authorization"));
                 filterChain.doFilter(request, response);
             }
         }, UsernamePasswordAuthenticationFilter.class);
