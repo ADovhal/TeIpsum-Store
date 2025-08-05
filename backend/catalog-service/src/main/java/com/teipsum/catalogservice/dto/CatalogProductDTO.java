@@ -21,5 +21,6 @@ public class CatalogProductDTO {
     private ProductSubcategory subcategory;
     private Gender gender;
     private List<String> imageUrls;
+    private List<String> sizes;
     private boolean available;
 }

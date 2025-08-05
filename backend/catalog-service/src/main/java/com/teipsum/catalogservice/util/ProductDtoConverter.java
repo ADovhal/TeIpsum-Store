@@ -23,6 +23,7 @@ public class ProductDtoConverter {
                 .subcategory(product.getSubcategory())
                 .gender(product.getGender())
                 .imageUrls(product.getImageUrls())
+                .sizes(product.getSizes())
                 .available(product.isAvailable())
                 .build();
     }

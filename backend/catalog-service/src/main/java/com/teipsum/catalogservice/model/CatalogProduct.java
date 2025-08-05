@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,4 +19,9 @@ public class CatalogProduct extends ProductBase {
 
     @Id
     private UUID id;
+
+    @ElementCollection
+    @CollectionTable(name = "catalog_product_sizes", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "size")
+    private List<String> sizes;
 }

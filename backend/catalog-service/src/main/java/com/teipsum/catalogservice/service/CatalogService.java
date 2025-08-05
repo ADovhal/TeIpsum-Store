@@ -45,6 +45,7 @@ public class CatalogService {
                 .subcategory(event.subcategory())
                 .gender(event.gender())
                 .imageUrls(event.imageUrls())
+                .sizes(event.sizes())
                 .available(event.available())
                 .build();
 
@@ -69,6 +70,7 @@ public class CatalogService {
             product.setSubcategory(event.subcategory());
             product.setGender(event.gender());
             product.setImageUrls(event.imageUrls());
+            product.setSizes(event.sizes());
             product.setAvailable(event.available());
 
         } catch (ProductNotFoundException | InvalidProductDataException e) {
