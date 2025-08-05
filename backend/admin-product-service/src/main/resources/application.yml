@@ -29,6 +29,10 @@ spring:
       properties:
         spring.json.add.type.headers: false
 
+storage:
+  local-path: ${ADMIN_PRODUCT_STORAGE_LOCAL_PATH}
+  base-url: ${ADMIN_PRODUCT_STORAGE_BASE_URL}
+
 logging:
   system:
     service.name: ${spring.application.name}

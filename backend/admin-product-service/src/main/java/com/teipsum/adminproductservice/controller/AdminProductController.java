@@ -14,9 +14,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,39 +29,24 @@ public class AdminProductController {
 
     private final AdminProductService adminProductService;
     private static final Logger logger = LogManager.getLogger(AdminProductController.class);
-    @PostMapping
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public ProductResponse createProduct(@RequestBody @Valid ProductRequest request) {
+    public ProductResponse createProduct(
+            @RequestPart("product") @Valid ProductRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         logger.info("Creating product with title: {}", request.title());
-        try {
-            ProductResponse response = adminProductService.createProduct(request);
-            logger.debug("Successfully created product with ID: {}", response.id());
-            return response;
-        } catch (Exception e) {
-            logger.error("Failed to create product: {}", e.getMessage());
-            throw e;
-        }
+        return adminProductService.createProduct(request, images);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ProductResponse updateProduct(
             @PathVariable UUID id,
-            @RequestBody @Valid ProductRequest request
-    ) {
-        logger.info("Updating product with ID: {}", id);
-        try {
-            ProductResponse response = adminProductService.updateProduct(id, request);
-            logger.debug("Successfully updated product with ID: {}", id);
-            return response;
-        } catch (ProductNotFoundException e) {
-            logger.warn("Product not found for update: {}", id);
-            throw e;
-        } catch (Exception e) {
-            logger.error("Failed to update product {}: {}", id, e.getMessage());
-            throw e;
-        }
+            @RequestPart("product") @Valid ProductRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        return adminProductService.updateProduct(id, request, images);
     }
 
     @GetMapping("/{id}")

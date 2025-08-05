@@ -15,7 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,28 +27,48 @@ public class AdminProductService {
 
     private final AdminProductRepository repository;
     private final ProductEventPublisher eventPublisher;
+    private final ImageService imageService;
 
     @Transactional
-    public ProductResponse createProduct(ProductRequest request) {
-        if (repository.existsByTitle(request.title())) {
-            throw new ProductAlreadyExistsException(request.title());
-        }
-        Product product = mapToEntity(request);
+    public ProductResponse createProduct(ProductRequest dto, List<MultipartFile> images) {
+        if (repository.existsByTitle(dto.title()))
+            throw new ProductAlreadyExistsException(dto.title());
+
+        Product product = mapToEntity(dto);
         repository.save(product);
+
+        List<String> urls = null;
+        try {
+            urls = imageService.uploadImages(product.getId(), images);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        product.setImageUrls(urls);
+        repository.save(product);
+
         eventPublisher.publishProductCreated(product);
         return ProductResponse.fromEntity(product);
     }
 
     @Transactional
-    public ProductResponse updateProduct(UUID id, ProductRequest request) {
+    public ProductResponse updateProduct(UUID id, ProductRequest dto, List<MultipartFile> images) {
         Product product = repository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
-        if (repository.existsByTitleAndIdNot(request.title(), id)) {
-            throw new ProductAlreadyExistsException(request.title());
+        if (repository.existsByTitleAndIdNot(dto.title(), id))
+            throw new ProductAlreadyExistsException(dto.title());
+
+        updateEntity(product, dto);
+
+        if (images != null && !images.isEmpty()) {
+            try { imageService.deleteImages(id); } catch (IOException ignored) {}
+            try {
+                product.setImageUrls(imageService.uploadImages(id, images));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        updateEntity(product, request);
         repository.save(product);
         eventPublisher.publishProductUpdated(product);
         return ProductResponse.fromEntity(product);
