@@ -1,0 +1,15 @@
+{
+  "name": "@teipsum/ui-playwright",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "playwright": "playwright test",
+    "playwright:ui": "playwright test --ui",
+    "playwright:smoke": "playwright test --grep @smoke",
+    "playwright:reg": "playwright test --grep @reg"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "allure-playwright": "^2.15.1"
+  }
+}

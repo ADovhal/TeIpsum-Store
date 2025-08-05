@@ -1,0 +1,16 @@
+{
+  "name": "@teipsum/ui-cypress",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:smoke": "cypress run --spec 'src/e2e/smoke.cy.ts'",
+    "cypress:reg": "cypress run --spec 'src/e2e/regression/*.cy.ts'"
+  },
+  "devDependencies": {
+    "cypress": "^13.8.1",
+    "typescript": "^5.4.5",
+    "@bahmutov/cy-grep": "^1.10.2"
+  }
+}
