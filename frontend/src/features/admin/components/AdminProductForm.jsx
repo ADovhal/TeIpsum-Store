@@ -4,15 +4,67 @@ import Select from 'react-select';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 
+// Categories matching backend enums
 const categories = [
-  { value: 'TSHIRT', label: 'T-Shirt' },
-  { value: 'HOODIE', label: 'Hoodie' },
-  { value: 'PANTS',  label: 'Pants' },
+  { value: 'MENS_CLOTHING', label: "Men's Clothing" },
+  { value: 'WOMENS_CLOTHING', label: "Women's Clothing" },
+  { value: 'KIDS_CLOTHING', label: "Kids' Clothing" },
+  { value: 'ACCESSORIES', label: 'Accessories' },
+  { value: 'SHOES', label: 'Shoes' },
 ];
+
+// Subcategories mapping to categories
+const subcategoriesMap = {
+  MENS_CLOTHING: [
+    { value: 'T_SHIRTS', label: 'T-Shirts' },
+    { value: 'SHIRTS', label: 'Shirts' },
+    { value: 'PANTS', label: 'Pants' },
+    { value: 'JEANS', label: 'Jeans' },
+    { value: 'JACKETS', label: 'Jackets' },
+  ],
+  WOMENS_CLOTHING: [
+    { value: 'T_SHIRTS', label: 'T-Shirts' },
+    { value: 'SHIRTS', label: 'Shirts' },
+    { value: 'PANTS', label: 'Pants' },
+    { value: 'JEANS', label: 'Jeans' },
+    { value: 'JACKETS', label: 'Jackets' },
+  ],
+  KIDS_CLOTHING: [
+    { value: 'BOYS_CLOTHING', label: "Boys' Clothing" },
+    { value: 'GIRLS_CLOTHING', label: "Girls' Clothing" },
+    { value: 'BABY_CLOTHING', label: 'Baby Clothing' },
+    { value: 'JEANS', label: 'Jeans' },
+    { value: 'JACKETS', label: 'Jackets' },
+  ],
+  ACCESSORIES: [
+    { value: 'BAGS', label: 'Bags' },
+    { value: 'BELTS', label: 'Belts' },
+    { value: 'HATS', label: 'Hats' },
+    { value: 'SUNGLASSES', label: 'Sunglasses' },
+  ],
+  SHOES: [
+    { value: 'SNEAKERS', label: 'Sneakers' },
+    { value: 'BOOTS', label: 'Boots' },
+    { value: 'SANDALS', label: 'Sandals' },
+    { value: 'DRESS_SHOES', label: 'Dress Shoes' },
+  ],
+};
+
+// Genders matching backend enums
 const genders = [
-  { value: 'MALE',   label: 'Male' },
-  { value: 'FEMALE', label: 'Female' },
+  { value: 'MEN', label: 'Men' },
+  { value: 'WOMEN', label: 'Women' },
   { value: 'UNISEX', label: 'Unisex' },
+];
+
+// Available sizes
+const sizes = [
+  { value: 'XS', label: 'XS' },
+  { value: 'S', label: 'S' },
+  { value: 'M', label: 'M' },
+  { value: 'L', label: 'L' },
+  { value: 'XL', label: 'XL' },
+  { value: 'XXL', label: 'XXL' },
 ];
 
 const Form = styled.form`
@@ -151,14 +203,39 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const [form, setForm] = React.useState(product || {});
   const [images, setImages] = useState([]);
   const [dragOver, setDragOver] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState(product?.sizes || []);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  // Update selectedSizes when product changes
+  React.useEffect(() => {
+    if (product?.sizes) {
+      setSelectedSizes(product.sizes);
+    }
+  }, [product]);
+
+  // Get available subcategories based on selected category
+  const getAvailableSubcategories = () => {
+    return form.category ? subcategoriesMap[form.category] || [] : [];
+  };
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSelect = (name) => (option) =>
-    setForm({ ...form, [name]: option.value });
+  const handleSelect = (name) => (option) => {
+    if (name === 'category') {
+      // Reset subcategory when category changes
+      setForm({ ...form, [name]: option.value, subcategory: '' });
+    } else {
+      setForm({ ...form, [name]: option.value });
+    }
+  };
+
+  const handleSizeChange = (selectedOptions) => {
+    const sizeValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setSelectedSizes(sizeValues);
+    setForm({ ...form, sizes: sizeValues });
+  };
 
   // Image handling functions
   const handleImageUpload = (files) => {
@@ -220,19 +297,44 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Validate required fields
+    if (!form.title?.trim()) {
+      alert('Product title is required');
+      return;
+    }
+    
+    if (!form.price || parseFloat(form.price) <= 0) {
+      alert('Valid price is required');
+      return;
+    }
+    
+    if (!form.category) {
+      alert('Category is required');
+      return;
+    }
+    
     // Prepare form data with images
     const formData = new FormData();
     
-    // Add form fields
-    Object.keys(form).forEach(key => {
-      if (form[key] !== undefined && form[key] !== null) {
-        formData.append(key, form[key]);
-      }
-    });
+    // Create product object matching backend ProductRequest
+    const productData = {
+      title: form.title.trim(),
+      description: form.description?.trim() || '',
+      price: parseFloat(form.price),
+      discount: form.discount ? parseFloat(form.discount) : null,
+      category: form.category,
+      subcategory: form.subcategory || null,
+      gender: form.gender || null,
+      available: form.available !== undefined ? form.available : true,
+      sizes: selectedSizes.length > 0 ? selectedSizes : null
+    };
+
+    // Add product data as JSON string
+    formData.append('product', JSON.stringify(productData));
 
     // Add images
-    images.forEach((image, index) => {
-      formData.append(`images`, image.file);
+    images.forEach((image) => {
+      formData.append('images', image.file);
     });
 
     onSave(formData);
@@ -244,10 +346,27 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
       <Input name="title" value={form.title || ''} onChange={handleChange} required />
     
       <Label>{t('price')}</Label>
-      <Input name="price" type="number" value={form.price || ''} onChange={handleChange} required />
+      <Input 
+        name="price" 
+        type="number" 
+        step="0.01" 
+        min="0.01"
+        value={form.price || ''} 
+        onChange={handleChange} 
+        required 
+      />
 
-      <Label>{t('discount')}</Label>
-      <Input name="discount" type="number" value={form.discount || ''} onChange={handleChange} />
+      <Label>{t('discount')} (%)</Label>
+      <Input 
+        name="discount" 
+        type="number" 
+        step="0.01"
+        min="0"
+        max="100"
+        value={form.discount || ''} 
+        onChange={handleChange} 
+        placeholder="Optional discount percentage"
+      />
 
       <Label>{t('description') || 'Description'}</Label>
       <Textarea 
@@ -262,20 +381,40 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
         value={categories.find(c => c.value === form.category)}
         onChange={handleSelect('category')}
         options={categories}
+        placeholder="Select category..."
+        required
       />
 
-      {/* <Label>{t('subcategory')}</Label>
-      <Select
-        value={subcategories.find(s => s.value === form.subcategory)}
-        onChange={handleSelect('subcategory')}
-        options={subcategories}
-      /> */}
+      {form.category && (
+        <>
+          <Label>{t('subcategory')}</Label>
+          <Select
+            value={getAvailableSubcategories().find(s => s.value === form.subcategory)}
+            onChange={handleSelect('subcategory')}
+            options={getAvailableSubcategories()}
+            placeholder="Select subcategory..."
+            isClearable
+          />
+        </>
+      )}
 
       <Label>{t('gender')}</Label>
       <Select
         value={genders.find(g => g.value === form.gender)}
         onChange={handleSelect('gender')}
         options={genders}
+        placeholder="Select gender..."
+        isClearable
+      />
+
+      <Label>Available Sizes</Label>
+      <Select
+        isMulti
+        value={sizes.filter(s => selectedSizes.includes(s.value))}
+        onChange={handleSizeChange}
+        options={sizes}
+        placeholder="Select available sizes..."
+        closeMenuOnSelect={false}
       />
 
       <Label>{t('availability')}</Label>

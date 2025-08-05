@@ -390,7 +390,8 @@ const SingleProductPage = () => {
   }, [productId, dispatch]);
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    // Only require size selection if sizes are available
+    if (selectedProduct.sizes && selectedProduct.sizes.length > 0 && !selectedSize) {
       alert('Please select a size');
       return;
     }
@@ -400,7 +401,7 @@ const SingleProductPage = () => {
       title: selectedProduct.title,
       price: selectedProduct.price,
       image: selectedProduct.imageUrls?.[0] || '',
-      size: selectedSize,
+      size: selectedSize || 'One Size',
       quantity: quantity
     }));
 
@@ -413,7 +414,7 @@ const SingleProductPage = () => {
     }
   };
 
-  const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -522,7 +523,7 @@ const SingleProductPage = () => {
                       <AdminFieldValue>{selectedProduct.id}</AdminFieldValue>
                     </AdminField>
                     <AdminField>
-                      <AdminFieldLabel>{t('internalCode')}</AdminFieldLabel>
+                      <AdminFieldLabel>{t('internalCode')} (SKU)</AdminFieldLabel>
                       <AdminFieldValue>{selectedProduct.sku || 'N/A'}</AdminFieldValue>
                     </AdminField>
                     <AdminField>
@@ -557,20 +558,22 @@ const SingleProductPage = () => {
                 </AdminSection>
               )}
 
-              <SizeSection>
-                <SizeTitle>{t('selectSize')}</SizeTitle>
-                <SizeGrid>
-                  {availableSizes.map((size) => (
-                    <SizeButton
-                      key={size}
-                      selected={selectedSize === size}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      {size}
-                    </SizeButton>
-                  ))}
-                </SizeGrid>
-              </SizeSection>
+              {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
+                <SizeSection>
+                  <SizeTitle>{t('selectSize')}</SizeTitle>
+                  <SizeGrid>
+                    {selectedProduct.sizes.map((size) => (
+                      <SizeButton
+                        key={size}
+                        selected={selectedSize === size}
+                        onClick={() => setSelectedSize(size)}
+                      >
+                        {size}
+                      </SizeButton>
+                    ))}
+                  </SizeGrid>
+                </SizeSection>
+              )}
 
               <QuantitySection>
                 <QuantityLabel>Quantity:</QuantityLabel>
