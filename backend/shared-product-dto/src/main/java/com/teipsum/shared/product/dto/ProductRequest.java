@@ -32,5 +32,7 @@ public record ProductRequest(
 
         List<@URL(message = "Image URL must be valid") String> imageUrls,
 
+        List<String> sizes,
+
         boolean available
 ) {}

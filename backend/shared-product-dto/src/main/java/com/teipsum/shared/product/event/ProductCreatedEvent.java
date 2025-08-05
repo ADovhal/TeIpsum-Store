@@ -17,5 +17,6 @@ public record ProductCreatedEvent(
         ProductSubcategory subcategory,
         Gender gender,
         List<String> imageUrls,
+        List<String> sizes,
         boolean available
 ) {}
