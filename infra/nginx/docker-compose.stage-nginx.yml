@@ -10,6 +10,7 @@ services:
       - /etc/letsencrypt/live/stage.teipsum.store/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
       - /etc/letsencrypt/live/stage.teipsum.store/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
       - /home/adeployer/secrets/.htpasswd:/etc/nginx/secrets/.htpasswd:ro
+      - /var/www/teipsum/static:/var/www/teipsum/static:ro
     networks:
       - stage-net
 
