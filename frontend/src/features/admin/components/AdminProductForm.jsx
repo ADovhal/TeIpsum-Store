@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { createAdminProduct } from '../../../services/adminSlice';
+import { createAdminProduct } from '../adminSlice';
 
 const categories = [
   { value: 'MENS_CLOTHING', label: "Men's Clothing" },
