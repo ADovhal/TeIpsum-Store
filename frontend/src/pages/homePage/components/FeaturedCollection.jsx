@@ -3,6 +3,9 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import styles from './FeaturedCollection.module.css';
+import fc_mE from '../../../assets/images/fc_minimalisticEssentials.jpg'
+import fc_uS from '../../../assets/images/fc_urbanSophistication.jpg'
+import fc_aC from '../../../assets/images/fc_artisanCollection.jpg'
 
 const FeaturedCollection = () => {
   const ref = useRef(null);
@@ -24,7 +27,7 @@ const FeaturedCollection = () => {
       id: 1,
       title: `${ t('minimalistEssentialsTitle') }`,
       description: `${ t('minimalistEssentialsDesc') }`,
-      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500",
+      image: fc_mE,
       price: `${ t('fromPrice') } $45`,
       category: "ESSENTIALS"
     },
@@ -32,7 +35,7 @@ const FeaturedCollection = () => {
       id: 2,
       title: `${ t('urbanSophisticationTitle') }`,
       description: `${ t('urbanSophisticationDesc') }`,
-      image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=500",
+      image: fc_uS,
       price: `${ t('fromPrice') } $85`,
       category: "URBAN"
     },
@@ -40,7 +43,7 @@ const FeaturedCollection = () => {
       id: 3,
       title: `${ t('artisanCollectionTitle') }`,
       description: `${ t('artisanCollectionDesc') }`,
-      image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500",
+      image: fc_aC,
       price: `${ t('fromPrice') } $125`,
       category: "ARTISAN"
     }
