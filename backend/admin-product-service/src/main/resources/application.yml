@@ -29,7 +29,6 @@ spring:
       properties:
         spring.json.add.type.headers: false
 
-spring:
   servlet:
     multipart:
       max-file-size: 5MB
