@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import styles from './FeaturedCollection.module.css';
-import fc_mE from '../../../assets/images/fc_minimalisticEssentials.jpg'
+import fc_mE from '../../../assets/images/fc_minimalistEssentials.jpg'
 import fc_uS from '../../../assets/images/fc_urbanSophistication.jpg'
 import fc_aC from '../../../assets/images/fc_artisanCollection.jpg'
 
