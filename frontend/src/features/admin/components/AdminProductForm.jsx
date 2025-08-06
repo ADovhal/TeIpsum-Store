@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import Select from 'react-select';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { createAdminProduct } from '../../../services/adminSlice';
 
-// Categories matching backend enums
 const categories = [
   { value: 'MENS_CLOTHING', label: "Men's Clothing" },
   { value: 'WOMENS_CLOTHING', label: "Women's Clothing" },
@@ -13,7 +14,6 @@ const categories = [
   { value: 'SHOES', label: 'Shoes' },
 ];
 
-// Subcategories mapping to categories
 const subcategoriesMap = {
   MENS_CLOTHING: [
     { value: 'T_SHIRTS', label: 'T-Shirts' },
@@ -50,14 +50,12 @@ const subcategoriesMap = {
   ],
 };
 
-// Genders matching backend enums
 const genders = [
   { value: 'MEN', label: 'Men' },
   { value: 'WOMEN', label: 'Women' },
   { value: 'UNISEX', label: 'Unisex' },
 ];
 
-// Available sizes
 const sizes = [
   { value: 'XS', label: 'XS' },
   { value: 'S', label: 'S' },
@@ -206,15 +204,14 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const [selectedSizes, setSelectedSizes] = useState(product?.sizes || []);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Update selectedSizes when product changes
   React.useEffect(() => {
     if (product?.sizes) {
       setSelectedSizes(product.sizes);
     }
   }, [product]);
 
-  // Get available subcategories based on selected category
   const getAvailableSubcategories = () => {
     return form.category ? subcategoriesMap[form.category] || [] : [];
   };
@@ -224,7 +221,6 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
 
   const handleSelect = (name) => (option) => {
     if (name === 'category') {
-      // Reset subcategory when category changes
       setForm({ ...form, [name]: option.value, subcategory: '' });
     } else {
       setForm({ ...form, [name]: option.value });
@@ -237,15 +233,12 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
     setForm({ ...form, sizes: sizeValues });
   };
 
-  // Image handling functions
   const handleImageUpload = (files) => {
     const validFiles = Array.from(files).filter(file => {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select only image files');
         return false;
       }
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('File size should be less than 5MB');
         return false;
@@ -294,30 +287,14 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
     setImages(prev => prev.filter(img => img.id !== imageId));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate required fields
-    if (!form.title?.trim()) {
-      alert('Product title is required');
-      return;
-    }
-    
-    if (!form.price || parseFloat(form.price) <= 0) {
-      alert('Valid price is required');
-      return;
-    }
-    
-    if (!form.category) {
-      alert('Category is required');
-      return;
-    }
-    
-    // Prepare form data with images
-    const formData = new FormData();
-    
-    // Create product object matching backend ProductRequest
-    const productData = {
+
+    if (!form.title?.trim()) return alert('Title required');
+    if (!form.price || parseFloat(form.price) <= 0) return alert('Valid price required');
+    if (!form.category) return alert('Category required');
+
+    const productPayload = {
       title: form.title.trim(),
       description: form.description?.trim() || '',
       price: parseFloat(form.price),
@@ -326,18 +303,18 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
       subcategory: form.subcategory || null,
       gender: form.gender || null,
       available: form.available !== undefined ? form.available : true,
-      sizes: selectedSizes.length > 0 ? selectedSizes : null
+      sizes: selectedSizes.length ? selectedSizes : null,
+      imageUrls: []
     };
 
-    // Add product data as JSON string
-    formData.append('product', JSON.stringify(productData));
+    const formData = new FormData();
+    formData.append('product', new Blob([JSON.stringify(productPayload)], {
+      type: 'application/json'
+    }));
 
-    // Add images
-    images.forEach((image) => {
-      formData.append('images', image.file);
-    });
+    images.forEach(img => formData.append('images', img.file));
 
-    onSave(formData);
+    dispatch(createAdminProduct(formData));
   };
 
   return (
