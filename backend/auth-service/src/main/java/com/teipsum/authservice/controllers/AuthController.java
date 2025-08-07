@@ -15,6 +15,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,28 @@ public class AuthController {
     private static final int REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60;
 
     @PostMapping("/register")
+    @Operation(
+        summary = "Register a new user",
+        description = "Registers a new user with the provided credentials",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "User registered successfully",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthResponse.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "409",
+                description = "User already exists",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+                )
+            )
+        }
+    )
     public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServletResponse response) {
         try {
             AuthResponse authResponse = authService.registerUser(request);
@@ -57,6 +83,28 @@ public class AuthController {
 
     @PostMapping("/register_admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(
+        summary = "Register a new admin user",
+        description = "Registers a new admin user with the provided credentials",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Admin user registered successfully",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthResponse.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "409",
+                description = "Admin user already exists",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+                )
+            )
+        }
+    )
     public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest request, HttpServletResponse response) {
         try {
 
@@ -75,6 +123,28 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(
+        summary = "Authenticate a user",
+        description = "Authenticates a user with the provided credentials and returns an access token",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "User authenticated successfully",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthResponse.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "Invalid credentials",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+                )
+            )
+        }
+    )
     public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletResponse response) {
         try {
             AuthResponse authResponse = authService.login(request);
@@ -92,6 +162,28 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @Operation(
+        summary = "Refresh access token",
+        description = "Refreshes the access token using the provided refresh token",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Access token refreshed successfully",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthResponse.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "Invalid or expired refresh token",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+                )
+            )
+        }
+    )
     public ResponseEntity<?> refreshAccessToken(
             @CookieValue(name = "refreshToken", required = true) String refreshToken,
             HttpServletResponse response) {
