@@ -47,6 +47,10 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.teipsum</groupId>
             <artifactId>teipsum-shared-product-dto</artifactId>
         </dependency>
