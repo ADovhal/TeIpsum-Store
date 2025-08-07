@@ -130,7 +130,6 @@ jobs:
             done
 
             cp -v "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/pom.xml"
-            cp -rv "$TEMP_DIR/docs/" "$PROJECT_DIR/docs/"
 
             echo "🔍 Verifying file structure..."
             test -f "$PROJECT_DIR/backend/pom.xml"
