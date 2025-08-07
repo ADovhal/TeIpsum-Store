@@ -1,4 +1,5 @@
 FROM swaggerapi/swagger-ui:v5.9.0
+ENV VALIDATOR_URL=""   
 ENV URLS="[ \
   { \"url\": \"/api-docs/auth.json\",       \"name\": \"Auth Service\" }, \
   { \"url\": \"/api-docs/user.json\",       \"name\": \"User Service\" }, \
