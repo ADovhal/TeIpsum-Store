@@ -18,8 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -33,6 +38,28 @@ public class AdminProductController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Create a new product",
+            description = "Creates a new product with the provided details and images",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Product created successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    )
+            }
+    )
     public ProductResponse createProduct(
             @RequestPart("product") @Valid ProductRequest request,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
@@ -42,6 +69,28 @@ public class AdminProductController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Update an existing product",
+            description = "Updates an existing product with the provided details and images",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Product updated successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    )
+            }
+    )
     public ProductResponse updateProduct(
             @PathVariable UUID id,
             @RequestPart("product") @Valid ProductRequest request,
@@ -50,6 +99,28 @@ public class AdminProductController {
     }
 
     @GetMapping("/{id}")
+    @Operation(
+            summary = "Get product by ID",
+            description = "Retrieves a product by its unique ID",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Product found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    )
+            }
+    )
     public ProductResponse getProduct(@PathVariable UUID id) {
         logger.debug("Fetching product with ID: {}", id);
         try {
@@ -63,6 +134,21 @@ public class AdminProductController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get all products",
+            description = "Retrieves a list of products with optional filtering",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Products found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class)
+                            )
+                    )
+            }
+    )
     public Page<ProductResponse> getAllProducts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             @ModelAttribute @Valid ProductFilterRequest filter
@@ -81,6 +167,24 @@ public class AdminProductController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Delete a product by ID",
+            description = "Deletes a product by its unique ID",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Product deleted successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    )
+            }
+    )
     public void deleteProduct(@PathVariable UUID id) {
         logger.info("Deleting product with ID: {}", id);
         try {
