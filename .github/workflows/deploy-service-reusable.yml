@@ -205,3 +205,15 @@ jobs:
             docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" up -d --build
 
             echo "✅ Successfully deployed $SERVICE_NAME!"
+        
+  update-docs:
+    needs: deploy              # запускаем после успешного deploy
+    uses: ./.github/workflows/update-docs-reusable.yml
+    with:
+      DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
+    secrets:
+      PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
+      SSH_HOST: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_HOST || secrets.STAGE_DEPLOY_HOST }}
+      SSH_USER: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_USER || secrets.STAGE_DEPLOY_USER }}
+      SSH_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_DEPLOY_KEY || secrets.STAGE_DEPLOY_KEY }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
