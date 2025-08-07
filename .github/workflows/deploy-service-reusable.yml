@@ -108,7 +108,7 @@ jobs:
 
             IFS=',' read -ra SHARED <<< "${{ inputs.SHARED_MODULES }}"
 
-            MODULES="backend/$SERVICE_NAME backend/pom.xml"
+            MODULES="backend/$SERVICE_NAME backend/pom.xml docs/"
             for module in "${SHARED[@]}"; do
               MODULES="$MODULES backend/$module/src backend/$module/pom.xml backend/$module/Dockerfile"
             done
@@ -130,6 +130,7 @@ jobs:
             done
 
             cp -v "$TEMP_DIR/backend/pom.xml" "$PROJECT_DIR/backend/pom.xml"
+            cp -rv "$TEMP_DIR/docs/" "$PROJECT_DIR/docs/"
 
             echo "🔍 Verifying file structure..."
             test -f "$PROJECT_DIR/backend/pom.xml"
