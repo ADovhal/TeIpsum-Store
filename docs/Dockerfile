@@ -5,7 +5,7 @@ ENV URLS="[ \
   { \"url\": \"./auth.json\",       \"name\": \"Auth Service\" }, \
   { \"url\": \"./user.json\",       \"name\": \"User Service\" }, \
   { \"url\": \"./catalog.json\",    \"name\": \"Catalog Service\" }, \
-  { \"url\": \"./orders.json\",     \"name\": \"Orders Service\" }, \
+  { \"url\": \"./order.json\",     \"name\": \"Orders Service\" }, \
   { \"url\": \"./admin-product.json\", \"name\": \"Admin Product Service\" } \
 ]"
 
