@@ -1,4 +1,3 @@
-# .github/workflows/update-docs-reusable.yml
 name: Reusable Update Docs
 
 on:
