@@ -211,7 +211,7 @@ jobs:
     needs: deploy
     uses: ./.github/workflows/update-docs-reusable.yml
     with:
-      DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
+      DEPLOY_ENV: ${{ inputs.DEPLOY_ENV }}
     secrets:
       PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
       SSH_HOST: ${{ secrets.SSH_HOST }}
