@@ -34,6 +34,14 @@ spring:
       type: single
       ack-mode: manual
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  server:
+    url: https://www.teipsum.store
+
 #  cache:
 #    type: redis
 #    redis:
