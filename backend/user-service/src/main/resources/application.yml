@@ -35,6 +35,14 @@ spring:
       type: single
       ack-mode: manual
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  server:
+    url: https://www.teipsum.store
+
 logging:
   system:
     service.name: ${spring.application.name}
