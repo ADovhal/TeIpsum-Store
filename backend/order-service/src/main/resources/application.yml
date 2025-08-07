@@ -36,6 +36,14 @@ spring:
       properties:
         spring.json.trusted.packages: com.teipsum.shared.product.event,com.teipsum.shared.order.event
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  server:
+    url: https://www.teipsum.store
+
 jwt:
   user-access-secret:   ${JWT_SECRET}
   admin-access-secret:  ${JWT_ADMIN_SECRET}
