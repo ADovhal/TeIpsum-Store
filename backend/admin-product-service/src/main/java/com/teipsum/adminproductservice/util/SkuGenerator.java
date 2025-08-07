@@ -16,29 +16,24 @@ public class SkuGenerator {
     
     public String generateSku(ProductCategory category, ProductSubcategory subcategory, Gender gender) {
         StringBuilder sku = new StringBuilder();
-        
-        // Category prefix (2 characters)
+
         sku.append(getCategoryPrefix(category));
-        
-        // Subcategory prefix (2 characters)
+
         if (subcategory != null) {
             sku.append(getSubcategoryPrefix(subcategory));
         } else {
             sku.append("00");
         }
-        
-        // Gender prefix (1 character)
+
         if (gender != null) {
             sku.append(getGenderPrefix(gender));
         } else {
             sku.append("U");
         }
-        
-        // Date component (YYMM format)
+
         String dateComponent = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMM"));
         sku.append(dateComponent);
-        
-        // Random 4-digit number
+
         String randomComponent = String.format("%04d", RANDOM.nextInt(10000));
         sku.append(randomComponent);
         
