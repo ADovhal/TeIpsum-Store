@@ -2,18 +2,18 @@
 set -e
 mkdir -p specs
 
-declare -A host_urls=(
-  [auth]="https://www.teipsum.store/api/auth/v3/api-docs"
-  [user]="https://www.teipsum.store/api/users/v3/api-docs"
-  [catalog]="https://www.teipsum.store/api/products/v3/api-docs"
-  [order]="https://www.teipsum.store/api/orders/v3/api-docs"
-  [admin-product]="https://www.teipsum.store/api/admin/products/v3/api-docs"
+declare -A ports=(
+  [auth]=22093
+  [user]=22094
+  [catalog]=22096
+  [order]=22001
+  [admin-product]=22095
 )
 
-for svc in "${!host_urls[@]}"; do
-  url="${host_urls[$svc]}"
-  echo "🔗 Downloading $svc spec..."
-  curl -sSf "$url" > "specs/${svc}.json"
+for svc in "${!ports[@]}"; do
+  port=${ports[$svc]}
+  url="http://127.0.0.1:${port}/v3/api-docs"
+  echo "🔗 Checking $svc on port $port..."
 
   for i in {1..10}; do
     if curl -sSf "$url" >/dev/null; then

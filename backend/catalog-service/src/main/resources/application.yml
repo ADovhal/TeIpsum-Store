@@ -37,13 +37,14 @@ spring:
 springdoc:
   api-docs:
     enabled: true
-    info:
-      title: "Catalog Service"
-      description: "TeIpsum Catalog Management Service"
   swagger-ui:
     enabled: true
-  server:
-    url: https://www.teipsum.store/api/products
+
+springdoc-openapi:
+  info:
+    title: "Catalog Service"
+    description: "TeIpsum Catalog Management Service"
+    version: "1.0.0"
 
 #  cache:
 #    type: redis
