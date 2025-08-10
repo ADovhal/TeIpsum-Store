@@ -5,7 +5,7 @@ services:
     environment:
       - VALIDATOR_URL=none
       - CONFIG_URL=/api-docs/swagger-config.json
-      - URLS_PRIMARY_NAME="TeIpsum API Docs"
+      - "URLS_PRIMARY_NAME=\"TeIpsum API Docs\""
     volumes:
       - ./specs:/usr/share/nginx/html/api-docs:ro
     networks:

@@ -36,13 +36,11 @@ spring:
 
 springdoc:
   swagger-ui:
+    enabled: true
     path: /swagger-ui.html
   api-docs:
+    enabled: true
     path: /v3/api-docs
-  info:
-    title: "Catalog Service"
-    description: "TeIpsum Catalog Management Service"
-    version: "1.0.0"
 
 #  cache:
 #    type: redis
