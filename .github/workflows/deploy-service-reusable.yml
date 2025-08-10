@@ -203,7 +203,8 @@ jobs:
             echo "🔄 Rebuilding Docker container..."
             cd "$PROJECT_DIR/backend"
             docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" down --remove-orphans --volumes
-            docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" up -d --build
+            docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" build --no-cache
+            docker compose --env-file "$ENV_PATH" -f "$SERVICE_NAME/$COMPOSE_FILE" up -d
 
             echo "✅ Successfully deployed $SERVICE_NAME!"
         
