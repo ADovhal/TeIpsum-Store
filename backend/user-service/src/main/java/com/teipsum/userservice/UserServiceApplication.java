@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(
     info = @Info(
-        title = "User Service",          
+        title = "User Service",         
         version = "1.0.0",               
         description = "TeIpsum User Management Service"
     )
