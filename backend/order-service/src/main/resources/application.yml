@@ -38,13 +38,11 @@ spring:
 
 springdoc:
   swagger-ui:
+    enabled: true
     path: /swagger-ui.html
   api-docs:
+    enabled: true
     path: /v3/api-docs
-  info:
-    title: "Order Service"
-    description: "TeIpsum Order Management Service"
-    version: "1.0.0"
 
 jwt:
   user-access-secret:   ${JWT_SECRET}
