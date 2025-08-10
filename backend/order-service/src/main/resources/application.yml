@@ -39,10 +39,13 @@ spring:
 springdoc:
   api-docs:
     enabled: true
+    info:
+      title: "Order Service"
+      description: "TeIpsum Order Management Service"
   swagger-ui:
     enabled: true
   server:
-    url: https://www.teipsum.store
+    url: https://www.teipsum.store/api/orders
 
 jwt:
   user-access-secret:   ${JWT_SECRET}
