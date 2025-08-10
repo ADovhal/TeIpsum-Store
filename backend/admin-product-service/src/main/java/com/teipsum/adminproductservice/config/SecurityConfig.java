@@ -67,7 +67,7 @@ public class SecurityConfig {
                                 .decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
-                );
+                ); 
 
         http.addFilterBefore(new OncePerRequestFilter() {
             @Override
