@@ -29,11 +29,11 @@ done
 cat <<EOF > specs/swagger-config.json
 {
   "urls": [
-    {"url": "/api-docs/auth.json", "name": "Auth Service"},
-    {"url": "/api-docs/user.json", "name": "User Service"},
-    {"url": "/api-docs/catalog.json", "name": "Catalog Service"},
-    {"url": "/api-docs/order.json", "name": "Order Service"},
-    {"url": "/api-docs/admin-product.json", "name": "Admin Product Service"}
+    {"url": "https://www.teipsum.store/api-docs/auth.json", "name": "Auth Service"},
+    {"url": "https://www.teipsum.store/api-docs/user.json", "name": "User Service"},
+    {"url": "https://www.teipsum.store/api-docs/catalog.json", "name": "Catalog Service"},
+    {"url": "https://www.teipsum.store/api-docs/order.json", "name": "Order Service"},
+    {"url": "https://www.teipsum.store/api-docs/admin-product.json", "name": "Admin Product Service"}
   ]
 }
 EOF
