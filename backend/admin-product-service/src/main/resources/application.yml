@@ -41,10 +41,13 @@ storage:
 springdoc:
   api-docs:
     enabled: true
+    info:
+      title: "Admin Product Service"
+      description: "TeIpsum Admin Product Management Service"
   swagger-ui:
     enabled: true
   server:
-    url: https://www.teipsum.store
+    url: https://www.teipsum.store/api/admin/products
 
 logging:
   system:
