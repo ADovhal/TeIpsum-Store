@@ -35,12 +35,10 @@ spring:
       ack-mode: manual
 
 springdoc:
-  api-docs:
-    enabled: true
   swagger-ui:
-    enabled: true
-
-springdoc-openapi:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
   info:
     title: "Catalog Service"
     description: "TeIpsum Catalog Management Service"
