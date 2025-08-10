@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @OpenAPIDefinition(
     info = @Info(
         title = "Admin-Product Service",
-        version = "1.0.0",     
+        version = "1.0.0",
         description = "TeIpsum Admin Product Management Service"
     )
 )
