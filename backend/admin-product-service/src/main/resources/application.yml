@@ -39,15 +39,16 @@ storage:
   base-url: ${ADMIN_PRODUCT_STORAGE_BASE_URL}
 
 springdoc:
-  api-docs:
-    enabled: true
-    info:
-      title: "Admin Product Service"
-      description: "TeIpsum Admin Product Management Service"
   swagger-ui:
-    enabled: true
-  server:
-    url: https://www.teipsum.store/api/admin/products
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  info:
+    title: "Admin Product Service"
+    description: "TeIpsum Admin Product Management Service"
+    version: "1.0.0"
 
 logging:
   system:
