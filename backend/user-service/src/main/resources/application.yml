@@ -36,15 +36,14 @@ spring:
       ack-mode: manual
 
 springdoc:
-  api-docs:
-    enabled: true
-    info:
-      title: "User Service"
-      description: "TeIpsum User Data/Profile Management Service"
   swagger-ui:
-    enabled: true
-  server:
-    url: https://www.teipsum.store/api/users
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+  info:
+    title: "User Service"
+    description: "TeIpsum User Management Service"
+    version: "1.0.0"
 
 logging:
   system:
