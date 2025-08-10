@@ -3,7 +3,7 @@ services:
     container_name: teipsum-docs
     image: swaggerapi/swagger-ui:v5.9.0
     environment:
-      - CONFIG_URL=/swagger-config.json
+      - CONFIG_URL=/api-docs/swagger-config.json
       - VALIDATOR_URL=none
       # - "URLS_PRIMARY_NAME=\"TeIpsum API Docs\""
     volumes:
