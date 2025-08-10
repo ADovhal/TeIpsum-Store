@@ -1,9 +1,11 @@
 services:
   teipsum-docs:
     container_name: teipsum-docs
-    build: .
-    ports:
-      - "8888:8080"
+    image: swaggerapi/swagger-ui:v5.9.0
+    environment:
+      - VALIDATOR_URL=none
+      - CONFIG_URL=/api-docs/swagger-config.json
+      - URLS_PRIMARY_NAME="TeIpsum API Docs"
     volumes:
       - ./specs:/usr/share/nginx/html/api-docs:ro
     networks:

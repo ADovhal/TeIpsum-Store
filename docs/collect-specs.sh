@@ -2,23 +2,22 @@
 set -e
 mkdir -p specs
 
-declare -A ports=(
-  [auth]=22093
-  [user]=22094
-  [catalog]=22096
-  [order]=22001
-  [admin-product]=22095
+declare -A urls=(
+  [auth]="http://prod-auth-service:9090/v3/api-docs"
+  [user]="http://prod-user-service:9093/v3/api-docs"
+  [catalog]="http://prod-catalog-service:9098/v3/api-docs"
+  [order]="http://prod-order-service:8100/v3/api-docs"
+  [admin-product]="http://prod-admin-product-service:9096/v3/api-docs"
 )
 
-for svc in "${!ports[@]}"; do
-  port=${ports[$svc]}
-  url="http://localhost:${port}/v3/api-docs"
-  echo "🔗 Checking $svc on port $port..."
+for svc in "${!urls[@]}"; do
+  url=${urls[$svc]}
+  echo "🔗 Fetching $svc spec from $url..."
 
   for i in {1..10}; do
     if curl -sSf "$url" >/dev/null; then
       echo "✅ $svc is available"
-      curl -sSf "$url" > "specs/${svc}.json"
+      curl -sSf "$url" | jq '.servers = [{"url": "/", "description": "Production server"}]' > "specs/${svc}.json"
       break
     fi
     echo "⏳ Waiting $svc ($i/10)..."
