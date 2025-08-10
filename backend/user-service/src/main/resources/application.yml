@@ -38,10 +38,13 @@ spring:
 springdoc:
   api-docs:
     enabled: true
+    info:
+      title: "User Service"
+      description: "TeIpsum User Data/Profile Management Service"
   swagger-ui:
     enabled: true
   server:
-    url: https://www.teipsum.store
+    url: https://www.teipsum.store/api/users
 
 logging:
   system:
