@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(
     info = @Info(
-        title = "Order Service",         
+        title = "Order Service",        
         version = "1.0.0",               
         description = "TeIpsum Order Service"
     )
