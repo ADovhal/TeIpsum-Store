@@ -37,15 +37,14 @@ spring:
         spring.json.trusted.packages: com.teipsum.shared.product.event,com.teipsum.shared.order.event
 
 springdoc:
-  api-docs:
-    enabled: true
-    info:
-      title: "Order Service"
-      description: "TeIpsum Order Management Service"
   swagger-ui:
-    enabled: true
-  server:
-    url: https://www.teipsum.store/api/orders
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+  info:
+    title: "Order Service"
+    description: "TeIpsum Order Management Service"
+    version: "1.0.0"
 
 jwt:
   user-access-secret:   ${JWT_SECRET}
