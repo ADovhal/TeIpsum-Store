@@ -29,7 +29,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "com.teipsum.shared.product"
+        spring.json.trusted.packages: "com.teipsum.shared.product,com.teipsum.shared.product.event,com.teipsum.shared.event"
     listener:
       type: single
       ack-mode: manual
