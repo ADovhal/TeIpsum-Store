@@ -14,6 +14,8 @@ import com.teipsum.authservice.security.JwtUtil;
 import com.teipsum.shared.exceptions.EmailExistsException;
 import com.teipsum.shared.exceptions.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +32,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    
+    private static final Logger logger = LogManager.getLogger(AuthService.class);
 
         private final UserCredentialsRepository userRepository;
         private final PasswordEncoder passwordEncoder;
@@ -130,6 +134,36 @@ public class AuthService {
                     request.dob(),
                     isAdmin
             ));
+        }
+
+        /**
+         * Deletes user credentials and all associated auth data
+         * Called when user account deletion is completed
+         */
+        @Transactional
+        public void deleteUserCredentials(String userId, String email) {
+            logger.info("Deleting user credentials for user: {} ({})", email, userId);
+
+            // Find user by ID
+            UserCredentials user = userRepository.findById(userId)
+                    .orElse(null);
+
+            if (user == null) {
+                logger.warn("User credentials not found for deletion: {} ({})", email, userId);
+                return;
+            }
+
+            // Verify email matches (additional security check)
+            if (!user.getEmail().equals(email)) {
+                logger.error("Email mismatch during deletion. Expected: {}, Found: {} for user: {}", 
+                           email, user.getEmail(), userId);
+                throw new IllegalStateException("Email mismatch during user deletion");
+            }
+
+            // Delete user credentials (this will cascade delete roles due to JPA relationships)
+            userRepository.delete(user);
+            
+            logger.info("Successfully deleted user credentials for: {} ({})", email, userId);
         }
 
 }
