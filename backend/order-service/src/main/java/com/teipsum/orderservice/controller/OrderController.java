@@ -2,6 +2,7 @@ package com.teipsum.orderservice.controller;
 
 import com.teipsum.orderservice.dto.OrderRequest;
 import com.teipsum.orderservice.dto.OrderResponse;
+import com.teipsum.orderservice.dto.UserOrderInfoResponse;
 import com.teipsum.orderservice.model.Order;
 import com.teipsum.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -159,5 +160,24 @@ public class OrderController {
                        @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getClaimAsString("userId"));
         service.cancel(id, userId);
+    }
+
+    @GetMapping("/user/{userId}/info")
+    @Operation(
+        summary = "Get user order information",
+        description = "Gets order count and active status for a user (internal service call)",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Order info retrieved",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserOrderInfoResponse.class)
+                )
+            )
+        }
+    )
+    public UserOrderInfoResponse getUserOrderInfo(@PathVariable UUID userId) {
+        return service.getUserOrderInfo(userId);
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <include resource="log4j2.xml"/>
+
+    <Appenders>
+        <RollingFile name="OrderEventsFile"
+                     fileName="${LOG_DIR}/${sys:service.name}-orders.log"
+                     filePattern="${LOG_DIR}/${sys:service.name}-orders-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{ISO8601} | ORDER_EVENT | %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="ORDER_EVENTS" level="info" additivity="false">
+            <AppenderRef ref="OrderEventsFile"/>
+            <Filters>
+                <MarkerFilter marker="IMPORTANT" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+            </Filters>
+        </Logger>
+        <Logger name="com.teipsum.orderservice" level="debug"/>
+    </Loggers>
+</Configuration>
