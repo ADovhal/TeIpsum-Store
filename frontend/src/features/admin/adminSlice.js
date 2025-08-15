@@ -66,7 +66,7 @@ export const createAdminUser = createAsyncThunk(
   'admin/createUser',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await adminUserAPI.createAdminUser(userData);
+      const response = await adminUserAPI.createUser(userData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to create admin user');

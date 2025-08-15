@@ -7,6 +7,7 @@ import { HeaderHeightContext } from '../../context/HeaderHeightContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import CartSidebar from '../../features/cart/components/CartSidebar';
+import AdminNavigationButton from '../Admin/AdminNavigationButton';
 import FireButton from '../../styles/FireButton';
 import styles from './Header.module.css';
 import logo from '../../assets/images/ActualLogo.png';
@@ -146,6 +147,7 @@ const Header = () => {
 
             {isAuthenticated ? (
               <div className={styles.userMenu}>
+                <AdminNavigationButton />
                 <Link to="/profile" className={styles.iconButton} onClick={closeMenu}>
                   <i className="fa fa-user" style={{ color: theme.textPrimary }}></i>
                 </Link>

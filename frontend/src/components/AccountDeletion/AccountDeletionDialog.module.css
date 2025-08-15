@@ -1,0 +1,417 @@
+/* Account Deletion Dialog Styles */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.dialog {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.content {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #dc2626;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.userInfo {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.userInfo h3 {
+  margin: 0 0 16px 0;
+  color: #374151;
+  font-size: 1.1rem;
+}
+
+.userInfo p {
+  margin: 8px 0;
+  color: #6b7280;
+}
+
+.orderWarning {
+  display: flex;
+  gap: 16px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.warningIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.orderWarning h4 {
+  margin: 0 0 8px 0;
+  color: #92400e;
+  font-size: 1.1rem;
+}
+
+.orderWarning p {
+  margin: 4px 0;
+  color: #92400e;
+}
+
+.activeOrdersWarning {
+  font-weight: 600;
+  color: #dc2626 !important;
+}
+
+.warning {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.warning p {
+  margin: 0;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.consequences {
+  margin-bottom: 20px;
+}
+
+.consequences h4 {
+  margin: 0 0 12px 0;
+  color: #374151;
+  font-size: 1.1rem;
+}
+
+.consequences ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #6b7280;
+}
+
+.consequences li {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.confirmationWarning {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.confirmationWarning h3 {
+  margin: 0 0 16px 0;
+  color: #dc2626;
+  font-size: 1.3rem;
+}
+
+.confirmationWarning p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 8px 0;
+}
+
+.dataLossWarning {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.dataLossWarning p {
+  margin: 0;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.alternativeOptions {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.alternativeOptions h4 {
+  margin: 0 0 12px 0;
+  color: #0369a1;
+}
+
+.alternativeOptions p {
+  margin: 0;
+  color: #0369a1;
+}
+
+.finalWarning {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.dangerIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.finalWarning h3 {
+  margin: 0 0 16px 0;
+  color: #dc2626;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.finalWarning p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.confirmationInput {
+  margin-bottom: 24px;
+}
+
+.confirmationInput label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.confirmInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: monospace;
+  text-align: center;
+  font-weight: 600;
+}
+
+.confirmInput:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.footer {
+  padding: 24px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.backButton,
+.cancelButton,
+.nextButton,
+.deleteButton {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.backButton {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.backButton:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.cancelButton {
+  background: #f9fafb;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.cancelButton:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.nextButton {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.nextButton:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.deleteButton {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.deleteButton:disabled,
+.nextButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e5e5;
+}
+
+.step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  background: #e5e7eb;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.step.active {
+  background: #dc2626;
+  color: white;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 10px;
+  }
+  
+  .dialog {
+    max-height: 95vh;
+  }
+  
+  .header,
+  .content,
+  .footer {
+    padding: 16px;
+  }
+  
+  .title {
+    font-size: 1.3rem;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .backButton,
+  .cancelButton,
+  .nextButton,
+  .deleteButton {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

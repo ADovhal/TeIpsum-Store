@@ -1,167 +1,372 @@
 import axios from 'axios';
-import productApi from './apiProduct';
+import apiAuth from './apiAuth';
+import { setAccessToken, logoutAsync } from '../features/auth/authSlice';
+
+let appStore;
+
+export const injectStore = (_store) => {
+  appStore = _store;
+};
 
 const apiAdmin = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Request interceptor to add auth token
 apiAdmin.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = appStore?.getState().auth.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling
 apiAdmin.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      window.location.href = '/login';
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const res = await apiAuth.post('/auth/refresh');
+        const newAccessToken = res.data.accessToken;
+        appStore?.dispatch(setAccessToken(newAccessToken));
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiAdmin(originalRequest);
+      } catch (refreshError) {
+        appStore?.dispatch(logoutAsync());
+        return Promise.reject(refreshError);
+      }
     }
+
     return Promise.reject(error);
   }
 );
 
-// Product Management API calls using the new productApi
+// ============== ADMIN USER MANAGEMENT FUNCTIONALITY ==============
+
+/**
+ * Registers a new admin user
+ */
+export const registerAdmin = async (adminData) => {
+  try {
+    const response = await apiAdmin.post('/auth/register_admin', adminData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+/**
+ * Gets list of all admin users (future feature)
+ */
+export const getAdminUsers = async () => {
+  try {
+    const response = await apiAdmin.get('/admin/users');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+/**
+ * Updates admin user permissions (future feature)
+ */
+export const updateAdminPermissions = async (userId, permissions) => {
+  try {
+    const response = await apiAdmin.put(`/admin/users/${userId}/permissions`, permissions);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+/**
+ * Deactivates an admin user (future feature)
+ */
+export const deactivateAdmin = async (userId) => {
+  try {
+    const response = await apiAdmin.put(`/admin/users/${userId}/deactivate`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+// ============== ADMIN PRODUCT MANAGEMENT FUNCTIONALITY ==============
+
+/**
+ * Product Management API calls for admin operations
+ */
 export const adminProductAPI = {
   // Get all products with filtering and pagination
-  getProducts: (params = {}) => {
-    return productApi.getAdminProducts(params);
-  },
-
-  // Get a single product by ID
-  getProduct: (id) => {
-    return productApi.getAdminProductById(id);
+  getProducts: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/products', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
   // Create a new product
-  createProduct: (productData) => {
-    return productApi.createProduct(productData);
+  createProduct: async (productData) => {
+    try {
+      const response = await apiAdmin.post('/admin/products', productData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
   // Update an existing product
-  updateProduct: (id, productData) => {
-    return productApi.updateProduct(id, productData);
+  updateProduct: async (productId, productData) => {
+    try {
+      const response = await apiAdmin.put(`/admin/products/${productId}`, productData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
   // Delete a product
-  deleteProduct: (id) => {
-    return productApi.deleteProduct(id);
+  deleteProduct: async (productId) => {
+    try {
+      const response = await apiAdmin.delete(`/admin/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Bulk operations
-  bulkDeleteProducts: (productIds) => {
-    return productApi.bulkDeleteProducts(productIds);
+  // Get product by ID for editing
+  getProductById: async (productId) => {
+    try {
+      const response = await apiAdmin.get(`/admin/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Health check
-  healthCheck: () => {
-    return productApi.healthCheck();
+  // Upload product images
+  uploadProductImages: async (productId, images) => {
+    try {
+      const formData = new FormData();
+      images.forEach((image, index) => {
+        formData.append(`images`, image);
+      });
+
+      const response = await apiAdmin.post(`/admin/products/${productId}/images`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Update product status (active/inactive)
+  updateProductStatus: async (productId, status) => {
+    try {
+      const response = await apiAdmin.patch(`/admin/products/${productId}/status`, { status });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 };
 
-// User Management API calls (for admin user creation)
+// ============== ADMIN USER MANAGEMENT API ==============
+
+/**
+ * User Management API calls for admin operations
+ */
 export const adminUserAPI = {
-  // Create a new admin user
-  createAdminUser: (userData) => {
-    return apiAdmin.post('/admin/users', userData);
+  // Get all users with filtering and pagination
+  getUsers: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/users', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Get all users
-  getUsers: (params = {}) => {
-    const { page = 0, size = 20, role } = params;
-    return apiAdmin.get('/admin/users', {
-      params: { page, size, role }
-    });
+  // Create a new user (admin creation)
+  createUser: async (userData) => {
+    try {
+      const response = await apiAdmin.post('/admin/users', userData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Update user role
-  updateUserRole: (userId, role) => {
-    return apiAdmin.put(`/admin/users/${userId}/role`, { role });
+  // Update user details
+  updateUser: async (userId, userData) => {
+    try {
+      const response = await apiAdmin.put(`/admin/users/${userId}`, userData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Delete user
-  deleteUser: (userId) => {
-    return apiAdmin.delete(`/admin/users/${userId}`);
+  // Delete/deactivate user
+  deleteUser: async (userId) => {
+    try {
+      const response = await apiAdmin.delete(`/admin/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Get user by ID
+  getUserById: async (userId) => {
+    try {
+      const response = await apiAdmin.get(`/admin/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Update user roles
+  updateUserRoles: async (userId, roles) => {
+    try {
+      const response = await apiAdmin.put(`/admin/users/${userId}/roles`, { roles });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 };
 
-// Order Management API calls
+// ============== ADMIN ORDER MANAGEMENT API ==============
+
+/**
+ * Order Management API calls for admin operations
+ */
 export const adminOrderAPI = {
-  // Get all orders
-  getOrders: (params = {}) => {
-    const { page = 0, size = 20, status, dateFrom, dateTo } = params;
-    return apiAdmin.get('/admin/orders', {
-      params: { page, size, status, dateFrom, dateTo }
-    });
+  // Get all orders with filtering and pagination
+  getOrders: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/orders', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Get order details
-  getOrder: (orderId) => {
-    return apiAdmin.get(`/admin/orders/${orderId}`);
+  // Get order by ID
+  getOrderById: async (orderId) => {
+    try {
+      const response = await apiAdmin.get(`/admin/orders/${orderId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
   // Update order status
-  updateOrderStatus: (orderId, status) => {
-    return apiAdmin.put(`/admin/orders/${orderId}/status`, { status });
+  updateOrderStatus: async (orderId, status) => {
+    try {
+      const response = await apiAdmin.patch(`/admin/orders/${orderId}/status`, { status });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Get order statistics
-  getOrderStats: (params = {}) => {
-    const { period = 'month' } = params;
-    return apiAdmin.get('/admin/orders/stats', {
-      params: { period }
-    });
+  // Cancel order
+  cancelOrder: async (orderId, reason) => {
+    try {
+      const response = await apiAdmin.patch(`/admin/orders/${orderId}/cancel`, { reason });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Process refund
+  processRefund: async (orderId, refundData) => {
+    try {
+      const response = await apiAdmin.post(`/admin/orders/${orderId}/refund`, refundData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 };
 
-// Analytics and Reports API calls
+// ============== ADMIN ANALYTICS API ==============
+
+/**
+ * Analytics API calls for admin operations
+ */
 export const adminAnalyticsAPI = {
   // Get sales analytics
-  getSalesAnalytics: (params = {}) => {
-    const { period = 'month', groupBy = 'day' } = params;
-    return apiAdmin.get('/admin/analytics/sales', {
-      params: { period, groupBy }
-    });
+  getSalesAnalytics: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/analytics/sales', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Get product performance
-  getProductPerformance: (params = {}) => {
-    const { period = 'month', limit = 10 } = params;
-    return apiAdmin.get('/admin/analytics/products', {
-      params: { period, limit }
-    });
+  // Get product performance analytics
+  getProductPerformance: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/analytics/products', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
   // Get user analytics
-  getUserAnalytics: (params = {}) => {
-    const { period = 'month' } = params;
-    return apiAdmin.get('/admin/analytics/users', {
-      params: { period }
-    });
+  getUserAnalytics: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/analytics/users', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Generate reports
-  generateReport: (reportType, params = {}) => {
-    return apiAdmin.post('/admin/reports/generate', {
-      reportType,
-      params
-    });
+  // Get revenue analytics
+  getRevenueAnalytics: async (params = {}) => {
+    try {
+      const response = await apiAdmin.get('/admin/analytics/revenue', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Get dashboard overview
+  getDashboardOverview: async () => {
+    try {
+      const response = await apiAdmin.get('/admin/analytics/dashboard');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 };
 
-export default apiAdmin; 
+export default apiAdmin;
