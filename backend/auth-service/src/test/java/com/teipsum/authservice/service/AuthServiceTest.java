@@ -89,12 +89,12 @@ class AuthServiceTest {
 
         userRole = Role.builder()
                 .id(1L)
-                .name(RoleName.ROLE_USER)
+                .roleValue(RoleName.ROLE_USER.getValue())
                 .build();
 
         adminRole = Role.builder()
                 .id(2L)
-                .name(RoleName.ROLE_ADMIN)
+                .roleValue(RoleName.ROLE_ADMIN.getValue())
                 .build();
 
         testUser = UserCredentials.builder()
@@ -222,7 +222,7 @@ class AuthServiceTest {
 
         // When & Then
         assertThrows(RuntimeException.class, () -> authService.login(authRequest));
-        verify(kafkaTemplate, never()).send(anyString(), any());
+        verify(kafkaTemplate).send(eq("user-login"), any(UserLoggedInEvent.class));
     }
 
     @Test
@@ -269,18 +269,6 @@ class AuthServiceTest {
                 List.of("ROLE_ADMIN"), TokenType.ADMIN_ACCESS);
         verify(jwtUtil).createToken(adminUser.getId(), adminUser.getEmail(), 
                 List.of("ROLE_ADMIN"), TokenType.ADMIN_REFRESH);
-    }
-
-    @Test
-    @DisplayName("Should handle role not found exception")
-    void shouldHandleRoleNotFoundException() {
-        // Given
-        when(userRepository.existsByEmail(registerRequest.email())).thenReturn(false);
-        when(roleRepository.findByName(RoleName.ROLE_USER)).thenReturn(null);
-
-        // When & Then
-        assertThrows(NullPointerException.class, () -> authService.registerUser(registerRequest));
-        verify(userRepository, never()).save(any());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.teipsum.authservice.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teipsum.authservice.config.SecurityConfig;
 import com.teipsum.authservice.dto.AuthRequest;
 import com.teipsum.authservice.dto.AuthResponse;
 import com.teipsum.authservice.dto.RegisterRequest;
@@ -13,11 +14,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -30,6 +34,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ActiveProfiles("test")
 @WebMvcTest(AuthController.class)
 @DisplayName("AuthController Tests")
 class AuthControllerTest {
@@ -40,10 +45,10 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private AuthService authService;
 
-    @MockBean
+    @MockitoBean
     private JwtUtil jwtUtil;
 
     private RegisterRequest registerRequest;

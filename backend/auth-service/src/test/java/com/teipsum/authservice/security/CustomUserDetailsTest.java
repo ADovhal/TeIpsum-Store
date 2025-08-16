@@ -24,12 +24,12 @@ class CustomUserDetailsTest {
     void setUp() {
         userRole = Role.builder()
                 .id(1L)
-                .name(RoleName.ROLE_USER)
+                .roleValue(RoleName.ROLE_USER.getValue())
                 .build();
 
         adminRole = Role.builder()
                 .id(2L)
-                .name(RoleName.ROLE_ADMIN)
+                .roleValue(RoleName.ROLE_ADMIN.getValue())
                 .build();
 
         testUser = UserCredentials.builder()
@@ -163,16 +163,6 @@ class CustomUserDetailsTest {
     @DisplayName("Should handle user with complex role structure")
     void shouldHandleUserWithComplexRoleStructure() {
         // Given
-        Role customRole1 = Role.builder()
-                .id(3L)
-                .name(RoleName.valueOf("ROLE_CUSTOM1"))
-                .build();
-        
-        Role customRole2 = Role.builder()
-                .id(4L)
-                .name(RoleName.valueOf("ROLE_CUSTOM2"))
-                .build();
-
         // This test assumes RoleName enum can be extended or mocked
         // In a real scenario, you might need to adjust based on actual enum values
         UserCredentials complexUser = UserCredentials.builder()

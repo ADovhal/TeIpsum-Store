@@ -40,12 +40,12 @@ class CustomUserDetailsServiceTest {
     void setUp() {
         userRole = Role.builder()
                 .id(1L)
-                .name(RoleName.ROLE_USER)
+                .roleValue(RoleName.ROLE_USER.getValue())
                 .build();
 
         adminRole = Role.builder()
                 .id(2L)
-                .name(RoleName.ROLE_ADMIN)
+                .roleValue(RoleName.ROLE_ADMIN.getValue())
                 .build();
 
         testUser = UserCredentials.builder()

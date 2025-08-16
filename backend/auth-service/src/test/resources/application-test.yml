@@ -1,9 +1,16 @@
+server:
+  port: 0
+
+cors:
+  allowed:
+    origins: "*"
+
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password: ""
   
   jpa:
     hibernate:
@@ -12,7 +19,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
+        show_sql: false
     show-sql: false
+    defer-datasource-initialization: true
   
   h2:
     console:
@@ -33,9 +42,20 @@ jwt:
   refresh-secret: test-refresh-secret-key-for-testing-purposes-must-be-very-long-to-be-secure
   admin-secret: test-admin-secret-key-for-testing-purposes-must-be-very-long-to-be-secure
   admin-refresh-secret: test-admin-refresh-secret-key-for-testing-purposes-must-be-very-long-to-be-secure
+  expiration: 3600
+
+security:
+  argon2:
+    hash-length: 32
+    salt-length: 16
+    parallelism: 1
+    memory: 4096
+    iterations: 3
 
 logging:
   level:
-    com.teipsum: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.teipsum: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.apache.kafka: OFF
+    org.hibernate: WARN

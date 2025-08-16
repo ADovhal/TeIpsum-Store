@@ -14,7 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @AutoConfigureWebMvc
 @ActiveProfiles("test")
 @Transactional
@@ -54,7 +56,7 @@ class AuthServiceIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @MockBean
+    @MockitoBean
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private MockMvc mockMvc;
@@ -68,10 +70,10 @@ class AuthServiceIntegrationTest {
 
         // Ensure roles exist
         if (!roleRepository.existsByName(RoleName.ROLE_USER)) {
-            roleRepository.save(Role.builder().name(RoleName.ROLE_USER).build());
+            roleRepository.save(Role.builder().roleValue(RoleName.ROLE_USER.getValue()).build());
         }
         if (!roleRepository.existsByName(RoleName.ROLE_ADMIN)) {
-            roleRepository.save(Role.builder().name(RoleName.ROLE_ADMIN).build());
+            roleRepository.save(Role.builder().roleValue(RoleName.ROLE_ADMIN.getValue()).build());
         }
     }
 
@@ -148,7 +150,7 @@ class AuthServiceIntegrationTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
-                .andExpected(status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(header().exists("Set-Cookie"));
     }
