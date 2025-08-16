@@ -14,4 +14,8 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
         return findByRoleValue(roleName.getValue())
                 .orElseThrow(() -> new RoleNotFoundException(roleName.name()));
     }
+
+    default boolean existsByName(RoleName roleName) {
+        return findByRoleValue(roleName.getValue()).isPresent();
+    }
 }
