@@ -33,9 +33,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/orders/guest").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().denyAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
