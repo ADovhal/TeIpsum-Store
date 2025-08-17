@@ -143,7 +143,7 @@ const AboutPage = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <h3>{t('sustainability')}</h3>
+              <h3>{t('sustainabilityHeader')}</h3>
               <p>{t('sustainabilityText')}</p>
             </motion.div>
 

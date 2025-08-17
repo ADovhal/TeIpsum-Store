@@ -203,7 +203,7 @@ const FAQPage = () => {
     { id: 'all', label: t('allQuestions') },
     { id: 'ordering', label: t('ordering') },
     { id: 'shipping', label: t('shipping') },
-    { id: 'returns', label: t('returns') },
+    { id: 'returns', label: t('returnsFAQ') },
     { id: 'sizing', label: t('sizing') },
     { id: 'care', label: t('productCare') },
     { id: 'account', label: t('account') }
@@ -233,104 +233,54 @@ const FAQPage = () => {
       category: 'shipping',
       question: t('internationalShipping'),
       answer: t('internationalShippingAnswer') + `
-      <p><strong>Important notes for international orders:</strong></p>
+      <p><strong>${t('importantNotesInternational')}</strong></p>
       <ul>
-        <li>Customers are responsible for any customs duties or taxes</li>
-        <li>Delivery times may vary due to customs processing</li>
-        <li>Some restrictions may apply to certain countries</li>
+        <li>${t('customersResponsibleDuties')}</li>
+        <li>${t('deliveryTimesVary')}</li>
+        <li>${t('someRestrictions')}</li>
       </ul>`
     },
     {
       id: 5,
       category: 'returns',
-      question: 'What is your return policy?',
-      answer: `<p>We offer a generous 30-day return policy:</p>
-      <ul>
-        <li>Items must be unworn, unwashed, and in original condition</li>
-        <li>All original tags must be attached</li>
-        <li>Returns are free for domestic orders</li>
-        <li>Refunds are processed within 5-7 business days</li>
-      </ul>
-      <p>Some items like underwear and earrings cannot be returned for hygiene reasons.</p>`
+      question: t('returnPolicyQuestion'),
+      answer: t('returnPolicyAnswer')
     },
     {
       id: 6,
       category: 'returns',
-      question: 'How do I return an item?',
-      answer: `<p>Returning items is simple:</p>
-      <ul>
-        <li>Email returns@teipsum.com with your order number</li>
-        <li>We'll send you a prepaid return label within 24 hours</li>
-        <li>Package your items and attach the return label</li>
-        <li>Drop off at any post office</li>
-      </ul>
-      <p>You'll receive an email confirmation once we receive and process your return.</p>`
+      question: t('howToReturnQuestion'),
+      answer: t('howToReturnAnswer')
     },
     {
       id: 7,
       category: 'sizing',
-      question: 'How do I find my size?',
-      answer: `<p>Getting the right fit is important to us:</p>
-      <ul>
-        <li>Check our detailed size guide on each product page</li>
-        <li>Measure yourself using our sizing instructions</li>
-        <li>Read customer reviews for fit insights</li>
-        <li>Contact our customer service for personalized sizing help</li>
-      </ul>
-      <p>If you're between sizes, we generally recommend sizing up for a more comfortable fit.</p>`
+      question: t('howToFindSizeQuestion'),
+      answer: t('howToFindSizeAnswer')
     },
     {
       id: 8,
       category: 'sizing',
-      question: 'What if my order doesn\'t fit?',
-      answer: `<p>No worries! We offer free exchanges for size issues:</p>
-      <ul>
-        <li>Size exchanges are processed within 3-5 business days</li>
-        <li>We'll send the new size as soon as we receive your return</li>
-        <li>Exchange shipping is free within Poland</li>
-      </ul>
-      <p>For faster service, you can order the correct size and return the wrong size separately.</p>`
+      question: t('orderDoesntFitQuestion'),
+      answer: t('orderDoesntFitAnswer')
     },
     {
       id: 9,
       category: 'care',
-      question: 'How should I care for my TeIpsum clothes?',
-      answer: `<p>Proper care will help your TeIpsum pieces last longer:</p>
-      <ul>
-        <li>Always check the care label on each garment</li>
-        <li>Wash in cold water when possible</li>
-        <li>Use gentle detergents and avoid bleach</li>
-        <li>Air dry or use low heat settings</li>
-        <li>Store hanging or folded properly</li>
-      </ul>
-      <p>For specific care instructions, refer to the product page or contact our customer service.</p>`
+      question: t('careClotheQuestion'),
+      answer: t('careClotheAnswer')
     },
     {
       id: 10,
       category: 'account',
-      question: 'Do I need an account to shop?',
-      answer: `<p>You can shop as a guest, but creating an account has benefits:</p>
-      <ul>
-        <li>Faster checkout for future orders</li>
-        <li>Order history and tracking</li>
-        <li>Exclusive member discounts</li>
-        <li>Early access to new collections</li>
-        <li>Personalized recommendations</li>
-      </ul>
-      <p>Creating an account is free and takes just a minute!</p>`
+      question: t('needAccountQuestion'),
+      answer: t('needAccountAnswer')
     },
     {
       id: 11,
       category: 'account',
-      question: 'How do I reset my password?',
-      answer: `<p>To reset your password:</p>
-      <ul>
-                        <li>Go to the login page and click "${t('forgotPassword')}"</li>
-        <li>Enter your email address</li>
-        <li>Check your email for reset instructions</li>
-        <li>Follow the link to create a new password</li>
-      </ul>
-      <p>If you don't receive the email, check your spam folder or contact support.</p>`
+      question: t('resetPasswordQuestion'),
+      answer: t('resetPasswordAnswer')
     }
   ];
 
@@ -359,11 +309,11 @@ const FAQPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Frequently Asked Questions
+          {t('faqTitle')}
         </Title>
         
         <Subtitle>
-          Find answers to common questions about TeIpsum. Can't find what you're looking for? Contact us!
+          {t('faqSubtitle')}
         </Subtitle>
 
         <SearchBox>
@@ -427,17 +377,17 @@ const FAQPage = () => {
 
         {filteredFAQs.length === 0 && (
           <div style={{ textAlign: 'center', padding: '40px', color: '#7f8c8d' }}>
-            <p>No questions found matching your search. Try different keywords or browse all categories.</p>
+            <p>{t('noQuestionsFound')}</p>
           </div>
         )}
 
         <ContactSection>
-          <ContactTitle>Still Need Help?</ContactTitle>
+          <ContactTitle>{t('stillNeedHelp')}</ContactTitle>
           <ContactText>
-            Our customer service team is here to help with any questions not covered here.
+            {t('customerServiceHelp')}
           </ContactText>
-          <ContactText>📧 support@teipsum.com | 📞 +48 123 456 789</ContactText>
-          <ContactText>🕒 Monday - Friday: 9 AM - 6 PM CET</ContactText>
+          <ContactText>{t('contactInfo')}</ContactText>
+          <ContactText>{t('workingHours')}</ContactText>
         </ContactSection>
       </ContentWrapper>
     </FAQContainer>

@@ -464,91 +464,91 @@ const BlogPage = () => {
   const blogPosts = [
     {
       id: 1,
-      title: "Sustainable Fashion: The Future is Here",
-      excerpt: "Discover how TeIpsum is leading the charge in sustainable fashion with eco-friendly materials and ethical production practices.",
+      title: t('blog.post1Title'),
+      excerpt: t('blog.post1Excerpt'),
       category: "sustainability",
-      author: "Emma Green",
-      date: "January 15, 2025",
+      author: t('blog.author1'),
+      date: t('blog.post1Date'),
       readTime: `5 ${t('minRead')}`,
       icon: "🌱"
     },
     {
       id: 2,
-      title: "Spring 2025 Color Trends",
-      excerpt: "Explore the vibrant colors that will define spring fashion this year, from soft pastels to bold earth tones.",
+      title: t('blog.post2Title'),
+      excerpt: t('blog.post2Excerpt'),
       category: "trends",
-      author: "Sofia Martinez",
-      date: "January 12, 2025",
+      author: t('blog.author2'),
+      date: t('blog.post2Date'),
       readTime: `4 ${t('minRead')}`,
       icon: "🎨"
     },
     {
       id: 3,
-      title: "How to Style Your Capsule Wardrobe",
-      excerpt: "Master the art of minimalist dressing with our guide to creating versatile outfits from essential pieces.",
+      title: t('blog.post3Title'),
+      excerpt: t('blog.post3Excerpt'),
       category: "style-tips",
-      author: "Alex Chen",
-      date: "January 10, 2025",
+      author: t('blog.author3'),
+      date: t('blog.post3Date'),
       readTime: `6 ${t('minRead')}`,
       icon: "👔"
     },
     {
       id: 4,
-      title: "TeIpsum Opens New Flagship Store",
-      excerpt: "We're excited to announce the opening of our new flagship store in Warsaw, featuring our complete collection and personalized styling services.",
+      title: t('blog.post4Title'),
+      excerpt: t('blog.post4Excerpt'),
       category: "company",
-      author: "TeIpsum Team",
-      date: "January 8, 2025",
+      author: t('blog.author4'),
+      date: t('blog.post4Date'),
       readTime: `3 ${t('minRead')}`,
       icon: "🏪"
     },
     {
       id: 5,
-      title: "The Art of Layering in Winter",
-      excerpt: "Stay warm and stylish with our expert tips on layering techniques that work for any winter occasion.",
+      title: t('blog.post5Title'),
+      excerpt: t('blog.post5Excerpt'),
       category: "style-tips",
-      author: "Maya Patel",
-      date: "January 5, 2025",
+      author: t('blog.author5'),
+      date: t('blog.post5Date'),
       readTime: `5 ${t('minRead')}`,
       icon: "🧥"
     },
     {
       id: 6,
-      title: "Behind the Scenes: Our Design Process",
-      excerpt: "Take a peek into our creative process and see how our designers bring sustainable fashion concepts to life.",
+      title: t('blog.post6Title'),
+      excerpt: t('blog.post6Excerpt'),
       category: "fashion",
-      author: "Design Team",
-      date: "January 3, 2025",
+      author: t('blog.author6'),
+      date: t('blog.post6Date'),
       readTime: `7 ${t('minRead')}`,
       icon: "✏️"
     },
     {
       id: 7,
-      title: "Denim Decoded: Finding Your Perfect Fit",
-      excerpt: "From skinny to wide-leg, discover which denim styles work best for your body type and personal style.",
+      title: t('blog.post7Title'),
+      excerpt: t('blog.post7Excerpt'),
       category: "style-tips",
-      author: "Jordan Blake",
-      date: "December 28, 2024",
+      author: t('blog.author7'),
+      date: t('blog.post7Date'),
       readTime: `4 ${t('minRead')}`,
       icon: "👖"
     },
     {
       id: 8,
-      title: "Circular Fashion: Our Recycling Initiative",
-      excerpt: "Learn about our new take-back program and how we're turning old garments into new sustainable fashion pieces.",
+      title: t('blog.post8Title'),
+      excerpt: t('blog.post8Excerpt'),
       category: "sustainability",
-      author: "Environmental Team",
-      date: "December 25, 2024",
+      author: t('blog.author8'),
+      date: t('blog.post8Date'),
       readTime: `6 ${t('minRead')}`,
       icon: "♻️"
     },
     {
       id: 9,
-      title: "Accessorizing 101: Small Details, Big Impact",
-      excerpt: "Transform any outfit with the right accessories. Our styling experts share their top tips for accessory mastery.",
+      title: t('blog.post9Title'),
+      excerpt: t('blog.post9Excerpt'),
       category: "style-tips",
-      author: "Styling Team",
-      date: "December 22, 2024",
+      author: t('blog.author9'),
+      date: t('blog.post9Date'),
       readTime: `5 ${t('minRead')}`,
       icon: "💎"
     }
@@ -606,11 +606,11 @@ const BlogPage = () => {
     <BlogContainer>
       <SEO
         title={t('blogTitle')}
-        description="Stay updated with the latest fashion trends, sustainability news, style tips, and behind-the-scenes stories from TeIpsum. Discover sustainable fashion insights and expert advice."
-        keywords="fashion blog, style tips, sustainable fashion trends, fashion news, TeIpsum blog, fashion advice, sustainability fashion, eco-friendly fashion tips"
+        description={t('blog.description')}
+        keywords={t('blog.keywords')}
         canonicalUrl="/blog"
         image="/images/teipsum-blog.jpg"
-        imageAlt="TeIpsum Fashion Blog - Trends and Sustainability"
+        imageAlt={t('blog.imageAlt')}
         type="blog"
         structuredData={blogPageStructuredData}
       />
@@ -625,8 +625,7 @@ const BlogPage = () => {
             TeIpsum {t('blog')}
           </Title>
           <Subtitle>
-            Stay updated with the latest fashion trends, sustainability news, style tips, 
-            and behind-the-scenes stories from the TeIpsum team.
+            {t('blog.subtitle')}
           </Subtitle>
         </HeroSection>
 
@@ -708,8 +707,8 @@ const BlogPage = () => {
             borderRadius: '20px',
             color: '#7f8c8d'
           }}>
-            <h3>No articles found</h3>
-            <p>Try selecting a different category or check back later for new content.</p>
+            <h3>{t('blog.noArticles')}</h3>
+            <p>{t('blog.tryDifferentCategory')}</p>
           </div>
         )}
       </ContentWrapper>

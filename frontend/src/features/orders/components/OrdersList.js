@@ -270,7 +270,7 @@ const OrdersListComponent = () => {
 
   const getStatusText = (status) => {
     const statusMap = {
-      'processing': t('processing') || 'Processing',
+      'processing': t('orderProcessing') || 'Processing',
       'shipped': t('shipped') || 'Shipped',
       'delivered': t('delivered') || 'Delivered',
       'cancelled': 'Cancelled'

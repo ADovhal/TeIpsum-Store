@@ -139,9 +139,11 @@ const HighlightText = styled.p`
 `;
 
 const ShippingPage = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
-    document.title = "Shipping Information - TeIpsum";
-  }, []);
+    document.title = `${t('shippingTitle')} - TeIpsum`;
+  }, [t]);
 
   return (
     <ShippingContainer>
@@ -151,11 +153,11 @@ const ShippingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Shipping Information
+          {t('shippingPage.title')}
         </Title>
         
         <Subtitle>
-          Fast, reliable delivery options to get your TeIpsum pieces to you safely and quickly.
+          {t('shippingPage.subtitle')}
         </Subtitle>
 
         <Section
@@ -163,33 +165,33 @@ const ShippingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>Delivery Options</SectionTitle>
+          <SectionTitle>{t('shippingPage.shippingOptions')}</SectionTitle>
           <InfoGrid>
             <InfoCard>
-              <InfoTitle>🚚 Standard Delivery</InfoTitle>
+              <InfoTitle>🚚 {t('shippingPage.standardShipping')}</InfoTitle>
               <InfoText>
-                <strong>3-5 business days</strong><br/>
-                Perfect for regular orders with no rush. Your items will be carefully packaged and delivered to your doorstep.
+                <strong>{t('shippingPage.standardTime')}</strong><br/>
+                {t('shippingPage.standardDesc')}
               </InfoText>
-              <InfoText><strong>Tracking:</strong> Full tracking provided</InfoText>
+              <InfoText><strong>{t('shippingPage.trackingInfo')}:</strong> {t('shippingPage.fullTracking')}</InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>⚡ Express Delivery</InfoTitle>
+              <InfoTitle>⚡ {t('shippingPage.expressShipping')}</InfoTitle>
               <InfoText>
-                <strong>1-2 business days</strong><br/>
-                When you need your TeIpsum pieces quickly. Priority handling and expedited shipping.
+                <strong>{t('shippingPage.expressTime')}</strong><br/>
+                {t('shippingPage.expressDesc')}
               </InfoText>
-              <InfoText><strong>Tracking:</strong> Real-time tracking updates</InfoText>
+              <InfoText><strong>{t('shippingPage.trackingInfo')}:</strong> {t('shippingPage.realtimeTracking')}</InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>🌍 International Shipping</InfoTitle>
+              <InfoTitle>🌍 {t('shippingPage.internationalShipping')}</InfoTitle>
               <InfoText>
-                <strong>7-14 business days</strong><br/>
-                We ship worldwide! Delivery times vary by destination. All customs fees are the customer's responsibility.
+                <strong>{t('shippingPage.internationalTime')}</strong><br/>
+                {t('shippingPage.internationalDesc')}
               </InfoText>
-              <InfoText><strong>Tracking:</strong> International tracking included</InfoText>
+              <InfoText><strong>{t('shippingPage.trackingInfo')}:</strong> {t('shippingPage.internationalTracking')}</InfoText>
             </InfoCard>
           </InfoGrid>
         </Section>
@@ -199,34 +201,34 @@ const ShippingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>Shipping Costs</SectionTitle>
+          <SectionTitle>{t('shippingPage.shippingCost')}</SectionTitle>
           <PriceTable>
             <thead>
               <tr>
-                <TableHeader>Delivery Type</TableHeader>
-                <TableHeader>Order Value</TableHeader>
-                <TableHeader>Cost</TableHeader>
+                <TableHeader>{t('shippingPage.deliveryType')}</TableHeader>
+                <TableHeader>{t('shippingPage.orderValue')}</TableHeader>
+                <TableHeader>{t('shippingPage.cost')}</TableHeader>
               </tr>
             </thead>
             <tbody>
               <TableRow>
-                <TableCell>Standard Delivery</TableCell>
-                <TableCell>Under $75</TableCell>
+                <TableCell>{t('shippingPage.standardShipping')}</TableCell>
+                <TableCell>{t('shippingPage.under75')}</TableCell>
                 <TableCell>$8.99</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Standard Delivery</TableCell>
-                <TableCell>$75 and above</TableCell>
-                <TableCell>FREE</TableCell>
+                <TableCell>{t('shippingPage.standardShipping')}</TableCell>
+                <TableCell>{t('shippingPage.above75')}</TableCell>
+                <TableCell>{t('shippingPage.freeShipping')}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Express Delivery</TableCell>
-                <TableCell>Any value</TableCell>
+                <TableCell>{t('shippingPage.expressShipping')}</TableCell>
+                <TableCell>{t('shippingPage.anyValue')}</TableCell>
                 <TableCell>$15.99</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>International</TableCell>
-                <TableCell>Any value</TableCell>
+                <TableCell>{t('shippingPage.international')}</TableCell>
+                <TableCell>{t('shippingPage.anyValue')}</TableCell>
                 <TableCell>$25.99+</TableCell>
               </TableRow>
             </tbody>
@@ -234,7 +236,7 @@ const ShippingPage = () => {
 
           <HighlightBox>
             <HighlightText>
-              🎉 FREE Standard Shipping on all orders over $75!
+              🎉 {t('shippingPage.freeShippingPromo')}
             </HighlightText>
           </HighlightBox>
         </Section>
@@ -244,19 +246,19 @@ const ShippingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>Processing & Packaging</SectionTitle>
+          <SectionTitle>{t('shippingPage.processingAndPackaging')}</SectionTitle>
           <InfoGrid>
             <InfoCard>
-              <InfoTitle>📦 Order Processing</InfoTitle>
+              <InfoTitle>📦 {t('shippingPage.orderProcessing')}</InfoTitle>
               <InfoText>
-                All orders are processed within 1-2 business days. Orders placed after 2 PM Friday will be processed the following Monday.
+                {t('shippingPage.processingDesc')}
               </InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>🎁 Sustainable Packaging</InfoTitle>
+              <InfoTitle>🎁 {t('shippingPage.sustainablePackaging')}</InfoTitle>
               <InfoText>
-                We use eco-friendly packaging materials. Your items arrive in recyclable boxes with minimal environmental impact.
+                {t('shippingPage.packagingDesc')}
               </InfoText>
             </InfoCard>
           </InfoGrid>
@@ -267,21 +269,21 @@ const ShippingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <SectionTitle>Important Notes</SectionTitle>
+          <SectionTitle>{t('shippingPage.importantNotes')}</SectionTitle>
           <InfoText>
-            • Delivery times are estimates and may be affected by weather or other unforeseen circumstances
+            • {t('shippingPage.note1')}
           </InfoText>
           <InfoText>
-            • P.O. Box addresses are not accepted for Express Delivery
+            • {t('shippingPage.note2')}
           </InfoText>
           <InfoText>
-            • Signature confirmation may be required for orders over $200
+            • {t('shippingPage.note3')}
           </InfoText>
           <InfoText>
-            • International customers are responsible for any customs duties or taxes
+            • {t('shippingPage.note4')}
           </InfoText>
           <InfoText>
-            • We ship Monday through Friday, excluding holidays
+            • {t('shippingPage.note5')}
           </InfoText>
         </Section>
       </ContentWrapper>

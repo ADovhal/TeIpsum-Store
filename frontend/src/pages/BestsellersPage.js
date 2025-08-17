@@ -204,10 +204,10 @@ const BestsellersPage = () => {
 
   // Mock bestseller stats
   const stats = [
-    { number: '500+', label: 'Happy Customers' },
-    { number: '50+', label: 'Bestselling Items' },
-    { number: '4.8★', label: 'Average Rating' },
-    { number: '98%', label: 'Satisfaction Rate' }
+    { number: '500+', label: t('bestsellers.customerFavorite') },
+    { number: '50+', label: t('bestsellers.topRated') },
+    { number: '4.8★', label: t('averageRating') },
+    { number: '98%', label: t('satisfactionRate') }
   ];
 
   return (
@@ -219,11 +219,10 @@ const BestsellersPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {t('bestsellersTitle')}
+            {t('bestsellers.title')}
           </Title>
           <Subtitle>
-            Discover the most loved pieces by our customers. These top-rated items have earned their place 
-            as favorites through exceptional quality, style, and customer satisfaction.
+            {t('bestsellers.description')}
           </Subtitle>
         </HeaderSection>
 
@@ -249,40 +248,40 @@ const BestsellersPage = () => {
         >
           <FilterSection>
             <FilterGroup>
-              <FilterLabel>Filter by:</FilterLabel>
+              <FilterLabel>{t('filterBy')}:</FilterLabel>
               <FilterSelect
                 value={filters.category}
                 onChange={(e) => handleFilterChange('category', e.target.value)}
               >
-                <option value="">All Categories</option>
-                <option value="MENS_CLOTHING">Men's Clothing</option>
-                <option value="WOMENS_CLOTHING">Women's Clothing</option>
-                <option value="KIDS_CLOTHING">Kids' Clothing</option>
-                <option value="ACCESSORIES">Accessories</option>
-                <option value="SHOES">Shoes</option>
+                <option value="">{t('allCategories')}</option>
+                <option value="TOPS">{t('category.tops')}</option>
+                <option value="BOTTOMS">{t('category.bottoms')}</option>
+                <option value="DRESSES_SKIRTS">{t('category.dressesSkirts')}</option>
+                <option value="OUTERWEAR">{t('category.outerwear')}</option>
+                <option value="SHOES">{t('category.shoes')}</option>
               </FilterSelect>
 
               <FilterSelect
                 value={filters.gender}
                 onChange={(e) => handleFilterChange('gender', e.target.value)}
               >
-                <option value="">All Genders</option>
-                <option value="MEN">Men</option>
-                <option value="WOMEN">Women</option>
-                <option value="UNISEX">Unisex</option>
+                <option value="">{t('allGenders')}</option>
+                <option value="MEN">{t('gender.men')}</option>
+                <option value="WOMEN">{t('gender.women')}</option>
+                <option value="UNISEX">{t('gender.unisex')}</option>
               </FilterSelect>
             </FilterGroup>
 
             <FilterGroup>
-              <FilterLabel>Sort by:</FilterLabel>
+              <FilterLabel>{t('sortBy')}:</FilterLabel>
               <FilterSelect
                 value={filters.sortBy}
                 onChange={(e) => handleFilterChange('sortBy', e.target.value)}
               >
-                <option value="popularity">Most Popular</option>
-                <option value="rating">Highest Rated</option>
-                <option value="price">Price: Low to High</option>
-                <option value="title">Name A-Z</option>
+                <option value="popularity">{t('mostPopular')}</option>
+                <option value="rating">{t('highestRated')}</option>
+                <option value="price">{t('priceLowToHigh')}</option>
+                <option value="title">{t('nameAZ')}</option>
               </FilterSelect>
             </FilterGroup>
           </FilterSection>
@@ -295,20 +294,20 @@ const BestsellersPage = () => {
         >
           <ProductsSection>
             <h2 style={{ color: '#2c3e50', marginBottom: '20px', fontSize: '1.8rem' }}>
-              Top Selling Products
+              {t('topSellingProducts')}
             </h2>
             
             {loading && (
               <LoadingContainer>
-                Loading bestsellers...
+                {t('loading')}...
               </LoadingContainer>
             )}
 
             {error && (
               <EmptyState>
                 <EmptyIcon>⚠️</EmptyIcon>
-                <h3>Error loading products</h3>
-                <p>Please try again later</p>
+                <h3>{t('errorLoadingProducts')}</h3>
+                <p>{t('pleaseTryAgainLater')}</p>
               </EmptyState>
             )}
 
@@ -330,8 +329,8 @@ const BestsellersPage = () => {
             {!loading && !error && (!Array.isArray(products) || products.length === 0) && (
               <EmptyState>
                 <EmptyIcon>🔍</EmptyIcon>
-                <h3>No bestsellers found</h3>
-                <p>Try adjusting your filters or check back later for new arrivals.</p>
+                <h3>{t('noBestsellersFound')}</h3>
+                <p>{t('tryAdjustingFilters')}</p>
               </EmptyState>
             )}
           </ProductsSection>

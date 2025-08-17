@@ -331,7 +331,31 @@ const NewCollectionPage = () => {
     fetchNewCollection();
   }, [filters, page, sortBy, dispatch]);
 
+  const getAvailableGenders = (category) => {
+    if (!category) {
+      return ['MEN', 'WOMEN', 'BOYS', 'GIRLS', 'BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+    }
+    
+    if (category === 'KIDS') {
+      return ['BOYS', 'GIRLS', 'UNISEX'];
+    } else if (category === 'BABY') {
+      return ['BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+    } else {
+      return ['MEN', 'WOMEN', 'UNISEX'];
+    }
+  };
+
   const handleFilterChange = (updatedFilters) => {
+    // If category is being changed, check if we need to reset gender
+    if (updatedFilters.category !== undefined) {
+      const availableGenders = getAvailableGenders(updatedFilters.category);
+      const currentGender = filters.gender;
+      
+      if (currentGender && !availableGenders.includes(currentGender)) {
+        updatedFilters.gender = '';
+      }
+    }
+    
     setFilters((prevFilters) => ({ ...prevFilters, ...updatedFilters }));
     setPage(0);
   };
@@ -396,11 +420,9 @@ const NewCollectionPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.6 }}
       >
-        <DescriptionTitle>Summer 2025 Collection</DescriptionTitle>
+        <DescriptionTitle>{t('newCollection.title')}</DescriptionTitle>
         <DescriptionText>
-          Our latest collection embodies the spirit of modern elegance with sustainable materials, 
-          innovative designs, and timeless aesthetics. Each piece is crafted with attention to detail 
-          and a commitment to quality that defines the TeIpsum brand.
+          {t('newCollection.description')}
         </DescriptionText>
         <CollectionStats>
           <StatItem>
@@ -413,11 +435,11 @@ const NewCollectionPage = () => {
           </StatItem>
           <StatItem>
             <StatNumber>100%</StatNumber>
-            <StatLabel>Sustainable</StatLabel>
+            <StatLabel>{t('newCollection.sustainableMade')}</StatLabel>
           </StatItem>
           <StatItem>
             <StatNumber>24/7</StatNumber>
-            <StatLabel>Support</StatLabel>
+            <StatLabel>{t('customerService')}</StatLabel>
           </StatItem>
         </CollectionStats>
       </CollectionDescription>
@@ -431,24 +453,39 @@ const NewCollectionPage = () => {
               onChange={(e) => handleFilterChange({ category: e.target.value })}
             >
               <option value="">{t('allCategories')}</option>
-              <option value="MENS_CLOTHING">Men's Clothing</option>
-              <option value="WOMENS_CLOTHING">Women's Clothing</option>
-              <option value="KIDS_CLOTHING">Kids' Clothing</option>
-              <option value="ACCESSORIES">Accessories</option>
-              <option value="SHOES">Shoes</option>
+              <option value="TOPS">{t('categoryFilter.tops')}</option>
+              <option value="BOTTOMS">{t('categoryFilter.bottoms')}</option>
+              <option value="DRESSES_SKIRTS">{t('categoryFilter.dressesSkirts')}</option>
+              <option value="OUTERWEAR">{t('categoryFilter.outerwear')}</option>
+              <option value="UNDERWEAR_SLEEPWEAR">{t('categoryFilter.underwearSleepwear')}</option>
+              <option value="ACTIVEWEAR">{t('categoryFilter.activewear')}</option>
+              <option value="SWIMWEAR">{t('categoryFilter.swimwear')}</option>
+              <option value="SHOES">{t('categoryFilter.shoes')}</option>
+              <option value="ACCESSORIES">{t('categoryFilter.accessories')}</option>
+              <option value="BAGS">{t('categoryFilter.bags')}</option>
+              <option value="JEWELRY">{t('categoryFilter.jewelry')}</option>
+              <option value="KIDS">{t('categoryFilter.kids')}</option>
+              <option value="BABY">{t('categoryFilter.baby')}</option>
             </FilterSelect>
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>{t('gender')}</FilterLabel>
+            <FilterLabel>{t('genderLabel')}</FilterLabel>
             <FilterSelect 
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
             >
               <option value="">{t('allGenders')}</option>
-              <option value="MEN">{t('men')}</option>
-              <option value="WOMEN">{t('women')}</option>
-              <option value="UNISEX">{t('unisex')}</option>
+              {getAvailableGenders(filters.category).map(gender => {
+                const translationKey = gender.toLowerCase()
+                  .replace('baby_boy', 'babyBoy')
+                  .replace('baby_girl', 'babyGirl');
+                return (
+                  <option key={gender} value={gender}>
+                    {t(`gender.${translationKey}`)}
+                  </option>
+                );
+              })}
             </FilterSelect>
           </FilterGroup>
 
@@ -458,7 +495,7 @@ const NewCollectionPage = () => {
               value={filters.maxPrice} 
               onChange={(e) => handleFilterChange({ maxPrice: parseInt(e.target.value) || 1000 })}
             >
-              <option value="1000">Any Price</option>
+              <option value="1000">{t('anyPrice')}</option>
               <option value="50">{t('to')} $50</option>
               <option value="100">{t('to')} $100</option>
               <option value="200">{t('to')} $200</option>
@@ -477,7 +514,7 @@ const NewCollectionPage = () => {
       <ProductsSection>
         <ResultsInfo>
           <ResultsCount>
-            {loading ? 'Loading...' : `${products?.length || 0} new items found`}
+            {loading ? t('loading') : t('newItemsFound', { count: products?.length || 0 })}
           </ResultsCount>
           <CustomSelect
             value={sortBy}
@@ -494,13 +531,13 @@ const NewCollectionPage = () => {
 
         {loading && (
           <LoadingContainer>
-            <div>Loading new collection...</div>
+            <div>{t('loading')}...</div>
           </LoadingContainer>
         )}
 
         {error && (
           <ErrorContainer>
-            <div>Error loading products: {error}</div>
+            <div>{t('errorLoadingProducts')}: {error}</div>
           </ErrorContainer>
         )}
 
@@ -522,9 +559,9 @@ const NewCollectionPage = () => {
             ) : (
               <EmptyState>
                 <EmptyStateIcon>🌟</EmptyStateIcon>
-                <EmptyStateTitle>No new items found</EmptyStateTitle>
+                <EmptyStateTitle>{t('noNewItemsFound')}</EmptyStateTitle>
                 <EmptyStateText>
-                  Check back soon for our latest collection updates.
+                  {t('checkBackSoon')}
                 </EmptyStateText>
               </EmptyState>
             )}
@@ -537,16 +574,16 @@ const NewCollectionPage = () => {
               onClick={handlePreviousPage} 
               disabled={page === 0}
             >
-              Previous
+              {t('previous')}
             </PaginationButton>
             <PageInfo>
-              Page {page + 1} of {totalPages}
+              {t('pageInfo', { current: page + 1, total: totalPages })}
             </PageInfo>
             <PaginationButton 
               onClick={handleNextPage} 
               disabled={page >= totalPages - 1}
             >
-              Next
+              {t('next')}
             </PaginationButton>
           </PaginationContainer>
         )}

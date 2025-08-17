@@ -255,123 +255,123 @@ const CareersPage = () => {
   const companyValues = [
     {
       icon: "💡",
-      title: "Innovation",
-      description: "We embrace creativity and fresh ideas. Every team member is encouraged to think outside the box and contribute to our innovative culture."
+      title: t('careers.innovation'),
+      description: t('careers.innovationDesc')
     },
     {
       icon: "🤝",
-      title: "Collaboration",
-      description: "We believe in the power of teamwork. Open communication and mutual support drive our success as a fashion-forward company."
+      title: t('careers.collaboration'),
+      description: t('careers.collaborationDesc')
     },
     {
       icon: "🌱",
-      title: "Growth",
-      description: "Personal and professional development is at our core. We provide opportunities for learning, advancement, and skill building."
+      title: t('careers.growth'),
+      description: t('careers.growthDesc')
     },
     {
       icon: "🎯",
-      title: "Excellence",
-      description: "We strive for quality in everything we do, from our products to our customer service and workplace culture."
+      title: t('careers.excellence'),
+      description: t('careers.excellenceDesc')
     },
     {
       icon: "🌍",
-      title: "Sustainability",
-      description: "Environmental responsibility guides our decisions. We're committed to sustainable fashion and business practices."
+      title: t('careers.sustainabilityValue'),
+      description: t('careers.sustainabilityValueDesc')
     },
     {
       icon: "❤️",
-      title: "Passion",
-      description: "We love what we do and it shows. Our passion for fashion and customer satisfaction drives everything we create."
+      title: t('careers.passion'),
+      description: t('careers.passionDesc')
     }
   ];
 
   const jobOpenings = [
     {
       id: 1,
-      title: "Senior Frontend Developer",
-      department: "Technology",
-      type: "Full-time",
-      location: "Remote",
-      description: "Join our tech team to build amazing user experiences for our e-commerce platform. Work with React, TypeScript, and modern web technologies.",
+      title: t('careers.seniorFrontendDev'),
+      department: t('careers.technology'),
+      type: t('careers.fullTime'),
+      location: t('careers.remote'),
+      description: t('careers.frontendDevDesc'),
       requirements: [
-        "5+ years of React development experience",
-        "Strong TypeScript and JavaScript skills",
-        "Experience with e-commerce platforms",
-        "Knowledge of responsive design and accessibility",
-        "Familiarity with Redux and modern state management"
+        t('careers.req1'),
+        t('careers.req2'),
+        t('careers.req3'),
+        t('careers.req4'),
+        t('careers.req5')
       ]
     },
     {
       id: 2,
-      title: "Fashion Designer",
-      department: "Design",
-      type: "Full-time",
+      title: t('careers.fashionDesigner'),
+      department: t('careers.design'),
+      type: t('careers.fullTime'),
       location: "Łódź, Poland",
-      description: "Create innovative and sustainable fashion designs that align with our brand vision. Lead seasonal collections and trend research.",
+      description: t('careers.fashionDesignerDesc'),
       requirements: [
-        "Bachelor's degree in Fashion Design",
-        "3+ years of fashion design experience",
-        "Proficiency in design software (Illustrator, Photoshop)",
-        "Understanding of sustainable fashion practices",
-        "Strong portfolio demonstrating creativity and technical skills"
+        t('careers.req6'),
+        t('careers.req7'),
+        t('careers.req8'),
+        t('careers.req9'),
+        t('careers.req10')
       ]
     },
     {
       id: 3,
-      title: "Digital Marketing Specialist",
-      department: "Marketing",
-      type: "Full-time",
-      location: "Hybrid",
-      description: "Drive our digital marketing initiatives across social media, email, and paid advertising channels. Focus on brand awareness and customer acquisition.",
+      title: t('careers.digitalMarketing'),
+      department: t('careers.marketing'),
+      type: t('careers.fullTime'),
+      location: t('careers.hybrid'),
+      description: t('careers.digitalMarketingDesc'),
       requirements: [
-        "Bachelor's degree in Marketing or related field",
-        "2+ years of digital marketing experience",
-        "Experience with Google Ads, Facebook Ads, and analytics tools",
-        "Strong content creation and copywriting skills",
-        "Knowledge of fashion industry trends"
+        t('careers.req11'),
+        t('careers.req12'),
+        t('careers.req13'),
+        t('careers.req14'),
+        t('careers.req15')
       ]
     },
     {
       id: 4,
-      title: "Customer Service Representative",
-      department: "Customer Service",
-      type: "Part-time",
-      location: "Remote",
-      description: "Provide exceptional customer support through various channels. Help customers with orders, returns, and product inquiries.",
+      title: t('careers.customerServiceRep'),
+      department: t('careers.customerServiceDept'),
+      type: t('careers.partTime'),
+      location: t('careers.remote'),
+      description: t('careers.customerServiceDesc'),
       requirements: [
-        "Excellent communication skills in English and Polish",
-        "Previous customer service experience preferred",
-        "Strong problem-solving abilities",
-        "Familiarity with e-commerce platforms",
-        "Flexible schedule availability"
+        t('careers.req16'),
+        t('careers.req17'),
+        t('careers.req18'),
+        t('careers.req19'),
+        t('careers.req20')
       ]
     },
     {
       id: 5,
-      title: "Supply Chain Coordinator",
-      department: "Operations",
-      type: "Full-time",
+      title: t('careers.supplyChainCoord'),
+      department: t('careers.operations'),
+      type: t('careers.fullTime'),
       location: "Łódź, Poland",
-      description: "Manage supplier relationships and optimize our supply chain processes. Ensure timely delivery and quality standards.",
+      description: t('careers.supplyChainDesc'),
       requirements: [
-        "Bachelor's degree in Supply Chain Management or related field",
-        "2+ years of supply chain experience",
-        "Strong analytical and organizational skills",
-        "Experience with inventory management systems",
-        "Knowledge of sustainable sourcing practices"
+        t('careers.req21'),
+        t('careers.req22'),
+        t('careers.req24'),
+        t('careers.req22'),
+        t('careers.req23')
       ]
     }
   ];
 
   const benefits = [
-    { icon: "💰", text: "Competitive salary and bonuses" },
-    { icon: "🏥", text: "Comprehensive health insurance" },
-    { icon: "🏖️", text: "25 days paid vacation" },
-    { icon: "🏠", text: "Remote work flexibility" },
-    { icon: "📚", text: "Learning and development budget" },
-    { icon: "👕", text: "Employee clothing discount" },
-    { icon: "☕", text: "Free coffee and snacks" },
-    { icon: "🎉", text: "Team events and celebrations" }
+    { icon: "💰", text: t('careers.competitiveSalary') },
+    { icon: "🏥", text: t('careers.healthInsurance') },
+    { icon: "🏖️", text: t('careers.paidTimeOff') },
+    { icon: "🏠", text: t('careers.workFromHome') },
+    { icon: "📚", text: t('careers.learningBudget') },
+    { icon: "👕", text: t('careers.employeeDiscount') },
+    { icon: "☕", text: t('careers.freeSnacks') },
+    { icon: "🎉", text: t('careers.teamEvents') }
   ];
 
   const filteredJobs = jobOpenings.filter(job => {
@@ -382,7 +382,7 @@ const CareersPage = () => {
 
   const handleApply = (jobTitle) => {
     // In a real application, this would redirect to an application form or email
-    alert(`Thank you for your interest in the ${jobTitle} position! Please send your resume to careers@teipsum.com`);
+    alert(`${t('careers.applyThankYou')} ${jobTitle} ${t('careers.applyInstructions')}`);
   };
 
   return (
@@ -397,8 +397,7 @@ const CareersPage = () => {
             {t('careersTitle')}
           </Title>
           <Subtitle>
-            Build your career with TeIpsum and help shape the future of sustainable fashion. 
-            We're looking for passionate individuals who share our values and vision.
+            {t('careers.subtitle')}
           </Subtitle>
         </HeroSection>
 
@@ -407,7 +406,7 @@ const CareersPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>Our Values</SectionTitle>
+          <SectionTitle>{t('careers.ourValues')}</SectionTitle>
           <ValuesGrid>
             {companyValues.map((value, index) => (
               <ValueCard
@@ -430,7 +429,7 @@ const CareersPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>Benefits & Perks</SectionTitle>
+          <SectionTitle>{t('careers.benefits')}</SectionTitle>
           <BenefitsGrid>
             {benefits.map((benefit, index) => (
               <BenefitItem key={index}>
@@ -446,30 +445,30 @@ const CareersPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>Open Positions</SectionTitle>
+          <SectionTitle>{t('careers.openPositions')}</SectionTitle>
           
           <JobFilters>
             <FilterSelect
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
             >
-              <option value="all">All Departments</option>
-              <option value="technology">Technology</option>
-              <option value="design">Design</option>
-              <option value="marketing">Marketing</option>
-              <option value="customer service">Customer Service</option>
-              <option value="operations">Operations</option>
+              <option value="all">{t('careers.allDepartments')}</option>
+              <option value="technology">{t('careers.technology')}</option>
+              <option value="design">{t('careers.design')}</option>
+              <option value="marketing">{t('careers.marketing')}</option>
+              <option value="customer service">{t('careers.customerServiceDept')}</option>
+              <option value="operations">{t('careers.operations')}</option>
             </FilterSelect>
 
             <FilterSelect
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
             >
-              <option value="all">All Types</option>
-              <option value="full-time">Full-time</option>
-              <option value="part-time">Part-time</option>
-              <option value="contract">Contract</option>
-              <option value="internship">Internship</option>
+              <option value="all">{t('careers.allTypes')}</option>
+              <option value="full-time">{t('careers.fullTime')}</option>
+              <option value="part-time">{t('careers.partTime')}</option>
+              <option value="contract">{t('careers.contract')}</option>
+              <option value="internship">{t('careers.internship')}</option>
             </FilterSelect>
           </JobFilters>
 
@@ -494,7 +493,7 @@ const CareersPage = () => {
                 
                 <JobDescription>{job.description}</JobDescription>
                 
-                <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>Requirements:</h4>
+                <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>{t('careers.requirements')}:</h4>
                 <JobRequirements>
                   {job.requirements.map((req, reqIndex) => (
                     <JobRequirement key={reqIndex}>{req}</JobRequirement>
@@ -502,7 +501,7 @@ const CareersPage = () => {
                 </JobRequirements>
                 
                 <ApplyButton onClick={() => handleApply(job.title)}>
-                  Apply Now
+                  {t('careers.applyNow')}
                 </ApplyButton>
               </JobCard>
             ))}
@@ -510,8 +509,8 @@ const CareersPage = () => {
 
           {filteredJobs.length === 0 && (
             <div style={{ textAlign: 'center', padding: '40px', color: '#7f8c8d' }}>
-              <h3>No positions found</h3>
-              <p>Try adjusting your filters or check back later for new opportunities.</p>
+              <h3>{t('careers.noPositionsFound')}</h3>
+              <p>{t('careers.tryAdjustingFiltersCareers')}</p>
             </div>
           )}
         </Section>

@@ -67,7 +67,7 @@ const HomePage = () => {
   const popularProducts = [
     {
       id: 1,
-      title: "Classic White T-Shirt",
+      title: t('homepage.product1Title'),
       price: 29.99,
       discount: 15,
       image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
@@ -78,7 +78,7 @@ const HomePage = () => {
     },
     {
       id: 2,
-      title: "Elegant Summer Dress",
+      title: t('homepage.product2Title'),
       price: 89.99,
       discount: 0,
       image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400",
@@ -89,7 +89,7 @@ const HomePage = () => {
     },
     {
       id: 3,
-      title: "Premium Denim Jeans",
+      title: t('homepage.product3Title'),
       price: 129.99,
       discount: 25,
       image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
@@ -100,7 +100,7 @@ const HomePage = () => {
     },
     {
       id: 4,
-      title: "Casual Sneakers",
+      title: t('homepage.product4Title'),
       price: 79.99,
       discount: 10,
       image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400",

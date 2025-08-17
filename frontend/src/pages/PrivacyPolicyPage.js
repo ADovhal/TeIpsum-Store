@@ -105,6 +105,8 @@ const ContactText = styled.p`
 `;
 
 const PrivacyPolicyPage = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
     document.title = "Privacy Policy - TeIpsum";
   }, []);
@@ -117,11 +119,11 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Privacy Policy
+          {t('privacy.title')}
         </Title>
         
         <LastUpdated>
-          Last updated: January 1, 2025
+          {t('lastUpdated')}: January 1, 2025
         </LastUpdated>
 
         <Section
@@ -129,14 +131,12 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>1. Introduction</SectionTitle>
+          <SectionTitle>{t('privacy.introduction')}</SectionTitle>
           <Text>
-            TeIpsum ("we," "our," or "us") respects your privacy and is committed to protecting your personal data. 
-            This privacy policy explains how we collect, use, and share information about you when you use our 
-            website and services.
+            {t('privacy.introductionDesc1')}
           </Text>
           <Text>
-            This policy applies to all information collected or submitted on the TeIpsum website and mobile applications.
+            {t('privacy.introductionDesc2')}
           </Text>
         </Section>
 
@@ -145,26 +145,26 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <SectionTitle>2. Information We Collect</SectionTitle>
+          <SectionTitle>{t('privacy.informationWeCollect')}</SectionTitle>
           
-          <SubTitle>Personal Information</SubTitle>
-          <Text>We may collect the following personal information:</Text>
+          <SubTitle>{t('privacy.personalInformation')}</SubTitle>
+          <Text>{t('privacy.personalInformationDesc')}</Text>
           <List>
-            <ListItem>Name and contact information (email, phone number, address)</ListItem>
-            <ListItem>Payment information (credit card details, billing address)</ListItem>
-            <ListItem>Account credentials (username, password)</ListItem>
-            <ListItem>Purchase history and preferences</ListItem>
-            <ListItem>Communication preferences</ListItem>
+            <ListItem>{t('privacy.personalInfo1')}</ListItem>
+            <ListItem>{t('privacy.personalInfo2')}</ListItem>
+            <ListItem>{t('privacy.personalInfo3')}</ListItem>
+            <ListItem>{t('privacy.personalInfo4')}</ListItem>
+            <ListItem>{t('privacy.personalInfo5')}</ListItem>
           </List>
 
-          <SubTitle>Automatically Collected Information</SubTitle>
-          <Text>We automatically collect certain information when you visit our website:</Text>
+          <SubTitle>{t('privacy.automaticallyCollected')}</SubTitle>
+          <Text>{t('privacy.automaticallyCollectedDesc')}</Text>
           <List>
-            <ListItem>IP address and device information</ListItem>
-            <ListItem>Browser type and version</ListItem>
-            <ListItem>Pages visited and time spent on our site</ListItem>
-            <ListItem>Referring website</ListItem>
-            <ListItem>Cookies and similar tracking technologies</ListItem>
+            <ListItem>{t('privacy.autoInfo1')}</ListItem>
+            <ListItem>{t('privacy.autoInfo2')}</ListItem>
+            <ListItem>{t('privacy.autoInfo3')}</ListItem>
+            <ListItem>{t('privacy.autoInfo4')}</ListItem>
+            <ListItem>{t('privacy.autoInfo5')}</ListItem>
           </List>
         </Section>
 
@@ -173,17 +173,17 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>3. How We Use Your Information</SectionTitle>
-          <Text>We use your information for the following purposes:</Text>
+          <SectionTitle>{t('privacy.howWeUseInfo')}</SectionTitle>
+          <Text>{t('privacy.howWeUseInfoDesc')}</Text>
           <List>
-            <ListItem>Processing orders and transactions</ListItem>
-            <ListItem>Providing customer service and support</ListItem>
-            <ListItem>Sending order confirmations and shipping updates</ListItem>
-            <ListItem>Personalizing your shopping experience</ListItem>
-            <ListItem>Marketing communications (with your consent)</ListItem>
-            <ListItem>Improving our website and services</ListItem>
-            <ListItem>Preventing fraud and ensuring security</ListItem>
-            <ListItem>Complying with legal obligations</ListItem>
+            <ListItem>{t('privacy.useInfo1')}</ListItem>
+            <ListItem>{t('privacy.useInfo2')}</ListItem>
+            <ListItem>{t('privacy.useInfo3')}</ListItem>
+            <ListItem>{t('privacy.useInfo4')}</ListItem>
+            <ListItem>{t('privacy.useInfo5')}</ListItem>
+            <ListItem>{t('privacy.useInfo6')}</ListItem>
+            <ListItem>{t('privacy.useInfo7')}</ListItem>
+            <ListItem>{t('privacy.useInfo8')}</ListItem>
           </List>
         </Section>
 
@@ -192,13 +192,13 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
         >
-          <SectionTitle>4. Information Sharing</SectionTitle>
-          <Text>We do not sell, trade, or rent your personal information to third parties. We may share your information in the following circumstances:</Text>
+          <SectionTitle>{t('privacy.informationSharing')}</SectionTitle>
+          <Text>{t('privacy.informationSharingDesc')}</Text>
           <List>
-            <ListItem><strong>Service Providers:</strong> Third-party vendors who help us operate our business (payment processors, shipping companies, email services)</ListItem>
-            <ListItem><strong>Legal Requirements:</strong> When required by law or to protect our rights</ListItem>
-            <ListItem><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</ListItem>
-            <ListItem><strong>Consent:</strong> When you give us explicit permission to share your information</ListItem>
+            <ListItem>{t('privacy.shareInfo1')}</ListItem>
+            <ListItem>{t('privacy.shareInfo2')}</ListItem>
+            <ListItem>{t('privacy.shareInfo3')}</ListItem>
+            <ListItem>{t('privacy.shareInfo4')}</ListItem>
           </List>
         </Section>
 
@@ -207,18 +207,17 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>5. Cookies and Tracking</SectionTitle>
+          <SectionTitle>{t('privacy.cookiesAndTracking')}</SectionTitle>
           <Text>
-            We use cookies and similar technologies to enhance your browsing experience, analyze site traffic, 
-            and personalize content. You can control cookie preferences through your browser settings.
+            {t('privacy.cookiesDesc1')}
           </Text>
           
-          <SubTitle>Types of Cookies We Use:</SubTitle>
+          <SubTitle>{t('privacy.cookiesDesc2')}</SubTitle>
           <List>
-            <ListItem><strong>Essential Cookies:</strong> Necessary for website functionality</ListItem>
-            <ListItem><strong>Analytics Cookies:</strong> Help us understand how visitors use our site</ListItem>
-            <ListItem><strong>Marketing Cookies:</strong> Used to deliver relevant advertisements</ListItem>
-            <ListItem><strong>Preference Cookies:</strong> Remember your settings and preferences</ListItem>
+            <ListItem>{t('privacy.cookieType1')}</ListItem>
+            <ListItem>{t('privacy.cookieType2')}</ListItem>
+            <ListItem>{t('privacy.cookieType3')}</ListItem>
+            <ListItem>{t('privacy.cookieType4')}</ListItem>
           </List>
         </Section>
 
@@ -227,20 +226,18 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
         >
-          <SectionTitle>6. Data Security</SectionTitle>
+          <SectionTitle>{t('privacy.dataSecurity')}</SectionTitle>
           <Text>
-            We implement appropriate technical and organizational measures to protect your personal information 
-            against unauthorized access, alteration, disclosure, or destruction. However, no internet transmission 
-            is completely secure, and we cannot guarantee absolute security.
+            {t('privacy.dataSecurityDesc1')}
           </Text>
           
-          <SubTitle>Security Measures Include:</SubTitle>
+          <SubTitle>{t('privacy.dataSecurityDesc2')}</SubTitle>
           <List>
-            <ListItem>SSL encryption for data transmission</ListItem>
-            <ListItem>Secure payment processing</ListItem>
-            <ListItem>Regular security audits</ListItem>
-            <ListItem>Limited access to personal data</ListItem>
-            <ListItem>Employee training on data protection</ListItem>
+            <ListItem>{t('privacy.securityMeasure1')}</ListItem>
+            <ListItem>{t('privacy.securityMeasure2')}</ListItem>
+            <ListItem>{t('privacy.securityMeasure3')}</ListItem>
+            <ListItem>{t('privacy.securityMeasure4')}</ListItem>
+            <ListItem>{t('privacy.securityMeasure5')}</ListItem>
           </List>
         </Section>
 
@@ -249,16 +246,16 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <SectionTitle>7. Your Rights</SectionTitle>
-          <Text>Depending on your location, you may have the following rights:</Text>
+          <SectionTitle>{t('privacy.yourRights')}</SectionTitle>
+          <Text>{t('privacy.yourRightsDesc')}</Text>
           <List>
-            <ListItem><strong>Access:</strong> Request a copy of your personal data</ListItem>
-            <ListItem><strong>Correction:</strong> Update or correct inaccurate information</ListItem>
-            <ListItem><strong>Deletion:</strong> Request deletion of your personal data</ListItem>
-            <ListItem><strong>Portability:</strong> Receive your data in a structured format</ListItem>
-            <ListItem><strong>Objection:</strong> Object to certain processing of your data</ListItem>
-            <ListItem><strong>Restriction:</strong> Limit how we use your data</ListItem>
-            <ListItem><strong>Withdrawal:</strong> Withdraw consent at any time</ListItem>
+            <ListItem>{t('privacy.right1')}</ListItem>
+            <ListItem>{t('privacy.right2')}</ListItem>
+            <ListItem>{t('privacy.right3')}</ListItem>
+            <ListItem>{t('privacy.right4')}</ListItem>
+            <ListItem>{t('privacy.right5')}</ListItem>
+            <ListItem>{t('privacy.right6')}</ListItem>
+            <ListItem>{t('privacy.right7')}</ListItem>
           </List>
         </Section>
 
@@ -267,14 +264,12 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.9 }}
         >
-          <SectionTitle>8. Data Retention</SectionTitle>
+          <SectionTitle>{t('privacy.dataRetention')}</SectionTitle>
           <Text>
-            We retain your personal information only as long as necessary to fulfill the purposes outlined in this 
-            privacy policy, comply with legal obligations, resolve disputes, and enforce our agreements.
+            {t('privacy.dataRetentionDesc1')}
           </Text>
           <Text>
-            Account information is retained for as long as your account is active. Transaction data is kept for 
-            7 years for accounting and legal purposes. Marketing data is retained until you unsubscribe.
+            {t('privacy.dataRetentionDesc2')}
           </Text>
         </Section>
 
@@ -283,10 +278,9 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
         >
-          <SectionTitle>9. International Transfers</SectionTitle>
+          <SectionTitle>{t('privacy.internationalTransfers')}</SectionTitle>
           <Text>
-            Your information may be transferred to and processed in countries other than your own. We ensure 
-            appropriate safeguards are in place to protect your data during international transfers.
+            {t('privacy.internationalTransfersDesc')}
           </Text>
         </Section>
 
@@ -295,21 +289,20 @@ const PrivacyPolicyPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.1 }}
         >
-          <SectionTitle>10. Changes to This Policy</SectionTitle>
+          <SectionTitle>{t('privacy.policyChanges')}</SectionTitle>
           <Text>
-            We may update this privacy policy from time to time. We will notify you of any significant changes 
-            by posting the new policy on our website and updating the "Last updated" date.
+            {t('privacy.policyChangesDesc')}
           </Text>
         </Section>
 
         <ContactBox>
-          <ContactTitle>Contact Us About Privacy</ContactTitle>
+          <ContactTitle>{t('privacy.contactTitle')}</ContactTitle>
           <ContactText>
-            If you have questions about this privacy policy or how we handle your personal data, please contact us:
+            {t('privacy.contactDesc')}
           </ContactText>
-          <ContactText>📧 privacy@teipsum.com</ContactText>
-          <ContactText>📞 +48 123 456 789</ContactText>
-          <ContactText>📍 TeIpsum Privacy Officer, ul. Fashion 123, 90-001 Łódź, Poland</ContactText>
+          <ContactText>{t('privacy.contactEmail')}</ContactText>
+          <ContactText>{t('privacy.contactPhone')}</ContactText>
+          <ContactText>{t('privacy.contactAddress')}</ContactText>
         </ContactBox>
       </ContentWrapper>
     </PrivacyContainer>

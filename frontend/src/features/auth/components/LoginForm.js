@@ -208,7 +208,7 @@ const LoginForm = () => {
     }
 
     if (!formData.password) {
-      setErrors(prev => ({ ...prev, password: 'Password is required' }));
+      setErrors(prev => ({ ...prev, password: t('validation.requiredField') }));
       setIsLoading(false);
       return;
     }
@@ -222,7 +222,7 @@ const LoginForm = () => {
       setFormData({ email: '', password: '' });
       navigate('/profile');
     } catch (err) {
-      setErrors({ general: err.message || 'Login failed. Please check your credentials.' });
+      setErrors({ general: err.message || t('loginFailed') });
     } finally {
       setIsLoading(false);
     }
@@ -230,7 +230,7 @@ const LoginForm = () => {
 
   const handleForgotPassword = () => {
     setShowForgotPassword(true);
-    alert('Password reset functionality would be implemented here. Please contact support for now.');
+    alert(t('passwordResetNotice'));
   };
 
   return (

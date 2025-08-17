@@ -164,9 +164,11 @@ const ContactText = styled.p`
 `;
 
 const ReturnsPage = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
-    document.title = "Returns & Exchanges - TeIpsum";
-  }, []);
+    document.title = `${t('returns.title')} - TeIpsum`;
+  }, [t]);
 
   return (
     <ReturnsContainer>
@@ -176,11 +178,11 @@ const ReturnsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Returns & Exchanges
+          {t('returns.title')}
         </Title>
         
         <Subtitle>
-          We want you to love your TeIpsum pieces. If you're not completely satisfied, we're here to help.
+          {t('returns.subtitle')}
         </Subtitle>
 
         <Section
@@ -188,26 +190,26 @@ const ReturnsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>Return Policy Overview</SectionTitle>
+          <SectionTitle>{t('returns.policyOverview')}</SectionTitle>
           <InfoGrid>
             <InfoCard>
-              <InfoTitle>⏰ 30-Day Return Window</InfoTitle>
+              <InfoTitle>{t('returns.returnWindow')}</InfoTitle>
               <InfoText>
-                You have 30 days from the delivery date to return items for a full refund or exchange.
+                {t('returns.returnWindowDesc')}
               </InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>💯 Original Condition</InfoTitle>
+              <InfoTitle>{t('returns.originalCondition')}</InfoTitle>
               <InfoText>
-                Items must be unworn, unwashed, and in original condition with all tags attached.
+                {t('returns.originalConditionDesc')}
               </InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>📦 Free Return Shipping</InfoTitle>
+              <InfoTitle>{t('returns.freeShipping')}</InfoTitle>
               <InfoText>
-                We provide prepaid return labels for all domestic returns. International returns may incur shipping costs.
+                {t('returns.freeShippingDesc')}
               </InfoText>
             </InfoCard>
           </InfoGrid>
@@ -218,26 +220,26 @@ const ReturnsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>How to Return Items</SectionTitle>
+          <SectionTitle>{t('returns.howToReturn')}</SectionTitle>
           <ProcessSteps>
             <StepsList>
               <StepItem>
-                <strong>Contact Us:</strong> Email returns@teipsum.com or use our online return portal with your order number.
+                {t('returns.step1')}
               </StepItem>
               <StepItem>
-                <strong>Receive Return Label:</strong> We'll send you a prepaid return shipping label within 24 hours.
+                {t('returns.step2')}
               </StepItem>
               <StepItem>
-                <strong>Package Items:</strong> Place items in original packaging (if available) or any secure packaging.
+                {t('returns.step3')}
               </StepItem>
               <StepItem>
-                <strong>Attach Label:</strong> Attach the prepaid return label to your package.
+                {t('returns.step4')}
               </StepItem>
               <StepItem>
-                <strong>Drop Off:</strong> Drop off at any post office or schedule a pickup.
+                {t('returns.step5')}
               </StepItem>
               <StepItem>
-                <strong>Get Refund:</strong> Refunds are processed within 5-7 business days after we receive your return.
+                {t('returns.step6')}
               </StepItem>
             </StepsList>
           </ProcessSteps>
@@ -248,28 +250,28 @@ const ReturnsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>Exchange Process</SectionTitle>
+          <SectionTitle>{t('returns.exchangeProcess')}</SectionTitle>
           <InfoGrid>
             <InfoCard>
-              <InfoTitle>🔄 Size Exchanges</InfoTitle>
+              <InfoTitle>{t('returns.sizeExchanges')}</InfoTitle>
               <InfoText>
-                Need a different size? We'll expedite your exchange to get you the right fit as quickly as possible.
+                {t('returns.sizeExchangesDesc')}
               </InfoText>
-              <InfoText><strong>Processing time:</strong> 3-5 business days</InfoText>
+              <InfoText>{t('returns.processingTime1')}</InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>🎨 Color/Style Exchanges</InfoTitle>
+              <InfoTitle>{t('returns.colorExchanges')}</InfoTitle>
               <InfoText>
-                Want a different color or style? Exchanges are subject to availability and price differences may apply.
+                {t('returns.colorExchangesDesc')}
               </InfoText>
-              <InfoText><strong>Processing time:</strong> 5-7 business days</InfoText>
+              <InfoText>{t('returns.processingTime2')}</InfoText>
             </InfoCard>
           </InfoGrid>
 
           <HighlightBox>
             <HighlightText>
-              💡 Pro Tip: For faster exchanges, you can order the new item and return the original separately.
+              {t('returns.proTip')}
             </HighlightText>
           </HighlightBox>
         </Section>
@@ -279,18 +281,13 @@ const ReturnsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <SectionTitle>What Cannot Be Returned</SectionTitle>
+          <SectionTitle>{t('returns.cannotReturn')}</SectionTitle>
           <WarningBox>
             <WarningText>
-              <strong>The following items cannot be returned for hygiene and safety reasons:</strong>
+              {t('returns.cannotReturnWarning')}
             </WarningText>
             <InfoText>
-              • Underwear and intimate apparel<br/>
-              • Swimwear (unless tags are still attached)<br/>
-              • Earrings and pierced jewelry<br/>
-              • Items marked as "Final Sale"<br/>
-              • Gift cards<br/>
-              • Items damaged by normal wear and tear
+              {t('returns.cannotReturnList')}
             </InfoText>
           </WarningBox>
         </Section>
@@ -300,36 +297,36 @@ const ReturnsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
         >
-          <SectionTitle>Refund Information</SectionTitle>
+          <SectionTitle>{t('returns.refundInfo')}</SectionTitle>
           <InfoGrid>
             <InfoCard>
-              <InfoTitle>💳 Refund Method</InfoTitle>
+              <InfoTitle>{t('returns.refundMethod')}</InfoTitle>
               <InfoText>
-                Refunds are issued to the original payment method used for the purchase.
+                {t('returns.refundMethodDesc')}
               </InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>⏱️ Processing Time</InfoTitle>
+              <InfoTitle>{t('returns.refundProcessingTime')}</InfoTitle>
               <InfoText>
-                Refunds typically appear on your statement within 5-10 business days after processing.
+                {t('returns.refundProcessingDesc')}
               </InfoText>
             </InfoCard>
 
             <InfoCard>
-              <InfoTitle>🎁 Gift Returns</InfoTitle>
+              <InfoTitle>{t('returns.giftReturns')}</InfoTitle>
               <InfoText>
-                Items purchased as gifts can be returned for store credit if no receipt is provided.
+                {t('returns.giftReturnsDesc')}
               </InfoText>
             </InfoCard>
           </InfoGrid>
         </Section>
 
         <ContactInfo>
-          <ContactText>Need Help with Your Return?</ContactText>
-          <ContactText>📧 Email: returns@teipsum.com</ContactText>
-          <ContactText>📞 Phone: +48 123 456 789</ContactText>
-          <ContactText>🕒 Monday - Friday: 9 AM - 6 PM CET</ContactText>
+          <ContactText>{t('returns.needHelp')}</ContactText>
+          <ContactText>{t('returns.contactEmail')}</ContactText>
+          <ContactText>{t('returns.contactPhone')}</ContactText>
+          <ContactText>{t('returns.contactHours')}</ContactText>
         </ContactInfo>
       </ContentWrapper>
     </ReturnsContainer>

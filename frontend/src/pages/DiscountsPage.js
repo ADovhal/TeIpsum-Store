@@ -285,7 +285,31 @@ const DiscountsPage = () => {
     fetchDiscountProducts();
   }, [filters, page, sortBy, dispatch, t]);
 
+  const getAvailableGenders = (category) => {
+    if (!category) {
+      return ['MEN', 'WOMEN', 'BOYS', 'GIRLS', 'BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+    }
+    
+    if (category === 'KIDS') {
+      return ['BOYS', 'GIRLS', 'UNISEX'];
+    } else if (category === 'BABY') {
+      return ['BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+    } else {
+      return ['MEN', 'WOMEN', 'UNISEX'];
+    }
+  };
+
   const handleFilterChange = (updatedFilters) => {
+    // If category is being changed, check if we need to reset gender
+    if (updatedFilters.category !== undefined) {
+      const availableGenders = getAvailableGenders(updatedFilters.category);
+      const currentGender = filters.gender;
+      
+      if (currentGender && !availableGenders.includes(currentGender)) {
+        updatedFilters.gender = '';
+      }
+    }
+    
     setFilters((prevFilters) => ({ ...prevFilters, ...updatedFilters }));
     setPage(0);
   };
@@ -355,24 +379,39 @@ const DiscountsPage = () => {
               onChange={(e) => handleFilterChange({ category: e.target.value })}
             >
               <option value="">{t('allCategories')}</option>
-              <option value="MENS_CLOTHING">Men's Clothing</option>
-              <option value="WOMENS_CLOTHING">Women's Clothing</option>
-              <option value="KIDS_CLOTHING">Kids' Clothing</option>
-              <option value="ACCESSORIES">Accessories</option>
-              <option value="SHOES">Shoes</option>
+              <option value="TOPS">{t('categoryFilter.tops')}</option>
+              <option value="BOTTOMS">{t('categoryFilter.bottoms')}</option>
+              <option value="DRESSES_SKIRTS">{t('categoryFilter.dressesSkirts')}</option>
+              <option value="OUTERWEAR">{t('categoryFilter.outerwear')}</option>
+              <option value="UNDERWEAR_SLEEPWEAR">{t('categoryFilter.underwearSleepwear')}</option>
+              <option value="ACTIVEWEAR">{t('categoryFilter.activewear')}</option>
+              <option value="SWIMWEAR">{t('categoryFilter.swimwear')}</option>
+              <option value="SHOES">{t('categoryFilter.shoes')}</option>
+              <option value="ACCESSORIES">{t('categoryFilter.accessories')}</option>
+              <option value="BAGS">{t('categoryFilter.bags')}</option>
+              <option value="JEWELRY">{t('categoryFilter.jewelry')}</option>
+              <option value="KIDS">{t('categoryFilter.kids')}</option>
+              <option value="BABY">{t('categoryFilter.baby')}</option>
             </FilterSelect>
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>{t('gender')}</FilterLabel>
+            <FilterLabel>{t('genderLabel')}</FilterLabel>
             <FilterSelect 
               value={filters.gender} 
               onChange={(e) => handleFilterChange({ gender: e.target.value })}
             >
               <option value="">{t('allGenders')}</option>
-              <option value="MEN">{t('men')}</option>
-              <option value="WOMEN">{t('women')}</option>
-              <option value="UNISEX">{t('unisex')}</option>
+              {getAvailableGenders(filters.category).map(gender => {
+                const translationKey = gender.toLowerCase()
+                  .replace('baby_boy', 'babyBoy')
+                  .replace('baby_girl', 'babyGirl');
+                return (
+                  <option key={gender} value={gender}>
+                    {t(`gender.${translationKey}`)}
+                  </option>
+                );
+              })}
             </FilterSelect>
           </FilterGroup>
 

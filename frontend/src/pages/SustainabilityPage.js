@@ -243,12 +243,11 @@ const SustainabilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Our Commitment to Sustainability
+          {t('sustainability.pageTitle')}
         </Title>
         
         <Subtitle>
-          Fashion that cares for our planet. We're dedicated to creating beautiful clothing 
-          while protecting the environment for future generations.
+          {t('sustainability.pageSubtitle')}
         </Subtitle>
 
         <Section
@@ -256,7 +255,7 @@ const SustainabilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>Our Impact Today</SectionTitle>
+          <SectionTitle>{t('sustainability.ourImpactToday')}</SectionTitle>
           <StatsGrid>
             {stats.map((stat, index) => (
               <StatCard key={index}>
@@ -272,7 +271,7 @@ const SustainabilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>Sustainability Initiatives</SectionTitle>
+          <SectionTitle>{t('sustainability.sustainabilityInitiatives')}</SectionTitle>
           <InitiativeGrid>
             {initiatives.map((initiative, index) => (
               <InitiativeCard
@@ -295,7 +294,7 @@ const SustainabilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>Our 2030 Goals</SectionTitle>
+          <SectionTitle>{t('sustainability.futureGoals')}</SectionTitle>
           <GoalsList>
             {goals.map((goal, index) => (
               <GoalItem
@@ -318,10 +317,9 @@ const SustainabilityPage = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <HighlightBox>
-            <HighlightTitle>Join Our Mission</HighlightTitle>
+            <HighlightTitle>{t('sustainability.joinOurMission')}</HighlightTitle>
             <HighlightText>
-              Every purchase you make supports sustainable fashion. Together, we can create a more 
-              sustainable future for fashion and our planet. Thank you for choosing conscious style.
+              {t('sustainability.joinMissionText')}
             </HighlightText>
           </HighlightBox>
         </Section>
@@ -331,32 +329,29 @@ const SustainabilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
         >
-          <SectionTitle>Transparency & Certifications</SectionTitle>
+          <SectionTitle>{t('sustainability.transparencyCertifications')}</SectionTitle>
           <InitiativeGrid>
             <InitiativeCard>
               <InitiativeIcon>📋</InitiativeIcon>
-              <InitiativeTitle>Supply Chain Transparency</InitiativeTitle>
+              <InitiativeTitle>{t('sustainability.supplyChainTransparency')}</InitiativeTitle>
               <InitiativeText>
-                We maintain complete transparency about our suppliers and manufacturing processes. 
-                Annual sustainability reports detail our progress and challenges.
+                {t('sustainability.supplyChainTransparencyText')}
               </InitiativeText>
             </InitiativeCard>
 
             <InitiativeCard>
               <InitiativeIcon>🏆</InitiativeIcon>
-              <InitiativeTitle>Global Certifications</InitiativeTitle>
+              <InitiativeTitle>{t('sustainability.globalCertifications')}</InitiativeTitle>
               <InitiativeText>
-                Certified by GOTS (Global Organic Textile Standard), OEKO-TEX, and B-Corp. 
-                These certifications ensure our commitment to environmental and social responsibility.
+                {t('sustainability.certificationsText')}
               </InitiativeText>
             </InitiativeCard>
 
             <InitiativeCard>
               <InitiativeIcon>📊</InitiativeIcon>
-              <InitiativeTitle>Impact Measurement</InitiativeTitle>
+              <InitiativeTitle>{t('sustainability.impactMeasurement')}</InitiativeTitle>
               <InitiativeText>
-                We continuously measure and report our environmental impact, from carbon emissions 
-                to water usage, ensuring accountability in our sustainability journey.
+                {t('sustainability.impactMeasurementText')}
               </InitiativeText>
             </InitiativeCard>
           </InitiativeGrid>

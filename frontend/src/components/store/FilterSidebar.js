@@ -165,7 +165,24 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
         if (name === 'maxPrice' && value < 0) return;
         if (name === 'minDiscount' && (value < 0 || value > 100)) return;
         if (name === 'maxDiscount' && (value < 0 || value > 100)) return;
-        onFilterChange({ [name]: value });
+        
+        if (name === 'category') {
+            // When category changes, check if current gender is still valid
+            const availableGenders = getAvailableGenders(value);
+            const updates = { [name]: value };
+            
+            // Reset gender if it's not available for the new category
+            if (filters.gender && !availableGenders.includes(filters.gender)) {
+                updates.gender = '';
+            }
+            
+            // Always reset subcategory when category changes
+            updates.subcategory = '';
+            
+            onFilterChange(updates);
+        } else {
+            onFilterChange({ [name]: value });
+        }
     };
 
     const handleClearFilters = () => {
@@ -183,13 +200,36 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
 
     const getSubcategories = (category) => {
         const subcategoryMap = {
-            'MENS_CLOTHING': ['T_SHIRTS', 'SHIRTS', 'PANTS', 'JEANS', 'JACKETS'],
-            'WOMENS_CLOTHING': ['T_SHIRTS', 'SHIRTS', 'PANTS', 'JEANS', 'JACKETS'],
-            'KIDS_CLOTHING': ['BOYS_CLOTHING', 'GIRLS_CLOTHING', 'BABY_CLOTHING', 'JEANS', 'JACKETS'],
-            'ACCESSORIES': ['BAGS', 'BELTS', 'HATS', 'SUNGLASSES'],
-            'SHOES': ['SNEAKERS', 'BOOTS', 'SANDALS', 'DRESS_SHOES']
+            'TOPS': ['T_SHIRTS', 'SHIRTS', 'BLOUSES', 'TANK_TOPS', 'HOODIES', 'SWEATERS', 'CARDIGANS', 'CROP_TOPS', 'POLO_SHIRTS'],
+            'BOTTOMS': ['JEANS', 'PANTS', 'SHORTS', 'LEGGINGS', 'JOGGERS', 'CHINOS', 'CARGO_PANTS'],
+            'DRESSES_SKIRTS': ['CASUAL_DRESSES', 'FORMAL_DRESSES', 'EVENING_DRESSES', 'MAXI_DRESSES', 'MINI_SKIRTS', 'MIDI_SKIRTS', 'MAXI_SKIRTS'],
+            'OUTERWEAR': ['COATS', 'JACKETS', 'BLAZERS', 'VESTS', 'PARKAS', 'BOMBER_JACKETS', 'LEATHER_JACKETS'],
+            'UNDERWEAR_SLEEPWEAR': ['BRAS', 'PANTIES', 'BOXERS', 'BRIEFS', 'PAJAMAS', 'NIGHTGOWNS', 'ROBES', 'LOUNGEWEAR'],
+            'ACTIVEWEAR': ['SPORTS_TOPS', 'SPORTS_BOTTOMS', 'TRACKSUITS', 'YOGA_WEAR', 'GYM_WEAR', 'RUNNING_GEAR'],
+            'SWIMWEAR': ['BIKINIS', 'ONE_PIECE', 'SWIM_TRUNKS', 'BOARD_SHORTS', 'COVER_UPS'],
+            'SHOES': ['SNEAKERS', 'BOOTS', 'SANDALS', 'HIGH_HEELS', 'FLATS', 'DRESS_SHOES', 'ATHLETIC_SHOES', 'LOAFERS'],
+            'ACCESSORIES': ['BELTS', 'HATS', 'CAPS', 'SCARVES', 'GLOVES', 'SUNGLASSES', 'WATCHES', 'TIES'],
+            'BAGS': ['HANDBAGS', 'BACKPACKS', 'TOTE_BAGS', 'CROSSBODY_BAGS', 'CLUTCHES', 'WALLETS', 'BRIEFCASES'],
+            'JEWELRY': ['NECKLACES', 'EARRINGS', 'BRACELETS', 'RINGS', 'BROOCHES'],
+            'KIDS': ['BOYS_TOPS', 'BOYS_BOTTOMS', 'BOYS_OUTERWEAR', 'GIRLS_TOPS', 'GIRLS_BOTTOMS', 'GIRLS_DRESSES', 'GIRLS_OUTERWEAR', 'KIDS_SHOES', 'KIDS_ACCESSORIES'],
+            'BABY': ['BABY_BODYSUITS', 'BABY_SLEEPWEAR', 'BABY_OUTERWEAR', 'BABY_SHOES', 'BABY_ACCESSORIES']
         };
         return subcategoryMap[category] || [];
+    };
+
+    const getAvailableGenders = (category) => {
+        if (!category) {
+            // When no category is selected, show all genders for search flexibility
+            return ['MEN', 'WOMEN', 'BOYS', 'GIRLS', 'BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+        }
+        
+        if (category === 'KIDS') {
+            return ['BOYS', 'GIRLS', 'UNISEX'];
+        } else if (category === 'BABY') {
+            return ['BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+        } else {
+            return ['MEN', 'WOMEN', 'UNISEX'];
+        }
     };
 
     return (
@@ -201,24 +241,32 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                 <FilterItem>
                     <Select name="category" value={filters.category} onChange={handleChange}>
                         <option value="">{t('allCategories')}</option>
-                        <option value="MENS_CLOTHING">{t('men')}</option>
-                        <option value="WOMENS_CLOTHING">Women's Clothing</option>
-                        <option value="KIDS_CLOTHING">Kids' Clothing</option>
-                        <option value="ACCESSORIES">Accessories</option>
-                        <option value="SHOES">Shoes</option>
+                        <option value="TOPS">{t('categoryFilter.tops')}</option>
+                        <option value="BOTTOMS">{t('categoryFilter.bottoms')}</option>
+                        <option value="DRESSES_SKIRTS">{t('categoryFilter.dressesSkirts')}</option>
+                        <option value="OUTERWEAR">{t('categoryFilter.outerwear')}</option>
+                        <option value="UNDERWEAR_SLEEPWEAR">{t('categoryFilter.underwearSleepwear')}</option>
+                        <option value="ACTIVEWEAR">{t('categoryFilter.activewear')}</option>
+                        <option value="SWIMWEAR">{t('categoryFilter.swimwear')}</option>
+                        <option value="SHOES">{t('categoryFilter.shoes')}</option>
+                        <option value="ACCESSORIES">{t('categoryFilter.accessories')}</option>
+                        <option value="BAGS">{t('categoryFilter.bags')}</option>
+                        <option value="JEWELRY">{t('categoryFilter.jewelry')}</option>
+                        <option value="KIDS">{t('categoryFilter.kids')}</option>
+                        <option value="BABY">{t('categoryFilter.baby')}</option>
                     </Select>
                 </FilterItem>
             </FilterSection>
 
             {filters.category && (
                 <FilterSection>
-                    <SectionTitle>Subcategory</SectionTitle>
+                    <SectionTitle>{t('subcategory')}</SectionTitle>
                     <FilterItem>
                         <Select name="subcategory" value={filters.subcategory} onChange={handleChange}>
-                            <option value="">All Subcategories</option>
+                            <option value="">{t('allSubcategories')}</option>
                             {getSubcategories(filters.category).map(sub => (
                                 <option key={sub} value={sub}>
-                                    {sub.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                    {t(`subcategoryFilter.${sub.toLowerCase()}`)}
                                 </option>
                             ))}
                         </Select>
@@ -227,13 +275,20 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
             )}
 
             <FilterSection>
-                <SectionTitle>{t('gender')}</SectionTitle>
+                <SectionTitle>{t('genderLabel')}</SectionTitle>
                 <FilterItem>
                     <Select name="gender" value={filters.gender} onChange={handleChange}>
                         <option value="">{t('allGenders')}</option>
-                        <option value="MEN">{t('men')}</option>
-                        <option value="WOMEN">{t('women')}</option>
-                        <option value="UNISEX">{t('unisex')}</option>
+                        {getAvailableGenders(filters.category).map(gender => {
+                            const translationKey = gender.toLowerCase()
+                                .replace('baby_boy', 'babyBoy')
+                                .replace('baby_girl', 'babyGirl');
+                            return (
+                                <option key={gender} value={gender}>
+                                    {t(`gender.${translationKey}`)}
+                                </option>
+                            );
+                        })}
                     </Select>
                 </FilterItem>
             </FilterSection>

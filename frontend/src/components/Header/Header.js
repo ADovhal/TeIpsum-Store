@@ -103,7 +103,7 @@ const Header = () => {
             <li><FireButton><Link to="/about" className={styles.navItem} onClick={closeMenu}>{t('about')}</Link></FireButton></li>
             <li><FireButton><Link to="/contact" className={styles.navItem} onClick={closeMenu}>{t('contact')}</Link></FireButton></li>
             <li><FireButton><Link to="/discounts" className={styles.navItem} onClick={closeMenu}>{t('discounts')}</Link></FireButton></li>
-            <li><FireButton><Link to="/new-collection" className={styles.navItem} onClick={closeMenu}>{t('newCollection')}</Link></FireButton></li>
+            <li><FireButton><Link to="/new-collection" className={styles.navItem} onClick={closeMenu}>{t('newCollectionButton')}</Link></FireButton></li>
           </ul>
         </nav>
 

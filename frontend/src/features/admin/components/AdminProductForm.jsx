@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Select from 'react-select';
 import { useLanguage } from '../../../context/LanguageContext';
@@ -6,64 +6,81 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { createAdminProduct } from '../adminSlice';
 
+// Backend-synchronized enums
 const categories = [
-  { value: 'MENS_CLOTHING', label: "Men's Clothing" },
-  { value: 'WOMENS_CLOTHING', label: "Women's Clothing" },
-  { value: 'KIDS_CLOTHING', label: "Kids' Clothing" },
-  { value: 'ACCESSORIES', label: 'Accessories' },
-  { value: 'SHOES', label: 'Shoes' },
+  'TOPS', 'BOTTOMS', 'DRESSES_SKIRTS', 'OUTERWEAR', 
+  'UNDERWEAR_SLEEPWEAR', 'ACTIVEWEAR', 'SWIMWEAR', 
+  'SHOES', 'ACCESSORIES', 'BAGS', 'JEWELRY', 'KIDS', 'BABY'
 ];
 
 const subcategoriesMap = {
-  MENS_CLOTHING: [
-    { value: 'T_SHIRTS', label: 'T-Shirts' },
-    { value: 'SHIRTS', label: 'Shirts' },
-    { value: 'PANTS', label: 'Pants' },
-    { value: 'JEANS', label: 'Jeans' },
-    { value: 'JACKETS', label: 'Jackets' },
+  TOPS: [
+    'T_SHIRTS', 'SHIRTS', 'BLOUSES', 'TANK_TOPS', 'HOODIES', 
+    'SWEATERS', 'CARDIGANS', 'CROP_TOPS', 'POLO_SHIRTS'
   ],
-  WOMENS_CLOTHING: [
-    { value: 'T_SHIRTS', label: 'T-Shirts' },
-    { value: 'SHIRTS', label: 'Shirts' },
-    { value: 'PANTS', label: 'Pants' },
-    { value: 'JEANS', label: 'Jeans' },
-    { value: 'JACKETS', label: 'Jackets' },
+  BOTTOMS: [
+    'JEANS', 'PANTS', 'SHORTS', 'LEGGINGS', 
+    'JOGGERS', 'CHINOS', 'CARGO_PANTS'
   ],
-  KIDS_CLOTHING: [
-    { value: 'BOYS_CLOTHING', label: "Boys' Clothing" },
-    { value: 'GIRLS_CLOTHING', label: "Girls' Clothing" },
-    { value: 'BABY_CLOTHING', label: 'Baby Clothing' },
-    { value: 'JEANS', label: 'Jeans' },
-    { value: 'JACKETS', label: 'Jackets' },
+  DRESSES_SKIRTS: [
+    'CASUAL_DRESSES', 'FORMAL_DRESSES', 'EVENING_DRESSES', 
+    'MAXI_DRESSES', 'MINI_SKIRTS', 'MIDI_SKIRTS', 'MAXI_SKIRTS'
   ],
-  ACCESSORIES: [
-    { value: 'BAGS', label: 'Bags' },
-    { value: 'BELTS', label: 'Belts' },
-    { value: 'HATS', label: 'Hats' },
-    { value: 'SUNGLASSES', label: 'Sunglasses' },
+  OUTERWEAR: [
+    'COATS', 'JACKETS', 'BLAZERS', 'VESTS', 
+    'PARKAS', 'BOMBER_JACKETS', 'LEATHER_JACKETS'
+  ],
+  UNDERWEAR_SLEEPWEAR: [
+    'BRAS', 'PANTIES', 'BOXERS', 'BRIEFS', 
+    'PAJAMAS', 'NIGHTGOWNS', 'ROBES', 'LOUNGEWEAR'
+  ],
+  ACTIVEWEAR: [
+    'SPORTS_TOPS', 'SPORTS_BOTTOMS', 'TRACKSUITS', 
+    'YOGA_WEAR', 'GYM_WEAR', 'RUNNING_GEAR'
+  ],
+  SWIMWEAR: [
+    'BIKINIS', 'ONE_PIECE', 'SWIM_TRUNKS', 'BOARD_SHORTS', 'COVER_UPS'
   ],
   SHOES: [
-    { value: 'SNEAKERS', label: 'Sneakers' },
-    { value: 'BOOTS', label: 'Boots' },
-    { value: 'SANDALS', label: 'Sandals' },
-    { value: 'DRESS_SHOES', label: 'Dress Shoes' },
+    'SNEAKERS', 'BOOTS', 'SANDALS', 'HIGH_HEELS', 
+    'FLATS', 'DRESS_SHOES', 'ATHLETIC_SHOES', 'LOAFERS'
   ],
+  ACCESSORIES: [
+    'BELTS', 'HATS', 'CAPS', 'SCARVES', 
+    'GLOVES', 'SUNGLASSES', 'WATCHES', 'TIES'
+  ],
+  BAGS: [
+    'HANDBAGS', 'BACKPACKS', 'TOTE_BAGS', 'CROSSBODY_BAGS', 
+    'CLUTCHES', 'WALLETS', 'BRIEFCASES'
+  ],
+  JEWELRY: [
+    'NECKLACES', 'EARRINGS', 'BRACELETS', 'RINGS', 'BROOCHES'
+  ],
+  KIDS: [
+    'BOYS_TOPS', 'BOYS_BOTTOMS', 'BOYS_OUTERWEAR', 
+    'GIRLS_TOPS', 'GIRLS_BOTTOMS', 'GIRLS_DRESSES', 
+    'GIRLS_OUTERWEAR', 'KIDS_SHOES', 'KIDS_ACCESSORIES'
+  ],
+  BABY: [
+    'BABY_BODYSUITS', 'BABY_SLEEPWEAR', 'BABY_OUTERWEAR', 
+    'BABY_SHOES', 'BABY_ACCESSORIES'
+  ]
 };
 
-const genders = [
-  { value: 'MEN', label: 'Men' },
-  { value: 'WOMEN', label: 'Women' },
-  { value: 'UNISEX', label: 'Unisex' },
-];
+// All genders from backend - kept for reference
+// const allGenders = ['MEN', 'WOMEN', 'BOYS', 'GIRLS', 'BABY_BOY', 'BABY_GIRL', 'UNISEX'];
 
-const sizes = [
-  { value: 'XS', label: 'XS' },
-  { value: 'S', label: 'S' },
-  { value: 'M', label: 'M' },
-  { value: 'L', label: 'L' },
-  { value: 'XL', label: 'XL' },
-  { value: 'XXL', label: 'XXL' },
-];
+// Sizes from backend ClothingSize enum
+const sizesMap = {
+  ADULT: ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+  ADULT_NUMERIC: ['0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20'],
+  PANTS: ['26', '28', '30', '32', '34', '36', '38', '40', '42', '44'],
+  SHOES: ['5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13', '14'],
+  KIDS: ['2T', '3T', '4T', 'XS', 'S', 'M', 'L', 'XL'],
+  KIDS_NUMERIC: ['4', '5', '6', '7', '8', '10', '12', '14', '16'],
+  BABY: ['NB', '0-3M', '3-6M', '6-9M', '9-12M', '12-18M', '18-24M'],
+  ONE_SIZE: ['One Size']
+};
 
 const Form = styled.form`
   display: flex;
@@ -198,7 +215,7 @@ const Textarea = styled.textarea`
 
 export default function AdminProductForm({ product, onSave, onCancel }) {
   const { t } = useLanguage();
-  const [form, setForm] = React.useState(product || {});
+  const [form, setForm] = useState(product || {});
   const [images, setImages] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState(product?.sizes || []);
@@ -206,24 +223,147 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  React.useEffect(() => {
+  // Smart filtering functions
+  const getAvailableGenders = () => {
+    if (form.category === 'KIDS') {
+      return ['BOYS', 'GIRLS', 'UNISEX'];
+    } else if (form.category === 'BABY') {
+      return ['BABY_BOY', 'BABY_GIRL', 'UNISEX'];
+    } else {
+      return ['MEN', 'WOMEN', 'UNISEX'];
+    }
+  };
+
+  const getAvailableSubcategories = () => {
+    return form.category ? subcategoriesMap[form.category] || [] : [];
+  };
+
+  const getAvailableSizes = () => {
+    if (!form.category) return [];
+    
+    if (form.category === 'SHOES') {
+      return sizesMap.SHOES;
+    } else if (form.category === 'BABY') {
+      return sizesMap.BABY;
+    } else if (form.category === 'KIDS') {
+      return [...sizesMap.KIDS, ...sizesMap.KIDS_NUMERIC];
+    } else if (form.category === 'ACCESSORIES' || form.category === 'BAGS' || form.category === 'JEWELRY') {
+      return sizesMap.ONE_SIZE;
+    } else if (form.category === 'BOTTOMS' && form.subcategory && ['JEANS', 'PANTS'].includes(form.subcategory)) {
+      return sizesMap.PANTS;
+    } else if (form.category === 'DRESSES_SKIRTS' && form.gender === 'WOMEN') {
+      return [...sizesMap.ADULT, ...sizesMap.ADULT_NUMERIC];
+    } else {
+      return sizesMap.ADULT;
+    }
+  };
+
+  // Filter subcategories based on gender for gender-specific items
+  const getFilteredSubcategories = () => {
+    const subcategories = getAvailableSubcategories();
+    
+    if (form.category === 'UNDERWEAR_SLEEPWEAR' && form.gender) {
+      if (form.gender === 'MEN' || form.gender === 'BOYS') {
+        return subcategories.filter(sub => !['BRAS', 'PANTIES', 'NIGHTGOWNS'].includes(sub));
+      } else if (form.gender === 'WOMEN' || form.gender === 'GIRLS') {
+        return subcategories.filter(sub => !['BOXERS', 'BRIEFS'].includes(sub));
+      }
+    }
+    
+    if (form.category === 'SWIMWEAR' && form.gender) {
+      if (form.gender === 'MEN' || form.gender === 'BOYS') {
+        return subcategories.filter(sub => ['SWIM_TRUNKS', 'BOARD_SHORTS'].includes(sub));
+      } else if (form.gender === 'WOMEN' || form.gender === 'GIRLS') {
+        return subcategories.filter(sub => ['BIKINIS', 'ONE_PIECE', 'COVER_UPS'].includes(sub));
+      }
+    }
+    
+    return subcategories;
+  };
+
+  // Convert to react-select options with translations
+  const getCategoryOptions = () => {
+    return categories.map(cat => {
+      // Map backend enum to translation key
+      const translationKey = cat.toLowerCase()
+        .replace('dresses_skirts', 'dressesSkirts')
+        .replace('underwear_sleepwear', 'underwearSleepwear')
+        .replace(/_/g, '');
+      return {
+        value: cat,
+        label: t(`categoryFilter.${translationKey}`)
+      };
+    });
+  };
+
+  const getSubcategoryOptions = () => {
+    return getFilteredSubcategories().map(sub => ({
+      value: sub,
+      label: t(`subcategoryFilter.${sub.toLowerCase()}`) || sub.replace(/_/g, ' ')
+    }));
+  };
+
+  const getGenderOptions = () => {
+    return getAvailableGenders().map(gender => {
+      // Map backend enum to translation key
+      const translationKey = gender.toLowerCase()
+        .replace('baby_boy', 'babyBoy')
+        .replace('baby_girl', 'babyGirl');
+      return {
+        value: gender,
+        label: t(`gender.${translationKey}`)
+      };
+    });
+  };
+
+  const getSizeOptions = () => {
+    return getAvailableSizes().map(size => ({
+      value: size,
+      label: size
+    }));
+  };
+
+  useEffect(() => {
     if (product?.sizes) {
       setSelectedSizes(product.sizes);
     }
   }, [product]);
 
-  const getAvailableSubcategories = () => {
-    return form.category ? subcategoriesMap[form.category] || [] : [];
-  };
+  // Reset dependent fields when category changes
+  useEffect(() => {
+    if (form.category) {
+      // Always reset gender when category changes to ensure proper filtering
+      setForm(prev => ({ ...prev, gender: '', subcategory: '' }));
+      
+      // Reset sizes
+      setSelectedSizes([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.category]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSelect = (name) => (option) => {
     if (name === 'category') {
-      setForm({ ...form, [name]: option.value, subcategory: '' });
+      setForm({ 
+        ...form, 
+        [name]: option?.value || '', 
+        subcategory: '',
+        gender: '',
+        sizes: []
+      });
+      setSelectedSizes([]);
+    } else if (name === 'gender') {
+      // When gender changes, reset subcategory if it's not compatible
+      const newGender = option?.value || '';
+      setForm({ 
+        ...form, 
+        gender: newGender,
+        subcategory: '' // Always reset subcategory when gender changes for simplicity
+      });
     } else {
-      setForm({ ...form, [name]: option.value });
+      setForm({ ...form, [name]: option?.value || '' });
     }
   };
 
@@ -236,11 +376,11 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const handleImageUpload = (files) => {
     const validFiles = Array.from(files).filter(file => {
       if (!file.type.startsWith('image/')) {
-        alert('Please select only image files');
+        alert(t('onlyImageFiles') || 'Please select only image files');
         return false;
       }
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size should be less than 5MB');
+        alert(t('fileSizeLimit') || 'File size should be less than 5MB');
         return false;
       }
       return true;
@@ -290,9 +430,9 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.title?.trim()) return alert('Title required');
-    if (!form.price || parseFloat(form.price) <= 0) return alert('Valid price required');
-    if (!form.category) return alert('Category required');
+    if (!form.title?.trim()) return alert(t('titleRequired') || 'Title required');
+    if (!form.price || parseFloat(form.price) <= 0) return alert(t('validPriceRequired') || 'Valid price required');
+    if (!form.category) return alert(t('categoryRequired') || 'Category required');
 
     const productPayload = {
       title: form.title.trim(),
@@ -342,7 +482,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
         max="100"
         value={form.discount || ''} 
         onChange={handleChange} 
-        placeholder="Optional discount percentage"
+        placeholder={t('optionalDiscountPercentage') || "Optional discount percentage"}
       />
 
       <Label>{t('description') || 'Description'}</Label>
@@ -350,53 +490,62 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
         name="description" 
         value={form.description || ''} 
         onChange={handleChange}
-        placeholder="Enter product description..."
+        placeholder={t('enterProductDescription') || "Enter product description..."}
       />
 
       <Label>{t('category')}</Label>
       <Select
-        value={categories.find(c => c.value === form.category)}
+        value={getCategoryOptions().find(c => c.value === form.category)}
         onChange={handleSelect('category')}
-        options={categories}
-        placeholder="Select category..."
+        options={getCategoryOptions()}
+        placeholder={t('selectCategory') || "Select category..."}
+        isClearable
         required
       />
 
       {form.category && (
         <>
-          <Label>{t('subcategory')}</Label>
+          <Label>{t('genderLabel')}</Label>
           <Select
-            value={getAvailableSubcategories().find(s => s.value === form.subcategory)}
-            onChange={handleSelect('subcategory')}
-            options={getAvailableSubcategories()}
-            placeholder="Select subcategory..."
+            value={getGenderOptions().find(g => g.value === form.gender)}
+            onChange={handleSelect('gender')}
+            options={getGenderOptions()}
+            placeholder={t('selectGender') || "Select gender..."}
             isClearable
           />
         </>
       )}
 
-      <Label>{t('gender')}</Label>
-      <Select
-        value={genders.find(g => g.value === form.gender)}
-        onChange={handleSelect('gender')}
-        options={genders}
-        placeholder="Select gender..."
-        isClearable
-      />
+      {form.category && getFilteredSubcategories().length > 0 && (
+        <>
+          <Label>{t('subcategory')}</Label>
+          <Select
+            value={getSubcategoryOptions().find(s => s.value === form.subcategory)}
+            onChange={handleSelect('subcategory')}
+            options={getSubcategoryOptions()}
+            placeholder={t('selectSubcategory') || "Select subcategory..."}
+            isClearable
+          />
+        </>
+      )}
 
-      <Label>Available Sizes</Label>
-      <Select
-        isMulti
-        value={sizes.filter(s => selectedSizes.includes(s.value))}
-        onChange={handleSizeChange}
-        options={sizes}
-        placeholder="Select available sizes..."
-        closeMenuOnSelect={false}
-      />
+      {form.category && getAvailableSizes().length > 0 && (
+        <>
+          <Label>{t('size')}</Label>
+          <Select
+            isMulti
+            value={getSizeOptions().filter(s => selectedSizes.includes(s.value))}
+            onChange={handleSizeChange}
+            options={getSizeOptions()}
+            placeholder={t('selectAvailableSizes') || "Select available sizes..."}
+            closeMenuOnSelect={false}
+          />
+        </>
+      )}
 
       <Label>{t('availability')}</Label>
       <Select
-        value={{ value: form.available, label: form.available ? t('inStock') : t('outOfStock') }}
+        value={{ value: form.available !== false, label: form.available !== false ? t('inStock') : t('outOfStock') }}
         onChange={handleSelect('available')}
         options={[
           { value: true, label: t('inStock') },
@@ -405,7 +554,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
       />
 
       <ImageUploadSection>
-        <Label>Product Images</Label>
+        <Label>{t('productImages') || 'Product Images'}</Label>
         <ImageUploadContainer
           className={dragOver ? 'dragover' : ''}
           onDrop={handleDrop}
@@ -414,10 +563,10 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
           onClick={() => fileInputRef.current?.click()}
         >
           <UploadText>
-            📸 Drag & drop images here or click to select
+            📸 {t('dragDropImages') || 'Drag & drop images here or click to select'}
           </UploadText>
           <UploadText style={{ fontSize: '12px', color: '#999' }}>
-            Supported formats: JPG, PNG, WebP (Max 5MB each)
+            {t('supportedFormats') || 'Supported formats: JPG, PNG, WebP (Max 5MB each)'}
           </UploadText>
           <HiddenFileInput
             ref={fileInputRef}

@@ -104,104 +104,95 @@ const MeasurementTitle = styled.h3`
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 `;
 
 const MeasurementText = styled.p`
-  color: #5a6c7d;
+  color: #7f8c8d;
   line-height: 1.6;
   margin-bottom: 10px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  font-size: 0.95rem;
 `;
 
 const SizeTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  margin: 30px 0;
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 `;
 
 const TableHeader = styled.th`
-  background: linear-gradient(45deg, #3498db, #2980b9);
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
-  padding: 15px 10px;
+  padding: 15px 12px;
   text-align: center;
   font-weight: 600;
   font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
 
-  @media (max-width: 768px) {
-    padding: 12px 8px;
-    font-size: 0.8rem;
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background: #f8f9fa;
+  }
+  
+  &:hover {
+    background: #e3f2fd;
   }
 `;
 
 const TableCell = styled.td`
-  padding: 12px 10px;
-  border-bottom: 1px solid #ecf0f1;
-  color: #2c3e50;
+  padding: 12px;
   text-align: center;
+  border-bottom: 1px solid #ecf0f1;
   font-size: 0.9rem;
-
-  &:first-child {
-    font-weight: 600;
-    background: #f8f9fa;
-  }
-
-  @media (max-width: 768px) {
-    padding: 10px 8px;
-    font-size: 0.8rem;
-  }
-`;
-
-const TableRow = styled.tr`
-  &:hover {
-    background: #f8f9fa;
-  }
+  color: #2c3e50;
 `;
 
 const InfoBox = styled.div`
-  background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
-  border: 2px solid #27ae60;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 30px;
   border-radius: 15px;
-  padding: 25px;
-  margin: 30px 0;
+  border: 2px solid #ecf0f1;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 `;
 
-const InfoTitle = styled.h4`
-  color: #155724;
-  font-size: 1.2rem;
+const InfoTitle = styled.h3`
+  color: #2c3e50;
+  font-size: 1.4rem;
   font-weight: 600;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 `;
 
 const InfoText = styled.p`
-  color: #155724;
-  font-size: 1rem;
-  margin-bottom: 10px;
+  color: #7f8c8d;
   line-height: 1.6;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  margin-bottom: 15px;
+  font-size: 1rem;
 `;
 
 const TipsList = styled.ul`
-  color: #155724;
-  margin: 15px 0;
-  padding-left: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
 `;
 
 const TipItem = styled.li`
   margin-bottom: 8px;
   line-height: 1.6;
+  padding-left: 20px;
+  position: relative;
+  
+  &:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #27ae60;
+    font-weight: bold;
+  }
 `;
 
 const SizeGuidePage = () => {
@@ -209,13 +200,13 @@ const SizeGuidePage = () => {
   const { t } = useLanguage();
 
   useEffect(() => {
-    document.title = "Size Guide - TeIpsum";
-  }, []);
+    document.title = `${t('sizeGuide.title')} - TeIpsum`;
+  }, [t]);
 
   const categories = [
-    { id: 'womens', label: 'Women' },
-    { id: 'mens', label: 'Men' },
-    { id: 'kids', label: 'Kids' }
+    { id: 'womens', label: t('sizeGuide.women') },
+    { id: 'mens', label: t('sizeGuide.men') },
+    { id: 'kids', label: t('sizeGuide.kids') }
   ];
 
   const sizeTables = {
@@ -270,6 +261,46 @@ const SizeGuidePage = () => {
     }
   };
 
+  // Gender-specific measurement instructions
+  const getMeasurementInstructions = () => {
+    switch (activeCategory) {
+      case 'womens':
+        return {
+          chestTitle: t('sizeGuide.chestBust'),
+          chestDesc: t('sizeGuide.chestBustDesc'),
+          chestTip: t('sizeGuide.chestBustTip'),
+          showHips: true,
+          showBust: true
+        };
+      case 'mens':
+        return {
+          chestTitle: t('sizeGuide.chest'),
+          chestDesc: t('sizeGuide.chestDesc'),
+          chestTip: t('sizeGuide.chestTip'),
+          showHips: false,
+          showBust: false
+        };
+      case 'kids':
+        return {
+          chestTitle: t('sizeGuide.chest'),
+          chestDesc: t('sizeGuide.chestDescKids'),
+          chestTip: t('sizeGuide.chestTipKids'),
+          showHips: false,
+          showBust: false
+        };
+      default:
+        return {
+          chestTitle: t('sizeGuide.chest'),
+          chestDesc: t('sizeGuide.chestDesc'),
+          chestTip: t('sizeGuide.chestTip'),
+          showHips: false,
+          showBust: false
+        };
+    }
+  };
+
+  const instructions = getMeasurementInstructions();
+
   return (
     <SizeGuideContainer>
       <ContentWrapper>
@@ -278,11 +309,11 @@ const SizeGuidePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Size Guide
+          {t('sizeGuide.title')}
         </Title>
         
         <Subtitle>
-          Find your perfect fit with our comprehensive size guide. Still unsure? Contact us for personalized assistance.
+          {t('sizeGuide.subtitle')}
         </Subtitle>
 
         <CategoryTabs>
@@ -302,47 +333,47 @@ const SizeGuidePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>How to Measure</SectionTitle>
+          <SectionTitle>{t('sizeGuide.howToMeasure')}</SectionTitle>
           <MeasurementGuide>
             <MeasurementCard>
-              <MeasurementTitle>📏 Chest/Bust</MeasurementTitle>
+              <MeasurementTitle>{instructions.chestTitle}</MeasurementTitle>
               <MeasurementText>
-                Measure around the fullest part of your chest/bust, keeping the tape measure level and snug but not tight.
+                {instructions.chestDesc}
               </MeasurementText>
               <MeasurementText>
-                <strong>Tip:</strong> Wear a well-fitting bra when measuring for the most accurate result.
+                {instructions.chestTip}
               </MeasurementText>
             </MeasurementCard>
 
             <MeasurementCard>
-              <MeasurementTitle>📐 Waist</MeasurementTitle>
+              <MeasurementTitle>{t('sizeGuide.waist')}</MeasurementTitle>
               <MeasurementText>
-                Measure around your natural waistline, which is typically the narrowest part of your torso.
+                {t('sizeGuide.waistDesc')}
               </MeasurementText>
               <MeasurementText>
-                <strong>Tip:</strong> Don't hold your breath! Breathe normally for an accurate measurement.
+                {t('sizeGuide.waistTip')}
               </MeasurementText>
             </MeasurementCard>
 
-            {activeCategory === 'womens' && (
+            {instructions.showHips && (
               <MeasurementCard>
-                <MeasurementTitle>📏 Hips</MeasurementTitle>
+                <MeasurementTitle>{t('sizeGuide.hips')}</MeasurementTitle>
                 <MeasurementText>
-                  Measure around the fullest part of your hips, typically about 8 inches below your waist.
+                  {t('sizeGuide.hipsDesc')}
                 </MeasurementText>
                 <MeasurementText>
-                  <strong>Tip:</strong> Stand with feet together for the most accurate measurement.
+                  {t('sizeGuide.hipsTip')}
                 </MeasurementText>
               </MeasurementCard>
             )}
 
             <MeasurementCard>
-              <MeasurementTitle>👤 Height</MeasurementTitle>
+              <MeasurementTitle>{t('sizeGuide.height')}</MeasurementTitle>
               <MeasurementText>
-                Stand straight against a wall and measure from the top of your head to the floor.
+                {t('sizeGuide.heightDesc')}
               </MeasurementText>
               <MeasurementText>
-                <strong>Tip:</strong> Remove shoes and have someone help you for best accuracy.
+                {t('sizeGuide.heightTip')}
               </MeasurementText>
             </MeasurementCard>
           </MeasurementGuide>
@@ -354,9 +385,7 @@ const SizeGuidePage = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <SectionTitle>
-            {activeCategory === 'womens' ? 'Women\'s' : 
-             activeCategory === 'mens' ? 'Men\'s' : 'Kids\''}
-            {' '}Clothing Sizes
+            {t(`sizeGuide.${activeCategory}ClothingSizes`)}
           </SectionTitle>
           
           <SizeTable>
@@ -364,19 +393,19 @@ const SizeGuidePage = () => {
               <tr>
                 {activeCategory === 'kids' ? (
                   <>
-                    <TableHeader>Age</TableHeader>
-                    <TableHeader>Height (cm)</TableHeader>
-                    <TableHeader>Chest (in)</TableHeader>
-                    <TableHeader>Waist (in)</TableHeader>
+                    <TableHeader>{t('sizeGuide.age')}</TableHeader>
+                    <TableHeader>{t('sizeGuide.heightCm')}</TableHeader>
+                    <TableHeader>{t('sizeGuide.chestIn')}</TableHeader>
+                    <TableHeader>{t('sizeGuide.waistIn')}</TableHeader>
                   </>
                 ) : (
                   <>
                     <TableHeader>{t('size')}</TableHeader>
-                    <TableHeader>Chest (in)</TableHeader>
-                    <TableHeader>Waist (in)</TableHeader>
-                    {activeCategory === 'womens' && <TableHeader>Hips (in)</TableHeader>}
-                    <TableHeader>US Size</TableHeader>
-                    <TableHeader>EU Size</TableHeader>
+                    <TableHeader>{t('sizeGuide.chestIn')}</TableHeader>
+                    <TableHeader>{t('sizeGuide.waistIn')}</TableHeader>
+                    {instructions.showHips && <TableHeader>{t('sizeGuide.hipsIn')}</TableHeader>}
+                    <TableHeader>{t('sizeGuide.usSize')}</TableHeader>
+                    <TableHeader>{t('sizeGuide.euSize')}</TableHeader>
                   </>
                 )}
               </tr>
@@ -396,7 +425,7 @@ const SizeGuidePage = () => {
                       <TableCell>{row.size}</TableCell>
                       <TableCell>{row.chest}</TableCell>
                       <TableCell>{row.waist}</TableCell>
-                      {activeCategory === 'womens' && <TableCell>{row.hips}</TableCell>}
+                      {instructions.showHips && <TableCell>{row.hips}</TableCell>}
                       <TableCell>{row.us}</TableCell>
                       <TableCell>{row.eu}</TableCell>
                     </>
@@ -413,15 +442,15 @@ const SizeGuidePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <SectionTitle>Shoe Sizes</SectionTitle>
+            <SectionTitle>{t('sizeGuide.shoeSizes')}</SectionTitle>
             
             <SizeTable>
               <thead>
                 <tr>
-                  <TableHeader>US</TableHeader>
-                  <TableHeader>EU</TableHeader>
-                  <TableHeader>UK</TableHeader>
-                  <TableHeader>Length (cm)</TableHeader>
+                  <TableHeader>{t('sizeGuide.us')}</TableHeader>
+                  <TableHeader>{t('sizeGuide.eu')}</TableHeader>
+                  <TableHeader>{t('sizeGuide.uk')}</TableHeader>
+                  <TableHeader>{t('sizeGuide.lengthCm')}</TableHeader>
                 </tr>
               </thead>
               <tbody>
@@ -444,18 +473,17 @@ const SizeGuidePage = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <InfoBox>
-            <InfoTitle>💡 Fitting Tips</InfoTitle>
+            <InfoTitle>{t('sizeGuide.fittingTips')}</InfoTitle>
             <TipsList>
-              <TipItem>If you're between sizes, we generally recommend sizing up for comfort</TipItem>
-              <TipItem>Check individual product pages for specific fit notes</TipItem>
-              <TipItem>Read customer reviews for real-world fit insights</TipItem>
-              <TipItem>Consider the fabric type - some materials have more stretch than others</TipItem>
-              <TipItem>When in doubt, contact our customer service for personalized recommendations</TipItem>
+              <TipItem>{t('sizeGuide.tip1')}</TipItem>
+              <TipItem>{t('sizeGuide.tip2')}</TipItem>
+              <TipItem>{t('sizeGuide.tip3')}</TipItem>
+              <TipItem>{t('sizeGuide.tip4')}</TipItem>
+              <TipItem>{t('sizeGuide.tip5')}</TipItem>
             </TipsList>
             
             <InfoText style={{ marginTop: '20px' }}>
-              <strong>Still not sure?</strong> We offer free exchanges on all domestic orders, 
-              so you can find your perfect fit risk-free!
+              {t('sizeGuide.stillNotSure')}
             </InfoText>
           </InfoBox>
         </Section>
@@ -466,16 +494,15 @@ const SizeGuidePage = () => {
           transition={{ duration: 0.8, delay: 1.0 }}
         >
           <InfoBox style={{ background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)', border: '2px solid #2196f3' }}>
-            <InfoTitle style={{ color: '#0d47a1' }}>📞 Need Personal Sizing Help?</InfoTitle>
+            <InfoTitle style={{ color: '#0d47a1' }}>{t('sizeGuide.needHelp')}</InfoTitle>
             <InfoText style={{ color: '#1565c0' }}>
-              Our customer service team is trained to help you find the perfect fit. 
-              Contact us with your measurements and we'll recommend the best size for you.
+              {t('sizeGuide.needHelpDesc')}
             </InfoText>
             <InfoText style={{ color: '#1565c0' }}>
-              📧 sizing@teipsum.com | 📞 +48 123 456 789
+              {t('sizeGuide.contactEmail')}
             </InfoText>
             <InfoText style={{ color: '#1565c0' }}>
-              🕒 Monday - Friday: 9 AM - 6 PM CET
+              {t('sizeGuide.contactHours')}
             </InfoText>
           </InfoBox>
         </Section>

@@ -171,39 +171,39 @@ const StandardsText = styled.p`
 const AccessibilityPage = () => {
   const  { t } = useLanguage();
   useEffect(() => {
-    document.title = `${t('accessibility')} - TeIpsum`;
+    document.title = `${t('accessibilityPage')} - TeIpsum`;
   }, [t]);
 
   const accessibilityFeatures = [
     {
       icon: "♿",
-      title: "Screen Reader Support",
-      description: "Our website is fully compatible with screen readers like JAWS, NVDA, and VoiceOver. All images include descriptive alt text, and navigation is optimized for assistive technologies."
+      title: t('accessibility.screenReaderSupport'),
+      description: t('accessibility.screenReaderDesc')
     },
     {
       icon: "🎯",
-      title: "Keyboard Navigation",
-      description: "Navigate our entire website using only your keyboard. All interactive elements are accessible via Tab, Enter, and arrow keys with clear focus indicators."
+      title: t('accessibility.keyboardNavigation'),
+      description: t('accessibility.keyboardDesc')
     },
     {
       icon: "🔍",
-      title: "Text Scaling",
-      description: "Zoom text up to 200% without horizontal scrolling or loss of functionality. Our responsive design adapts to different text sizes and browser zoom levels."
+      title: t('accessibility.textScaling'),
+      description: t('accessibility.textScalingDesc')
     },
     {
       icon: "🎨",
-      title: "High Contrast Mode",
-      description: "Enhanced color contrast ratios meet WCAG AA standards. Important information is never conveyed through color alone, and we support high contrast display modes."
+      title: t('accessibility.highContrastMode'),
+      description: t('accessibility.highContrastDesc')
     },
     {
       icon: "⏱️",
-      title: "No Time Limits",
-      description: "Take your time browsing and shopping. We don't impose time limits on forms or sessions, and any automatic content updates can be paused or controlled."
+      title: t('accessibility.noTimeLimits'),
+      description: t('accessibility.noTimeLimitsDesc')
     },
     {
       icon: "🚫",
-      title: "Seizure Safe",
-      description: "Our content avoids flashing elements and rapid animations that could trigger seizures. Motion can be reduced through browser settings and our design preferences."
+      title: t('accessibility.seizureSafe'),
+      description: t('accessibility.seizureSafeDesc')
     }
   ];
 
@@ -219,8 +219,7 @@ const AccessibilityPage = () => {
         </Title>
         
         <Subtitle>
-          TeIpsum is committed to ensuring digital accessibility for all users, regardless of ability. 
-          We continually improve the user experience for everyone.
+          {t('accessibility.subtitle')}
         </Subtitle>
 
         <Section
@@ -228,15 +227,12 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>Our Commitment</SectionTitle>
+          <SectionTitle>{t('accessibility.ourCommitment')}</SectionTitle>
           <Text>
-            We believe that everyone should have equal access to fashion and online shopping. TeIpsum is 
-            dedicated to providing an inclusive, accessible, and user-friendly experience for all visitors, 
-            including those who rely on assistive technologies.
+            {t('accessibility.commitmentDesc1')}
           </Text>
           <Text>
-            Our accessibility efforts are guided by the Web Content Accessibility Guidelines (WCAG) 2.1 
-            Level AA standards, ensuring our website meets international accessibility requirements.
+            {t('accessibility.commitmentDesc2')}
           </Text>
         </Section>
 
@@ -245,7 +241,7 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>Accessibility Features</SectionTitle>
+          <SectionTitle>{t('accessibility.features')}</SectionTitle>
           <FeatureGrid>
             {accessibilityFeatures.map((feature, index) => (
               <FeatureCard
@@ -268,16 +264,16 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>What We've Implemented</SectionTitle>
+          <SectionTitle>{t('accessibility.implemented')}</SectionTitle>
           <List>
-            <ListItem><strong>Semantic HTML:</strong> Proper heading structure and landmark regions for easy navigation</ListItem>
-            <ListItem><strong>Alt Text:</strong> Descriptive alternative text for all images and graphics</ListItem>
-            <ListItem><strong>Form Labels:</strong> Clear, descriptive labels for all form inputs</ListItem>
-            <ListItem><strong>Color Contrast:</strong> High contrast ratios for text and background colors</ListItem>
-            <ListItem><strong>Focus Management:</strong> Visible focus indicators and logical tab order</ListItem>
-            <ListItem><strong>ARIA Labels:</strong> Additional context for complex interactive elements</ListItem>
-            <ListItem><strong>Responsive Design:</strong> Mobile-friendly layout that works with assistive technologies</ListItem>
-            <ListItem><strong>Error Handling:</strong> Clear, descriptive error messages and validation feedback</ListItem>
+            <ListItem><strong>{t('accessibility.semanticHTML')}:</strong> {t('accessibility.semanticHTMLDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.altText')}:</strong> {t('accessibility.altTextDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.formLabels')}:</strong> {t('accessibility.formLabelsDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.colorContrast')}:</strong> {t('accessibility.colorContrastDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.focusManagement')}:</strong> {t('accessibility.focusManagementDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.ariaLabels')}:</strong> {t('accessibility.ariaLabelsDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.responsiveDesign')}:</strong> {t('accessibility.responsiveDesignDesc')}</ListItem>
+            <ListItem><strong>{t('accessibility.errorHandling')}:</strong> {t('accessibility.errorHandlingDesc')}</ListItem>
           </List>
         </Section>
 
@@ -286,24 +282,22 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <SectionTitle>Assistive Technology Support</SectionTitle>
+          <SectionTitle>{t('accessibility.assistiveTechSupport')}</SectionTitle>
           <Text style={{textAlign:'left'}}>
-            Our website has been tested with various assistive technologies and browsers:
+            {t('accessibility.assistiveTechDesc')}
           </Text>
           <List>
-            <ListItem><strong>Screen Readers:</strong> JAWS, NVDA, VoiceOver, TalkBack</ListItem>
-            <ListItem><strong>Voice Control:</strong> Dragon NaturallySpeaking, Voice Control</ListItem>
-            <ListItem><strong>Switch Navigation:</strong> Switch Access, external switch devices</ListItem>
-            <ListItem><strong>Magnification:</strong> ZoomText, browser zoom, OS magnification tools</ListItem>
+            <ListItem><strong>{t('accessibility.screenReadersLabel')}:</strong> {t('accessibility.screenReadersList')}</ListItem>
+            <ListItem><strong>{t('accessibility.voiceControl')}:</strong> {t('accessibility.voiceControlList')}</ListItem>
+            <ListItem><strong>{t('accessibility.switchNavigation')}:</strong> {t('accessibility.switchNavigationList')}</ListItem>
+            <ListItem><strong>{t('accessibility.magnification')}:</strong> {t('accessibility.magnificationList')}</ListItem>
           </List>
         </Section>
 
         <StandardsBox>
-          <StandardsTitle>🏆 Compliance Standards</StandardsTitle>
+          <StandardsTitle>🏆 {t('accessibility.complianceStandards')}</StandardsTitle>
           <StandardsText>
-            TeIpsum strives to conform to WCAG 2.1 Level AA guidelines, Section 508 of the Rehabilitation Act, 
-            and the Americans with Disabilities Act (ADA). We regularly audit our website to ensure continued 
-            compliance and optimal accessibility.
+            {t('accessibility.complianceDesc')}
           </StandardsText>
         </StandardsBox>
 
@@ -312,16 +306,16 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
         >
-          <SectionTitle>Ongoing Improvements</SectionTitle>
+          <SectionTitle>{t('accessibility.ongoingImprovements')}</SectionTitle>
           <Text style={{textAlign:'left'}}>
-            Accessibility is an ongoing effort. We regularly:
+            {t('accessibility.ongoingDesc')}
           </Text>
           <List>
-            <ListItem>Conduct accessibility audits and user testing</ListItem>
-            <ListItem>Train our team on accessibility best practices</ListItem>
-            <ListItem>Update our website based on user feedback and new standards</ListItem>
-            <ListItem>Test new features with assistive technologies before release</ListItem>
-            <ListItem>Collaborate with accessibility experts and the disability community</ListItem>
+            <ListItem>{t('accessibility.improvement1')}</ListItem>
+            <ListItem>{t('accessibility.improvement2')}</ListItem>
+            <ListItem>{t('accessibility.improvement3')}</ListItem>
+            <ListItem>{t('accessibility.improvement4')}</ListItem>
+            <ListItem>{t('accessibility.improvement5')}</ListItem>
           </List>
         </Section>
 
@@ -330,29 +324,28 @@ const AccessibilityPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
         >
-          <SectionTitle>Browser and Device Recommendations</SectionTitle>
+          <SectionTitle>{t('accessibility.browserRecommendations')}</SectionTitle>
           <Text style={{textAlign:'left'}}>
-            For the best accessible experience, we recommend:
+            {t('accessibility.recommendationsDesc')}
           </Text>
           <List>
-            <ListItem>Using the latest version of your preferred browser</ListItem>
-            <ListItem>Keeping your operating system and assistive technologies updated</ListItem>
-            <ListItem>Enabling JavaScript for full functionality</ListItem>
-            <ListItem>Using browsers that support modern web standards (Chrome, Firefox, Safari, Edge)</ListItem>
+            <ListItem>{t('accessibility.recommendation1')}</ListItem>
+            <ListItem>{t('accessibility.recommendation2')}</ListItem>
+            <ListItem>{t('accessibility.recommendation3')}</ListItem>
+            <ListItem>{t('accessibility.recommendation4')}</ListItem>
           </List>
         </Section>
 
         <ContactBox>
-          <ContactTitle>Accessibility Feedback</ContactTitle>
+          <ContactTitle>{t('accessibility.feedback')}</ContactTitle>
           <ContactText>
-            We welcome your feedback on the accessibility of TeIpsum. If you encounter any barriers or 
-            have suggestions for improvement, please let us know:
+            {t('accessibility.feedbackDesc')}
           </ContactText>
-          <ContactText>📧 accessibility@teipsum.com</ContactText>
-          <ContactText>📞 +48 123 456 789 (Voice/TTY available)</ContactText>
-          <ContactText>📍 TeIpsum Accessibility Team, ul. Fashion 123, 90-001 Łódź, Poland</ContactText>
+          <ContactText>{t('accessibility.contactEmail')}</ContactText>
+          <ContactText>{t('accessibility.contactPhone')}</ContactText>
+          <ContactText>{t('accessibility.contactAddress')}</ContactText>
           <ContactText style={{ marginTop: '20px', fontWeight: '600' }}>
-            We aim to respond to accessibility feedback within 3 business days.
+            {t('accessibility.responseTime')}
           </ContactText>
         </ContactBox>
       </ContentWrapper>

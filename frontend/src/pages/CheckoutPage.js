@@ -481,7 +481,7 @@ const CheckoutPage = () => {
         </OrderFormSection>
 
         <AccountIncentiveSection>
-          <IncentiveSectionTitle>Create an Account</IncentiveSectionTitle>
+          <IncentiveSectionTitle>{t('createAccount')}</IncentiveSectionTitle>
           
           <IncentiveCard
             initial={{ opacity: 0, y: 20 }}
@@ -490,15 +490,15 @@ const CheckoutPage = () => {
           >
             <IncentiveTitle>{t('welcomeBonus')}</IncentiveTitle>
             <IncentiveText>
-              Join our community and enjoy exclusive benefits with your first order!
+              {t('welcomeBonusText')}
             </IncentiveText>
             <BenefitList>
-              <BenefitItem>10% off your first order</BenefitItem>
-              <BenefitItem>Exclusive vouchers and discounts</BenefitItem>
-              <BenefitItem>Order history and tracking</BenefitItem>
-              <BenefitItem>Early access to new collections</BenefitItem>
-              <BenefitItem>Personalized recommendations</BenefitItem>
-              <BenefitItem>Free shipping on orders over $100</BenefitItem>
+              <BenefitItem>{t('discount10')}</BenefitItem>
+              <BenefitItem>{t('exclusiveVouchers')}</BenefitItem>
+              <BenefitItem>{t('orderHistory')}</BenefitItem>
+              <BenefitItem>{t('earlyAccess')}</BenefitItem>
+              <BenefitItem>{t('personalizedRecs')}</BenefitItem>
+              <BenefitItem>{t('freeShipping')}</BenefitItem>
             </BenefitList>
           </IncentiveCard>
 
@@ -507,7 +507,7 @@ const CheckoutPage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Create Account & Save 10%
+            {t('createAccountSave')}
           </CreateAccountButton>
 
           <p style={{ 
@@ -516,7 +516,7 @@ const CheckoutPage = () => {
             color: 'rgba(255, 255, 255, 0.8)',
             fontSize: '0.9rem'
           }}>
-            You can still complete your order without creating an account
+            {t('completeWithoutAccount')}
           </p>
         </AccountIncentiveSection>
       </CheckoutContent>

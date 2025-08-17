@@ -474,9 +474,9 @@ const Footer = () => {
           <SectionTitle theme={theme}>{t('store')}</SectionTitle>
           <FooterLink to="/store" theme={theme}>{t('allProducts')}</FooterLink>
           <FooterLink to="/new-arrivals" theme={theme}>{t('newArrivals')}</FooterLink>
-          <FooterLink to="/bestsellers" theme={theme}>{t('bestsellers')}</FooterLink>
+          <FooterLink to="/bestsellers" theme={theme}>{t('bestsellersButton')}</FooterLink>
           <FooterLink to="/discounts" theme={theme}>{t('discounts')}</FooterLink>
-          <FooterLink to="/size-guide" theme={theme}>{t('sizeGuide')}</FooterLink>
+          <FooterLink to="/size-guide" theme={theme}>{t('sizeGuideButton')}</FooterLink>
         </FooterSection>
 
         <FooterSection>
@@ -491,9 +491,9 @@ const Footer = () => {
         <FooterSection>
           <SectionTitle theme={theme}>{t('company')}</SectionTitle>
           <FooterLink to="/about" theme={theme}>{t('about')}</FooterLink>
-          <FooterLink to="/careers" theme={theme}>{t('careers')}</FooterLink>
-          <FooterLink to="/blog" theme={theme}>{t('blog')}</FooterLink>
-          <FooterLink to="/accessibility" theme={theme}>{t('accessibility')}</FooterLink>
+          <FooterLink to="/careers" theme={theme}>{t('careersButton')}</FooterLink>
+          <FooterLink to="/blog" theme={theme}>{t('blogPage')}</FooterLink>
+          <FooterLink to="/accessibility" theme={theme}>{t('accessibilityPage')}</FooterLink>
           <FooterLink to="/privacy" theme={theme}>{t('privacyPolicy')}</FooterLink>
           <FooterLink to="/terms" theme={theme}>{t('termsOfService')}</FooterLink>
           <FooterLink to="/cookies" theme={theme}>{t('cookiePolicy')}</FooterLink>
