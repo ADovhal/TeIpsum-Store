@@ -2,13 +2,30 @@ package com.teipsum.shared.product.enums;
 
 import lombok.Getter;
 
+/**
+ * Main product categories for a comprehensive clothing e-commerce store
+ */
 public enum ProductCategory {
-    // Основные категории одежды
-    MENS_CLOTHING("Men's Clothing", true, true, true),
-    WOMENS_CLOTHING("Women's Clothing", true, true, true),
-    KIDS_CLOTHING("Kids' Clothing", true, true, false),
-    ACCESSORIES("Accessories", true, true, false),
-    SHOES("Shoes", true, true, true);
+    // Main clothing categories
+    TOPS("Tops", true, true, true),
+    BOTTOMS("Bottoms", true, true, true),
+    DRESSES_SKIRTS("Dresses & Skirts", true, true, true),
+    OUTERWEAR("Outerwear", true, true, true),
+    UNDERWEAR_SLEEPWEAR("Underwear & Sleepwear", true, true, true),
+    ACTIVEWEAR("Activewear", true, true, true),
+    SWIMWEAR("Swimwear", true, true, true),
+    
+    // Footwear
+    SHOES("Shoes", true, true, true),
+    
+    // Accessories
+    ACCESSORIES("Accessories", true, false, false),
+    BAGS("Bags", true, false, false),
+    JEWELRY("Jewelry", true, false, false),
+    
+    // Special categories
+    KIDS("Kids", true, true, true),
+    BABY("Baby", true, true, true);
 
     @Getter
     private final String displayName;

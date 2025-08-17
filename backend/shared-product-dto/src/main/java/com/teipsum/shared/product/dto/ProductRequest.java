@@ -3,6 +3,7 @@ package com.teipsum.shared.product.dto;
 import com.teipsum.shared.product.enums.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,7 +31,7 @@ public record ProductRequest(
 
         Gender gender,
 
-        List<@URL(message = "Image URL must be valid") String> imageUrls,
+        List<@URL(message = "Image URL must be valid") MultipartFile> imageUrls,
 
         List<String> sizes,
 
