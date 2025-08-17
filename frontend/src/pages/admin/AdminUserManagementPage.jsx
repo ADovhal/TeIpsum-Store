@@ -31,7 +31,7 @@ const AdminUserManagementPage = () => {
       <div className={styles.header}>
         <h1 className={styles.title}>{t('userManagement')}</h1>
         <p className={styles.subtitle}>
-          Manage user accounts and administrative privileges
+          {t('admin.userManagementSubtitle')}
         </p>
       </div>
 
@@ -49,9 +49,9 @@ const AdminUserManagementPage = () => {
         <div className={styles.content}>
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Administrator Management</h2>
+              <h2 className={styles.sectionTitle}>{t('admin.administratorManagement')}</h2>
               <p className={styles.sectionDescription}>
-                Create and manage administrator accounts with system-wide privileges
+                {t('admin.adminManagementDescription')}
               </p>
             </div>
 
@@ -59,9 +59,9 @@ const AdminUserManagementPage = () => {
               <div className={styles.actionCard}>
                 <div className={styles.cardIcon}>👤</div>
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardTitle}>Create New Admin</h3>
+                  <h3 className={styles.cardTitle}>{t('admin.createNewAdminCard')}</h3>
                   <p className={styles.cardDescription}>
-                    Register a new administrator account with full system access
+                    {t('admin.createNewAdminDescription')}
                   </p>
                   <button 
                     className={styles.primaryButton}
@@ -75,15 +75,15 @@ const AdminUserManagementPage = () => {
               <div className={styles.actionCard}>
                 <div className={styles.cardIcon}>👥</div>
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardTitle}>Manage Users</h3>
+                  <h3 className={styles.cardTitle}>{t('admin.manageUsersCard')}</h3>
                   <p className={styles.cardDescription}>
-                    View and manage regular user accounts and their permissions
+                    {t('admin.manageUsersDescription')}
                   </p>
                   <button 
                     className={styles.secondaryButton}
                     onClick={() => {/* TODO: Implement user list */}}
                   >
-                    View All Users
+                    {t('admin.viewAllUsers')}
                   </button>
                 </div>
               </div>
@@ -91,15 +91,15 @@ const AdminUserManagementPage = () => {
               <div className={styles.actionCard}>
                 <div className={styles.cardIcon}>🔐</div>
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardTitle}>Security Settings</h3>
+                  <h3 className={styles.cardTitle}>{t('admin.securitySettings')}</h3>
                   <p className={styles.cardDescription}>
-                    Configure security policies and access controls
+                    {t('admin.securitySettingsDescription')}
                   </p>
                   <button 
                     className={styles.secondaryButton}
                     onClick={() => {/* TODO: Implement security settings */}}
                   >
-                    Security Settings
+                    {t('admin.securitySettings')}
                   </button>
                 </div>
               </div>
@@ -107,15 +107,15 @@ const AdminUserManagementPage = () => {
               <div className={styles.actionCard}>
                 <div className={styles.cardIcon}>📊</div>
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardTitle}>User Analytics</h3>
+                  <h3 className={styles.cardTitle}>{t('admin.userAnalytics')}</h3>
                   <p className={styles.cardDescription}>
-                    View user registration trends and account statistics
+                    {t('admin.userAnalyticsDescription')}
                   </p>
                   <button 
                     className={styles.secondaryButton}
                     onClick={() => {/* TODO: Implement analytics */}}
                   >
-                    View Analytics
+                    {t('admin.viewAnalytics')}
                   </button>
                 </div>
               </div>
@@ -124,9 +124,9 @@ const AdminUserManagementPage = () => {
 
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Recent Activity</h2>
+              <h2 className={styles.sectionTitle}>{t('admin.recentActivity')}</h2>
               <p className={styles.sectionDescription}>
-                Latest user management activities and system events
+                {t('admin.recentActivityDescription')}
               </p>
             </div>
 
@@ -134,24 +134,24 @@ const AdminUserManagementPage = () => {
               <div className={styles.activityItem}>
                 <div className={styles.activityIcon}>👤</div>
                 <div className={styles.activityContent}>
-                  <p className={styles.activityTitle}>New user registration</p>
-                  <p className={styles.activityTime}>2 hours ago</p>
+                  <p className={styles.activityTitle}>{t('admin.newUserRegistration')}</p>
+                  <p className={styles.activityTime}>2 {t('admin.hoursAgo')}</p>
                 </div>
               </div>
 
               <div className={styles.activityItem}>
                 <div className={styles.activityIcon}>🔐</div>
                 <div className={styles.activityContent}>
-                  <p className={styles.activityTitle}>Admin login detected</p>
-                  <p className={styles.activityTime}>4 hours ago</p>
+                  <p className={styles.activityTitle}>{t('admin.adminLoginDetected')}</p>
+                  <p className={styles.activityTime}>4 {t('admin.hoursAgo')}</p>
                 </div>
               </div>
 
               <div className={styles.activityItem}>
                 <div className={styles.activityIcon}>⚠️</div>
                 <div className={styles.activityContent}>
-                  <p className={styles.activityTitle}>Account deletion request</p>
-                  <p className={styles.activityTime}>1 day ago</p>
+                  <p className={styles.activityTitle}>{t('admin.accountDeletionRequest')}</p>
+                  <p className={styles.activityTime}>1 {t('admin.dayAgo')}</p>
                 </div>
               </div>
             </div>
