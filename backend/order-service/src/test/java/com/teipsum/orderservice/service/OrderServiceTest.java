@@ -253,7 +253,7 @@ class OrderServiceTest {
         Order completedOrder = Order.builder()
                 .id(orderId)
                 .userId(userId)
-                .status(OrderStatus.COMPLETED)
+                .status(OrderStatus.DELIVERED)
                 .totalAmount(new BigDecimal("130.00"))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -309,7 +309,7 @@ class OrderServiceTest {
         Order order2 = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
-                .status(OrderStatus.COMPLETED)
+                .status(OrderStatus.PENDING)
                 .totalAmount(new BigDecimal("75.00"))
                 .createdAt(Instant.now().minusSeconds(3600))
                 .updatedAt(Instant.now().minusSeconds(3600))
@@ -514,7 +514,7 @@ class OrderServiceTest {
         Order completedOrder = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
-                .status(OrderStatus.COMPLETED)
+                .status(OrderStatus.DELIVERED)
                 .totalAmount(new BigDecimal("75.00"))
                 .createdAt(Instant.now().minusSeconds(3600))
                 .updatedAt(Instant.now().minusSeconds(3600))
@@ -541,7 +541,7 @@ class OrderServiceTest {
         Order completedOrder1 = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
-                .status(OrderStatus.COMPLETED)
+                .status(OrderStatus.DELIVERED)
                 .totalAmount(new BigDecimal("100.00"))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -596,7 +596,7 @@ class OrderServiceTest {
         Order order1 = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
-                .status(OrderStatus.COMPLETED)
+                .status(OrderStatus.DELIVERED)
                 .totalAmount(new BigDecimal("100.00"))
                 .createdAt(Instant.now().minusSeconds(7200))
                 .updatedAt(Instant.now().minusSeconds(7200))
@@ -665,7 +665,7 @@ class OrderServiceTest {
             Order order = Order.builder()
                     .id(UUID.randomUUID())
                     .userId(userId)
-                    .status(i % 2 == 0 ? OrderStatus.COMPLETED : OrderStatus.PENDING)
+                    .status(i % 2 == 0 ? OrderStatus.CONFIRMED : OrderStatus.PENDING)
                     .totalAmount(new BigDecimal("50.00"))
                     .createdAt(Instant.now().minusSeconds(i * 100))
                     .updatedAt(Instant.now().minusSeconds(i * 100))
@@ -698,7 +698,7 @@ class OrderServiceTest {
         String userEmail = "test@example.com";
         UUID originalOrderId = UUID.randomUUID();
         BigDecimal originalAmount = new BigDecimal("123.45");
-        OrderStatus originalStatus = OrderStatus.COMPLETED;
+        OrderStatus originalStatus = OrderStatus.CONFIRMED;
         Instant originalCreatedAt = Instant.now().minusSeconds(3600);
         
         Order order = Order.builder()
@@ -751,7 +751,7 @@ class OrderServiceTest {
         Order processingOrder = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
-                .status(OrderStatus.PROCESSING)
+                .status(OrderStatus.PENDING)
                 .totalAmount(new BigDecimal("75.00"))
                 .createdAt(Instant.now().minusSeconds(1800))
                 .updatedAt(Instant.now().minusSeconds(1800))
@@ -760,7 +760,7 @@ class OrderServiceTest {
         Order completedOrder = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
-                .status(OrderStatus.COMPLETED)
+                .status(OrderStatus.DELIVERED)
                 .totalAmount(new BigDecimal("100.00"))
                 .createdAt(Instant.now().minusSeconds(3600))
                 .updatedAt(Instant.now().minusSeconds(3600))
@@ -791,8 +791,8 @@ class OrderServiceTest {
 
         // Verify original statuses are preserved
         assertEquals(OrderStatus.PENDING, pendingOrder.getStatus());
-        assertEquals(OrderStatus.PROCESSING, processingOrder.getStatus());
-        assertEquals(OrderStatus.COMPLETED, completedOrder.getStatus());
+        assertEquals(OrderStatus.PENDING, processingOrder.getStatus());
+        assertEquals(OrderStatus.DELIVERED, completedOrder.getStatus());
         assertEquals(OrderStatus.CANCELLED, cancelledOrder.getStatus());
 
         verify(orderRepository).findAllByUserIdOrderByCreatedAtDesc(userId);

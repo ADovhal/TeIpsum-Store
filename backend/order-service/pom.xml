@@ -55,6 +55,11 @@
             <artifactId>shared-logger</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.teipsum</groupId>
+            <artifactId>teipsum-shared-dto</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

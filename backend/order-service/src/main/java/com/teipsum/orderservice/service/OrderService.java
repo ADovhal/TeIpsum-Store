@@ -97,8 +97,7 @@ public class OrderService {
             List<Order> userOrders = repo.findAllByUserIdOrderByCreatedAtDesc(userId);
             
             boolean hasActiveOrders = userOrders.stream()
-                    .anyMatch(order -> order.getStatus() == OrderStatus.PENDING || 
-                                     order.getStatus() == OrderStatus.PROCESSING);
+                    .anyMatch(order -> order.getStatus() == OrderStatus.PENDING);
             
             return new UserOrderInfoResponse(userOrders.size(), hasActiveOrders);
         }
