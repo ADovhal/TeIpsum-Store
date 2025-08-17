@@ -456,4 +456,3 @@ class AdminProductControllerTest {
         verify(adminProductService, never()).createProduct(any(), any());
     }
 }
-
