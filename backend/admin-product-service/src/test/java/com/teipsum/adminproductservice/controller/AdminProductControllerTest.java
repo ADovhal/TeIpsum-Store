@@ -2,9 +2,11 @@ package com.teipsum.adminproductservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teipsum.adminproductservice.dto.ProductResponse;
+import com.teipsum.adminproductservice.event.ProductEventPublisher;
 import com.teipsum.adminproductservice.exception.ProductAlreadyExistsException;
 import com.teipsum.adminproductservice.service.AdminProductService;
 import com.teipsum.shared.exceptions.ProductNotFoundException;
+import com.teipsum.shared.exceptions.handler.GlobalExceptionHandler;
 import com.teipsum.shared.product.dto.ProductFilterRequest;
 import com.teipsum.shared.product.dto.ProductRequest;
 import com.teipsum.shared.product.enums.Gender;
@@ -14,14 +16,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -35,7 +44,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AdminProductController.class)
+
+@SpringBootTest
+@Import(GlobalExceptionHandler.class)
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 @DisplayName("AdminProductController Tests")
 class AdminProductControllerTest {
 
@@ -45,8 +58,17 @@ class AdminProductControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private AdminProductService adminProductService;
+
+    @MockitoBean
+    private ProductEventPublisher productEventPublisher;
+
+    @MockitoBean
+    private AuditingHandler jpaAuditingHandler;
+
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
 
     private ProductRequest productRequest;
     private ProductResponse productResponse;
@@ -56,14 +78,43 @@ class AdminProductControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+
+        when(jwtDecoder.decode(anyString())).thenReturn(
+                Jwt.withTokenValue("token")
+                        .header("alg", "none")
+                        .claim("sub", "admin")
+                        .claim("roles", List.of("ROLE_ADMIN"))
+                        .build()
+        );
+
+        doNothing().when(productEventPublisher).publishProductCreated(any());
+        doNothing().when(productEventPublisher).publishProductUpdated(any());
+        doNothing().when(productEventPublisher).publishProductDeleted(any());
+
+        imageFile1 = new MockMultipartFile(
+                "images",
+                "image1.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test image 1".getBytes()
+        );
+
+        imageFile2 = new MockMultipartFile(
+                "images",
+                "image2.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test image 2".getBytes()
+        );
+
+
         productRequest = new ProductRequest(
                 "Test Product",
                 "Test Description",
                 new BigDecimal("99.99"),
                 new BigDecimal("10.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
+                List.of(),
                 List.of("S", "M", "L"),
                 true
         );
@@ -75,7 +126,7 @@ class AdminProductControllerTest {
                 "Test Description",
                 new BigDecimal("99.99"),
                 new BigDecimal("10.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
                 List.of("url1", "url2"),
@@ -93,31 +144,15 @@ class AdminProductControllerTest {
                 MediaType.APPLICATION_JSON_VALUE,
                 objectMapper.writeValueAsBytes(productRequest)
         );
-
-        imageFile1 = new MockMultipartFile(
-                "images",
-                "image1.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "test image 1".getBytes()
-        );
-
-        imageFile2 = new MockMultipartFile(
-                "images",
-                "image2.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "test image 2".getBytes()
-        );
     }
 
     @Test
     @DisplayName("Should create product successfully")
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     void shouldCreateProductSuccessfully() throws Exception {
-        // Given
         when(adminProductService.createProduct(any(ProductRequest.class), anyList()))
                 .thenReturn(productResponse);
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products")
                         .file(productRequestFile)
                         .file(imageFile1)
@@ -135,13 +170,11 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should create product without images")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldCreateProductWithoutImages() throws Exception {
-        // Given
         when(adminProductService.createProduct(any(ProductRequest.class), isNull()))
                 .thenReturn(productResponse);
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products")
                         .file(productRequestFile)
                         .with(csrf())
@@ -154,9 +187,8 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should return forbidden when non-admin tries to create product")
-    @WithMockUser(authorities = {"ROLE_USER"})
+    @WithMockUser(roles = "USER")
     void shouldReturnForbiddenWhenNonAdminTriesToCreateProduct() throws Exception {
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products")
                         .file(productRequestFile)
                         .file(imageFile1)
@@ -169,13 +201,11 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should return conflict when product already exists")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldReturnConflictWhenProductAlreadyExists() throws Exception {
-        // Given
         when(adminProductService.createProduct(any(ProductRequest.class), anyList()))
                 .thenThrow(new ProductAlreadyExistsException("Test Product"));
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products")
                         .file(productRequestFile)
                         .file(imageFile1)
@@ -189,22 +219,17 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should update product successfully")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldUpdateProductSuccessfully() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
         when(adminProductService.updateProduct(eq(productId), any(ProductRequest.class), anyList()))
                 .thenReturn(productResponse);
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products/{id}", productId)
                         .file(productRequestFile)
                         .file(imageFile1)
                         .with(csrf())
-                        .with(request -> {
-                            request.setMethod("PUT");
-                            return request;
-                        })
+                        .with(request -> { request.setMethod("PUT"); return request; })
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(productResponse.id().toString()))
@@ -215,21 +240,16 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should return not found when updating non-existent product")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldReturnNotFoundWhenUpdatingNonExistentProduct() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
         when(adminProductService.updateProduct(eq(productId), any(ProductRequest.class), anyList()))
                 .thenThrow(new ProductNotFoundException(productId));
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products/{id}", productId)
                         .file(productRequestFile)
                         .with(csrf())
-                        .with(request -> {
-                            request.setMethod("PUT");
-                            return request;
-                        })
+                        .with(request -> { request.setMethod("PUT"); return request; })
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").exists());
@@ -240,11 +260,9 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("Should get product by id successfully")
     void shouldGetProductByIdSuccessfully() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
         when(adminProductService.getProduct(productId)).thenReturn(productResponse);
 
-        // When & Then
         mockMvc.perform(get("/api/admin/products/{id}", productId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(productResponse.id().toString()))
@@ -257,12 +275,10 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("Should return not found when getting non-existent product")
     void shouldReturnNotFoundWhenGettingNonExistentProduct() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
         when(adminProductService.getProduct(productId))
                 .thenThrow(new ProductNotFoundException(productId));
 
-        // When & Then
         mockMvc.perform(get("/api/admin/products/{id}", productId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").exists());
@@ -273,12 +289,10 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("Should get all products successfully")
     void shouldGetAllProductsSuccessfully() throws Exception {
-        // Given
         Page<ProductResponse> productPage = new PageImpl<>(List.of(productResponse));
         when(adminProductService.getAllProducts(any(ProductFilterRequest.class), any(Pageable.class)))
                 .thenReturn(productPage);
 
-        // When & Then
         mockMvc.perform(get("/api/admin/products")
                         .param("page", "0")
                         .param("size", "10"))
@@ -293,12 +307,10 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("Should get products with filters")
     void shouldGetProductsWithFilters() throws Exception {
-        // Given
         Page<ProductResponse> productPage = new PageImpl<>(List.of(productResponse));
         when(adminProductService.getAllProducts(any(ProductFilterRequest.class), any(Pageable.class)))
                 .thenReturn(productPage);
 
-        // When & Then
         mockMvc.perform(get("/api/admin/products")
                         .param("title", "Test")
                         .param("category", "CLOTHING")
@@ -318,13 +330,11 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should delete product successfully")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldDeleteProductSuccessfully() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
         doNothing().when(adminProductService).deleteProduct(productId);
 
-        // When & Then
         mockMvc.perform(delete("/api/admin/products/{id}", productId)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -334,12 +344,10 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should return forbidden when non-admin tries to delete product")
-    @WithMockUser(authorities = {"ROLE_USER"})
+    @WithMockUser(roles = "USER")
     void shouldReturnForbiddenWhenNonAdminTriesToDeleteProduct() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
 
-        // When & Then
         mockMvc.perform(delete("/api/admin/products/{id}", productId)
                         .with(csrf()))
                 .andExpect(status().isForbidden());
@@ -349,14 +357,12 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should return not found when deleting non-existent product")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldReturnNotFoundWhenDeletingNonExistentProduct() throws Exception {
-        // Given
         UUID productId = UUID.randomUUID();
         doThrow(new ProductNotFoundException(productId))
                 .when(adminProductService).deleteProduct(productId);
 
-        // When & Then
         mockMvc.perform(delete("/api/admin/products/{id}", productId)
                         .with(csrf()))
                 .andExpect(status().isNotFound())
@@ -368,14 +374,12 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("Should require authentication for admin endpoints")
     void shouldRequireAuthenticationForAdminEndpoints() throws Exception {
-        // When & Then - create product without authentication
         mockMvc.perform(multipart("/api/admin/products")
                         .file(productRequestFile)
                         .with(csrf())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isUnauthorized());
 
-        // When & Then - delete product without authentication
         mockMvc.perform(delete("/api/admin/products/{id}", UUID.randomUUID())
                         .with(csrf()))
                 .andExpect(status().isUnauthorized());
@@ -386,15 +390,13 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should require CSRF token for modifying operations")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldRequireCsrfTokenForModifyingOperations() throws Exception {
-        // When & Then - create product without CSRF
         mockMvc.perform(multipart("/api/admin/products")
                         .file(productRequestFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isForbidden());
 
-        // When & Then - delete product without CSRF
         mockMvc.perform(delete("/api/admin/products/{id}", UUID.randomUUID()))
                 .andExpect(status().isForbidden());
 
@@ -405,7 +407,6 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("Should handle invalid UUID in path parameter")
     void shouldHandleInvalidUuidInPathParameter() throws Exception {
-        // When & Then
         mockMvc.perform(get("/api/admin/products/invalid-uuid"))
                 .andExpect(status().isBadRequest());
 
@@ -414,17 +415,15 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should handle malformed product request")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldHandleMalformedProductRequest() throws Exception {
-        // Given - malformed JSON
         MockMultipartFile malformedRequest = new MockMultipartFile(
                 "product",
                 "",
                 MediaType.APPLICATION_JSON_VALUE,
-                "{\"title\":\"Test\",\"price\":}".getBytes() // malformed JSON
+                "{\"title\":\"Test\",\"price\":}".getBytes()
         );
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products")
                         .file(malformedRequest)
                         .with(csrf())
@@ -436,11 +435,10 @@ class AdminProductControllerTest {
 
     @Test
     @DisplayName("Should handle empty product request")
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(roles = "ADMIN")
     void shouldHandleEmptyProductRequest() throws Exception {
-        // Given - empty product request
         ProductRequest emptyRequest = new ProductRequest(
-                "", "", null, null, null, null, null, null, null
+                "", "", null, null, null, null, null, null, null, true
         );
         MockMultipartFile emptyRequestFile = new MockMultipartFile(
                 "product",
@@ -449,7 +447,6 @@ class AdminProductControllerTest {
                 objectMapper.writeValueAsBytes(emptyRequest)
         );
 
-        // When & Then
         mockMvc.perform(multipart("/api/admin/products")
                         .file(emptyRequestFile)
                         .with(csrf())
@@ -459,3 +456,4 @@ class AdminProductControllerTest {
         verify(adminProductService, never()).createProduct(any(), any());
     }
 }
+

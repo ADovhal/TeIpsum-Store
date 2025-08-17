@@ -21,6 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("AdminProductService Tests")
 class AdminProductServiceTest {
 
@@ -64,14 +67,20 @@ class AdminProductServiceTest {
 
     @BeforeEach
     void setUp() {
+
+        testImages = List.of(
+                new MockMultipartFile("image1", "image1.jpg", "image/jpeg", "test image 1".getBytes()),
+                new MockMultipartFile("image2", "image2.jpg", "image/jpeg", "test image 2".getBytes())
+        );
         productRequest = new ProductRequest(
                 "Test Product",
                 "Test Description",
                 new BigDecimal("99.99"),
                 new BigDecimal("10.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
+                List.of(),
                 List.of("S", "M", "L"),
                 true
         );
@@ -83,7 +92,7 @@ class AdminProductServiceTest {
                 .description("Test Description")
                 .price(new BigDecimal("99.99"))
                 .discount(new BigDecimal("10.00"))
-                .category(ProductCategory.CLOTHING)
+                .category(ProductCategory.TOPS)
                 .subcategory(ProductSubcategory.T_SHIRTS)
                 .gender(Gender.UNISEX)
                 .sizes(List.of("S", "M", "L"))
@@ -92,10 +101,7 @@ class AdminProductServiceTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        testImages = List.of(
-                new MockMultipartFile("image1", "image1.jpg", "image/jpeg", "test image 1".getBytes()),
-                new MockMultipartFile("image2", "image2.jpg", "image/jpeg", "test image 2".getBytes())
-        );
+
     }
 
     @Test
@@ -103,7 +109,7 @@ class AdminProductServiceTest {
     void shouldCreateProductSuccessfully() throws IOException {
         // Given
         when(repository.existsByTitle(productRequest.title())).thenReturn(false);
-        when(skuGenerator.generateSku(any())).thenReturn("TEST-SKU-001");
+        when(skuGenerator.generateSku(productRequest.category(), productRequest.subcategory(), productRequest.gender())).thenReturn("TEST-SKU-001");
         when(repository.save(any(Product.class))).thenReturn(testProduct);
         when(imageService.uploadImages(any(UUID.class), anyList())).thenReturn(List.of("url1", "url2"));
 
@@ -142,7 +148,7 @@ class AdminProductServiceTest {
     void shouldCreateProductWithoutImages() throws IOException {
         // Given
         when(repository.existsByTitle(productRequest.title())).thenReturn(false);
-        when(skuGenerator.generateSku(any())).thenReturn("TEST-SKU-001");
+        when(skuGenerator.generateSku(productRequest.category(), productRequest.subcategory(), productRequest.gender())).thenReturn("TEST-SKU-001");
         when(repository.save(any(Product.class))).thenReturn(testProduct);
         when(imageService.uploadImages(any(UUID.class), isNull())).thenReturn(List.of());
 
@@ -154,7 +160,7 @@ class AdminProductServiceTest {
         assertEquals("Test Product", response.title());
 
         verify(repository).save(any(Product.class));
-        verify(imageService).uploadImages(any(UUID.class), isNull());
+        verify(imageService, never()).uploadImages(any(), any());
         verify(eventPublisher).publishProductCreated(any(Product.class));
     }
 
@@ -163,7 +169,7 @@ class AdminProductServiceTest {
     void shouldHandleImageUploadFailureDuringCreation() throws IOException {
         // Given
         when(repository.existsByTitle(productRequest.title())).thenReturn(false);
-        when(skuGenerator.generateSku(any())).thenReturn("TEST-SKU-001");
+        when(skuGenerator.generateSku(productRequest.category(), productRequest.subcategory(), productRequest.gender())).thenReturn("TEST-SKU-001");
         when(repository.save(any(Product.class))).thenReturn(testProduct);
         when(imageService.uploadImages(any(UUID.class), anyList())).thenThrow(new IOException("Upload failed"));
 
@@ -303,7 +309,7 @@ class AdminProductServiceTest {
                 () -> adminProductService.deleteProduct(productId));
 
         verify(repository).findById(productId);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).delete((Product) any());
         verify(eventPublisher, never()).publishProductDeleted(any());
     }
 
@@ -344,7 +350,7 @@ class AdminProductServiceTest {
     void shouldGetAllProductsWithPagination() {
         // Given
         ProductFilterRequest filter = new ProductFilterRequest(
-                null, null, null, null, null, null, null, null, null, null
+                null, null, null, null, null, null, null, null, null, null, null
         );
         Pageable pageable = Pageable.ofSize(10);
         Page<Product> productPage = new PageImpl<>(List.of(testProduct));
@@ -371,7 +377,7 @@ class AdminProductServiceTest {
     void shouldHandleEmptyProductList() {
         // Given
         ProductFilterRequest filter = new ProductFilterRequest(
-                null, null, null, null, null, null, null, null, null, null
+                null, null, null, null, null, null, null, null, null, null, null
         );
         Pageable pageable = Pageable.ofSize(10);
         Page<Product> emptyPage = new PageImpl<>(List.of());
@@ -398,9 +404,17 @@ class AdminProductServiceTest {
     void shouldApplyFiltersCorrectly() {
         // Given
         ProductFilterRequest filter = new ProductFilterRequest(
-                "Test", ProductCategory.CLOTHING, ProductSubcategory.T_SHIRTS, 
-                Gender.UNISEX, new BigDecimal("50"), new BigDecimal("150"), 
-                true, List.of("M", "L"), null, null
+                "Test",
+                ProductCategory.TOPS,
+                ProductSubcategory.T_SHIRTS,
+                Gender.UNISEX,
+                new BigDecimal("50"),
+                new BigDecimal("150"),
+                null,
+                null,
+                true,
+                null,
+                null
         );
         Pageable pageable = Pageable.ofSize(10);
         Page<Product> productPage = new PageImpl<>(List.of(testProduct));

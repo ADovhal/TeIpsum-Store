@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
         description = "TeIpsum Admin Product Management Service"
     )
 )
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.teipsum")
 @EnableJpaAuditing
 public class AdminProductServiceApplication {
 

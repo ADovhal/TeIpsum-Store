@@ -33,24 +33,28 @@ public class AdminProductService {
 
     @Transactional
     public ProductResponse createProduct(ProductRequest dto, List<MultipartFile> images) {
-        if (repository.existsByTitle(dto.title()))
+        if (repository.existsByTitle(dto.title())) {
             throw new ProductAlreadyExistsException(dto.title());
+        }
 
         Product product = mapToEntity(dto);
-        repository.save(product);
 
-        List<String> urls = null;
-        try {
-            urls = imageService.uploadImages(product.getId(), images);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        product = repository.save(product);
+
+        if (images != null && !images.isEmpty()) {
+            try {
+                List<String> urls = imageService.uploadImages(product.getId(), images);
+                product.setImageUrls(urls);
+                product = repository.save(product);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        product.setImageUrls(urls);
-        repository.save(product);
 
         eventPublisher.publishProductCreated(product);
         return ProductResponse.fromEntity(product);
     }
+
 
     @Transactional
     public ProductResponse updateProduct(UUID id, ProductRequest dto, List<MultipartFile> images) {
@@ -111,7 +115,7 @@ public class AdminProductService {
                 .category(request.category())
                 .subcategory(request.subcategory())
                 .gender(request.gender())
-                .imageUrls(request.imageUrls())
+                .imageUrls(List.of())
                 .sizes(request.sizes())
                 .available(request.available())
                 .build();
@@ -125,7 +129,7 @@ public class AdminProductService {
         product.setCategory(request.category());
         product.setSubcategory(request.subcategory());
         product.setGender(request.gender());
-        product.setImageUrls(request.imageUrls());
+        product.setImageUrls(null);
         product.setSizes(request.sizes());
         product.setAvailable(request.available());
     }
