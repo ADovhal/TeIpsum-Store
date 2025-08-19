@@ -31,7 +31,7 @@ jobs:
           cache-dependency-path: 'frontend/package-lock.json'
 
       - name: Install deps
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run tests with coverage (lcov)
         run: npm run test:coverage --if-present
