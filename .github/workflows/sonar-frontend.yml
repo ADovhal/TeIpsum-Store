@@ -1,18 +1,54 @@
-name: SonarQube (frontend)
+name: SonarCloud (frontend)
+
 on:
   push:
-    branches: [main]
-    paths: [ 'frontend/**' ]
+    branches: [ main ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/sonar-frontend.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'frontend/**'
 
 jobs:
-  sonarqube:
-    name: SonarQube
+  analyze:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: SonarQube Scan
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run tests with coverage (lcov)
+        run: npm run test:coverage --if-present
+
+      - name: SonarCloud Scan (frontend)
         uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: frontend
+          args: >
+            -Dsonar.organization=adovhal
+            -Dsonar.projectKey=ADovhal_TeIpsum-Store-frontend
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=src/**/*.{test,spec}.{js,jsx,ts,tsx}
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

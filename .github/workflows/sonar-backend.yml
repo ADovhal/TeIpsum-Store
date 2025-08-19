@@ -1,36 +1,56 @@
-name: SonarQube (backend)
+name: SonarCloud (backend)
+
 on:
   push:
-    branches: [main]
-    paths: [ 'backend/**' ]
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/sonar-backend.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
 
 jobs:
-  build:
-    name: Build and analyze
+  build-and-analyze:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 17
           distribution: temurin
-      - name: Cache SonarQube packages
+          java-version: '17'
+
+      - name: Cache Sonar packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
+
+      - name: Cache Maven repository
         uses: actions/cache@v4
         with:
-          path: ~/.m2
+          path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
-        working-directory: backend
+
+      - name: Build & Sonar analyze (Maven)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ADovhal_TeIpsum-Store
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn -B -DskipTests=false verify \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.organization=adovhal \
+            -Dsonar.projectKey=ADovhal_TeIpsum-Store-backend \
+            -Dsonar.host.url=https://sonarcloud.io
+            # -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
