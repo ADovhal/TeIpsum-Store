@@ -1,5 +1,5 @@
 FROM shared-product-dto-builder AS shared-product-dto
-FROM shared-dto AS shared-dto
+FROM shared-dto-builder AS shared-dto
 FROM shared-exceptions-builder AS shared-exc
 FROM shared-logger-builder AS shared-logger
 
