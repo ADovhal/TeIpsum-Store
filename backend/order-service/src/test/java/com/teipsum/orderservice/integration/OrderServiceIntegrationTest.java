@@ -5,6 +5,7 @@ import com.teipsum.orderservice.dto.OrderRequest;
 import com.teipsum.orderservice.model.Order;
 import com.teipsum.orderservice.model.OrderStatus;
 import com.teipsum.orderservice.repository.OrderRepository;
+import com.teipsum.shared.exceptions.handler.GlobalExceptionHandler;
 import com.teipsum.shared.product.event.OrderLineItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,8 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -35,6 +39,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@Import(GlobalExceptionHandler.class)
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @AutoConfigureWebMvc
 @ActiveProfiles("test")
 @Transactional
@@ -52,6 +58,9 @@ class OrderServiceIntegrationTest {
 
     @MockitoBean
     private KafkaTemplate<String, Object> kafkaTemplate;
+
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
 
     private MockMvc mockMvc;
 

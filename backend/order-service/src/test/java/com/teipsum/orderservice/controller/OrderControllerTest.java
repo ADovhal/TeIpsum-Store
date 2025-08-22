@@ -1,6 +1,7 @@
 package com.teipsum.orderservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teipsum.orderservice.config.SecurityConfig;
 import com.teipsum.orderservice.dto.OrderRequest;
 import com.teipsum.orderservice.dto.OrderResponse;
 import com.teipsum.orderservice.model.Order;
@@ -9,14 +10,23 @@ import com.teipsum.orderservice.model.OrderStatus;
 import com.teipsum.orderservice.service.OrderService;
 import com.teipsum.shared.exceptions.ConflictException;
 import com.teipsum.shared.exceptions.NotFoundException;
+import com.teipsum.shared.exceptions.handler.GlobalExceptionHandler;
 import com.teipsum.shared.product.event.OrderLineItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,11 +38,15 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(OrderController.class)
+@SpringBootTest
+@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 @DisplayName("OrderController Tests")
 class OrderControllerTest {
 
@@ -47,7 +61,6 @@ class OrderControllerTest {
 
     private OrderRequest orderRequest;
     private Order testOrder;
-    private OrderResponse orderResponse;
     private UUID userId;
     private UUID orderId;
 
@@ -90,21 +103,40 @@ class OrderControllerTest {
         );
 
         testOrder.setItems(orderItems);
-        orderResponse = OrderResponse.from(testOrder);
+    }
+
+    private Jwt createMockJwt(UUID userId) {
+        return Jwt.withTokenValue("mock-token")
+                .header("alg", "HS256")
+                .claim("userId", userId.toString())
+                .claim("sub", "user@example.com")
+                .claim("roles", List.of("ROLE_USER"))
+                .build();
+    }
+
+    private JwtAuthenticationToken createAuthentication(UUID userId) {
+        Jwt jwt = createMockJwt(userId);
+        return new JwtAuthenticationToken(
+                jwt,
+                AuthorityUtils.createAuthorityList("ROLE_USER")
+        );
     }
 
     @Test
     @DisplayName("Should create order successfully")
-    @WithMockUser(username = "user@example.com")
     void shouldCreateOrderSuccessfully() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         when(orderService.createOrder(eq(userId), any(OrderRequest.class))).thenReturn(testOrder);
 
         // When & Then
         mockMvc.perform(post("/api/orders")
                         .with(csrf())
-                        .header("Authorization", "Bearer token")
-                        .requestAttr("jwt", createMockJwt(userId))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderRequest)))
                 .andExpect(status().isCreated())
@@ -150,14 +182,18 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should get order by id successfully")
-    @WithMockUser(username = "user@example.com")
     void shouldGetOrderByIdSuccessfully() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         when(orderService.findByIdAndUserId(orderId, userId)).thenReturn(testOrder);
 
         // When & Then
         mockMvc.perform(get("/api/orders/{id}", orderId)
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(orderId.toString()))
                 .andExpect(jsonPath("$.userId").value(userId.toString()))
@@ -169,16 +205,20 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should return not found when order doesn't exist")
-    @WithMockUser(username = "user@example.com")
     void shouldReturnNotFoundWhenOrderDoesntExist() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
         UUID nonExistentId = UUID.randomUUID();
+
         when(orderService.findByIdAndUserId(nonExistentId, userId))
                 .thenThrow(new NotFoundException("Order not found"));
 
         // When & Then
         mockMvc.perform(get("/api/orders/{id}", nonExistentId)
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").exists());
 
@@ -187,9 +227,10 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should get user orders successfully")
-    @WithMockUser(username = "user@example.com")
     void shouldGetUserOrdersSuccessfully() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         Order order2 = Order.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
@@ -205,7 +246,10 @@ class OrderControllerTest {
 
         // When & Then
         mockMvc.perform(get("/api/orders/my")
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
@@ -217,14 +261,18 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should return empty list when user has no orders")
-    @WithMockUser(username = "user@example.com")
     void shouldReturnEmptyListWhenUserHasNoOrders() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         when(orderService.findAllByUser(userId)).thenReturn(List.of());
 
         // When & Then
         mockMvc.perform(get("/api/orders/my")
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -234,15 +282,19 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should cancel order successfully")
-    @WithMockUser(username = "user@example.com")
     void shouldCancelOrderSuccessfully() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         doNothing().when(orderService).cancel(orderId, userId);
 
         // When & Then
         mockMvc.perform(delete("/api/orders/{id}", orderId)
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isNoContent());
 
         verify(orderService).cancel(orderId, userId);
@@ -250,17 +302,21 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should return not found when canceling non-existent order")
-    @WithMockUser(username = "user@example.com")
     void shouldReturnNotFoundWhenCancelingNonExistentOrder() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
         UUID nonExistentId = UUID.randomUUID();
+
         doThrow(new NotFoundException("Order not found"))
                 .when(orderService).cancel(nonExistentId, userId);
 
         // When & Then
         mockMvc.perform(delete("/api/orders/{id}", nonExistentId)
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").exists());
 
@@ -269,16 +325,20 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should return conflict when canceling non-pending order")
-    @WithMockUser(username = "user@example.com")
     void shouldReturnConflictWhenCancelingNonPendingOrder() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         doThrow(new ConflictException("Order cannot be cancelled"))
                 .when(orderService).cancel(orderId, userId);
 
         // When & Then
         mockMvc.perform(delete("/api/orders/{id}", orderId)
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
 
@@ -316,18 +376,26 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should require CSRF token for modifying operations")
-    @WithMockUser(username = "user@example.com")
     void shouldRequireCsrfTokenForModifyingOperations() throws Exception {
+        // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         // When & Then - create order without CSRF
         mockMvc.perform(post("/api/orders")
-                        .requestAttr("jwt", createMockJwt(userId))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderRequest)))
                 .andExpect(status().isForbidden());
 
         // When & Then - cancel order without CSRF
         mockMvc.perform(delete("/api/orders/{id}", orderId)
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isForbidden());
 
         verify(orderService, never()).createOrder(any(), any());
@@ -336,11 +404,16 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should handle invalid UUID in path parameter")
-    @WithMockUser(username = "user@example.com")
     void shouldHandleInvalidUuidInPathParameter() throws Exception {
+        // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         // When & Then
         mockMvc.perform(get("/api/orders/invalid-uuid")
-                        .requestAttr("jwt", createMockJwt(userId)))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        }))
                 .andExpect(status().isBadRequest());
 
         verify(orderService, never()).findByIdAndUserId(any(), any());
@@ -348,15 +421,18 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should validate order request")
-    @WithMockUser(username = "user@example.com")
     void shouldValidateOrderRequest() throws Exception {
         // Given - empty order request
+        JwtAuthenticationToken authentication = createAuthentication(userId);
         OrderRequest emptyRequest = new OrderRequest(List.of());
 
         // When & Then
         mockMvc.perform(post("/api/orders")
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(emptyRequest)))
                 .andExpect(status().isBadRequest());
@@ -366,15 +442,18 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should handle malformed JSON")
-    @WithMockUser(username = "user@example.com")
     void shouldHandleMalformedJson() throws Exception {
         // Given - malformed JSON
+        JwtAuthenticationToken authentication = createAuthentication(userId);
         String malformedJson = "{\"items\":[{\"productId\":\"test\",\"quantity\":}]}";
 
         // When & Then
         mockMvc.perform(post("/api/orders")
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(malformedJson))
                 .andExpect(status().isBadRequest());
@@ -384,15 +463,19 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should handle service exceptions gracefully")
-    @WithMockUser(username = "user@example.com")
     void shouldHandleServiceExceptionsGracefully() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         when(orderService.createOrder(any(), any())).thenThrow(new RuntimeException("Database error"));
 
         // When & Then
         mockMvc.perform(post("/api/orders")
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderRequest)))
                 .andExpect(status().isInternalServerError());
@@ -402,9 +485,9 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should handle large order requests")
-    @WithMockUser(username = "user@example.com")
     void shouldHandleLargeOrderRequests() throws Exception {
         // Given - large order with many items
+        JwtAuthenticationToken authentication = createAuthentication(userId);
         List<OrderLineItem> manyItems = List.of(
                 new OrderLineItem("product-1", 1, new BigDecimal("10.00")),
                 new OrderLineItem("product-2", 1, new BigDecimal("20.00")),
@@ -429,7 +512,10 @@ class OrderControllerTest {
         // When & Then
         mockMvc.perform(post("/api/orders")
                         .with(csrf())
-                        .requestAttr("jwt", createMockJwt(userId))
+                        .with(request -> {
+                            request.setUserPrincipal(authentication);
+                            return request;
+                        })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(largeRequest)))
                 .andExpect(status().isCreated())
@@ -440,41 +526,25 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Should handle concurrent requests")
-    @WithMockUser(username = "user@example.com")
     void shouldHandleConcurrentRequests() throws Exception {
         // Given
+        JwtAuthenticationToken authentication = createAuthentication(userId);
+
         when(orderService.createOrder(eq(userId), any(OrderRequest.class))).thenReturn(testOrder);
 
         // When & Then - simulate multiple concurrent requests
         for (int i = 0; i < 3; i++) {
             mockMvc.perform(post("/api/orders")
                             .with(csrf())
-                            .requestAttr("jwt", createMockJwt(userId))
+                            .with(request -> {
+                                request.setUserPrincipal(authentication);
+                                return request;
+                            })
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(orderRequest)))
                     .andExpect(status().isCreated());
         }
 
         verify(orderService, times(3)).createOrder(eq(userId), any(OrderRequest.class));
-    }
-
-    private MockJwt createMockJwt(UUID userId) {
-        return new MockJwt(userId.toString());
-    }
-
-    // Mock JWT class for testing
-    private static class MockJwt {
-        private final String userId;
-
-        public MockJwt(String userId) {
-            this.userId = userId;
-        }
-
-        public String getClaimAsString(String claim) {
-            if ("userId".equals(claim)) {
-                return userId;
-            }
-            return null;
-        }
     }
 }
