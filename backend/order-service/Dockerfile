@@ -17,7 +17,7 @@ COPY --from=shared-dto /root/.m2 /tmp/m2-shared-dto
 RUN mkdir -p /root/.m2 && \
     cp -r /tmp/m2-dto/* /root/.m2/ && \
     cp -r /tmp/m2-exc/* /root/.m2/ && \
-    cp -r /tmp/m2-logger/* /root/.m2/ \
+    cp -r /tmp/m2-logger/* /root/.m2/ && \
     cp -r /tmp/m2-shared-dto/* /root/.m2/
 
 RUN mvn -f ${SERVICE_NAME}/pom.xml -DskipTests package
