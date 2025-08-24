@@ -41,7 +41,6 @@
       <shared-logger.version>1.0.0</shared-logger.version>
       <shared-product-dto.version>1.0.0</shared-product-dto.version>
       <sonar.organization>adovhal</sonar.organization>
-      <sonar.projectKey>ADovhal_TeIpsum-Store</sonar.projectKey>
     </properties>
 
     <dependencyManagement>

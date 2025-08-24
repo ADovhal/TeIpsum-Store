@@ -25,6 +25,7 @@
 
     <properties>
         <java.version>17</java.version>
+        <sonar.projectKey>ADovhal_TeIpsum-Store-auth-service</sonar.projectKey>
     </properties>
 
     <dependencies>
