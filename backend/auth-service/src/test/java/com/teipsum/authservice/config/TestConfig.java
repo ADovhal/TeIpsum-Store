@@ -21,4 +21,3 @@ public class TestConfig {
         return mock(KafkaTemplate.class);
     }
 }
-
