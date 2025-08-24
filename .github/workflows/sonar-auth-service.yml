@@ -1,4 +1,4 @@
-name: SonarCloud (backend)
+name: SonarCloud (Auth-Service)
 
 on:
   push:
