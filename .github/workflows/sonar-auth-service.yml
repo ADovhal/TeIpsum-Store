@@ -48,7 +48,7 @@ jobs:
       - name: Install shared dependencies
         run: |
           cd backend
-          mvn -B clean install -DskipTests -pl teipsum-shared-dto,shared-logger,teipsum-shared-exceptions -am
+          mvn -B clean install -DskipTests -pl ./shared-dto,./shared-logger,./shared-exceptions -am
 
       - name: Build & Sonar analyze Auth Service
         working-directory: backend/auth-service
