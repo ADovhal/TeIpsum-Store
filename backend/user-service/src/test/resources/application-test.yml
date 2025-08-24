@@ -1,9 +1,16 @@
+server:
+  port: 0
+
+cors:
+  allowed:
+    origins: "*"
+
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password: ""
   
   jpa:
     hibernate:
@@ -33,6 +40,10 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost:8080/oauth2/jwks
+
+jwt:
+  user-access-secret: test-access-secret-key-for-testing-purposes-must-be-very-long-to-be-secure
+  admin-access-secret: test-admin-secret-key-for-testing-purposes-must-be-very-long-to-be-secure
 
 logging:
   level:

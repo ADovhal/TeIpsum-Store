@@ -1,5 +1,7 @@
 package com.teipsum.userservice.service;
 
+import com.teipsum.shared.event.OrderInfoRequestEvent;
+import com.teipsum.shared.event.OrderInfoResponseEvent;
 import com.teipsum.shared.exceptions.ConflictException;
 import com.teipsum.shared.exceptions.NotFoundException;
 import com.teipsum.shared.exceptions.UserNotFoundException;
@@ -11,26 +13,31 @@ import com.teipsum.userservice.dto.UserDeletionInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.service.spi.ServiceException;
+import org.springframework.kafka.KafkaException;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
+//import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     
     private static final Logger logger = LogManager.getLogger(UserService.class);
-
+    private final OrderInfoCacheService orderInfoCacheService;
     private final UserRepository userRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final WebClient.Builder webClientBuilder;
+//    private final WebClient.Builder webClientBuilder;
 
     @Transactional
     public void createUserProfile(
@@ -121,8 +128,10 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
 
         // Get order information from order-service
-        OrderInfo orderInfo = getOrderInfo(userId);
-        
+        OrderInfoCacheService.OrderInfo orderInfo = orderInfoCacheService.getCachedInfo(userId);
+
+        requestOrderInfoUpdate(userId);
+
         return UserDeletionInfoResponse.of(
                 user.getId(),
                 user.getEmail(),
@@ -140,26 +149,34 @@ public class UserService {
      */
     @Transactional
     public void initiateUserDeletion(String userId) {
-        UserProfile user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        try {
+            UserProfile user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
 
-        logger.info("Initiating deletion for user: {} ({})", user.getEmail(), userId);
+            logger.info("Initiating deletion for user: {} ({})", user.getEmail(), userId);
 
-        // Get order information
-        OrderInfo orderInfo = getOrderInfo(userId);
+            UserDeletionRequestedEvent event = new UserDeletionRequestedEvent(
+                    userId,
+                    user.getEmail(),
+                    LocalDateTime.now(),
+                    true,
+                    0
+            );
 
-        // Publish deletion requested event - this will trigger order anonymization
-        UserDeletionRequestedEvent event = new UserDeletionRequestedEvent(
-                userId,
-                user.getEmail(),
-                LocalDateTime.now(),
-                orderInfo.hasOrders(),
-                orderInfo.orderCount()
-        );
+            kafkaTemplate.send("user-deletion-requested", userId, event)
+                    .thenAccept(result ->
+                            logger.info("Deletion event sent for user: {}", userId))
+                    .exceptionally(ex -> {
+                        logger.error("Failed to send deletion event for user {}: {}", userId, ex.getMessage());
 
-        kafkaTemplate.send("user-deletion-requested", userId, event);
-        
-        logger.info("Published user deletion requested event for user: {}", userId);
+                        throw new KafkaException("Failed to send deletion event for user: " + userId);
+                    });
+
+            logger.info("Published user deletion requested event for user: {}", userId);
+        } catch (Exception e) {
+            logger.error("Failed to initiate deletion process: {}", e.getMessage());
+            throw new ServiceException("Failed to initiate deletion process");
+        }
     }
 
     /**
@@ -167,59 +184,58 @@ public class UserService {
      */
     @Transactional
     public void completeUserDeletion(String userId, String deletedBy) {
-        UserProfile user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
-
-        String email = user.getEmail();
-        
-        // Delete user profile
-        userRepository.deleteById(userId);
-        
-        logger.info("Deleted user profile for: {} ({})", email, userId);
-
-        // Publish completion event - this will trigger auth service cleanup
-        UserDeletionCompletedEvent event = new UserDeletionCompletedEvent(
-                userId,
-                email,
-                LocalDateTime.now(),
-                deletedBy
-        );
-
-        kafkaTemplate.send("user-deletion-completed", userId, event);
-        
-        logger.info("Published user deletion completed event for user: {}", userId);
-    }
-
-    /**
-     * Gets order information from order-service
-     */
-    private OrderInfo getOrderInfo(String userId) {
         try {
-            WebClient webClient = webClientBuilder.baseUrl("http://order-service:8080").build();
-            
-            // Call order-service to get order count and status
-            OrderInfoResponse response = webClient.get()
-                    .uri("/api/orders/user/{userId}/info", userId)
-                    .retrieve()
-                    .bodyToMono(OrderInfoResponse.class)
-                    .block();
-                    
-            if (response != null) {
-                return new OrderInfo(
-                    response.orderCount() > 0,
-                    response.orderCount(),
-                    response.hasActiveOrders()
-                );
-            }
+            UserProfile user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+            userRepository.deleteById(userId);
+
+            logger.info("Deleted user profile for: {} ({})", user.getEmail(), userId);
+
+            UserDeletionCompletedEvent event = new UserDeletionCompletedEvent(
+                    userId,
+                    user.getEmail(),
+                    LocalDateTime.now(),
+                    deletedBy
+            );
+
+            kafkaTemplate.send("user-deletion-completed", userId, event)
+                    .thenAccept(result ->
+                            logger.info("Deleted user profile for: {} ({})", userId))
+                    .exceptionally(ex -> {
+                                logger.error("Failed to send completion event for user {}: {}", userId, ex.getMessage());
+                                throw new KafkaException("Failed to send completion event for user: " + userId);
+                    });
+            logger.info("Published user deletion completed event for user: {}", userId);
+
         } catch (Exception e) {
-            logger.warn("Failed to get order info for user {}: {}", userId, e.getMessage());
+            logger.error("Error completing user deletion for {}: {}", userId, e.getMessage());
+            throw new ServiceException("Failed to complete account deletion", e);
         }
-        
-        // Default to no orders if service call fails
-        return new OrderInfo(false, 0, false);
     }
 
-    private record OrderInfo(boolean hasOrders, int orderCount, boolean hasActiveOrders) {}
-    
-    private record OrderInfoResponse(int orderCount, boolean hasActiveOrders) {}
+    private void requestOrderInfoUpdate(String userId) {
+        try {
+            UserProfile user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NotFoundException("User not found"));
+
+            OrderInfoRequestEvent event = new OrderInfoRequestEvent(
+                    userId,
+                    user.getEmail(),
+                    LocalDateTime.now()
+            );
+
+            kafkaTemplate.send("order-info-request", userId, event)
+                    .thenAccept(result ->
+                            logger.debug("Order info request sent for user: {}", userId))
+                    .exceptionally(ex -> {
+                        logger.warn("Failed to send order info request for user {}: {}",
+                                userId, ex.getMessage());
+                        return null;
+                    });
+
+        } catch (Exception e) {
+            logger.warn("Error requesting order info for user {}: {}", userId, e.getMessage());
+        }
+    }
 }

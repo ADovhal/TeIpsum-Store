@@ -1,7 +1,9 @@
 package com.teipsum.userservice.event;
 
+import com.teipsum.shared.event.OrderInfoResponseEvent;
 import com.teipsum.shared.event.UserLoggedInEvent;
 import com.teipsum.shared.event.UserRegisteredEvent;
+import com.teipsum.userservice.service.OrderInfoCacheService;
 import com.teipsum.userservice.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,11 +26,15 @@ class UserEventListenerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private OrderInfoCacheService orderInfoCacheService;
+
     @InjectMocks
     private UserEventListener userEventListener;
 
     private UserRegisteredEvent userRegisteredEvent;
     private UserLoggedInEvent userLoggedInEvent;
+    private OrderInfoResponseEvent orderInfoEvent;
 
     @BeforeEach
     void setUp() {
@@ -44,6 +50,14 @@ class UserEventListenerTest {
 
         userLoggedInEvent = new UserLoggedInEvent(
                 "test@example.com",
+                LocalDateTime.now()
+        );
+
+        orderInfoEvent = new OrderInfoResponseEvent(
+                "user-123",
+                "test@example.com",
+                5,
+                true,
                 LocalDateTime.now()
         );
     }
@@ -122,7 +136,7 @@ class UserEventListenerTest {
         // Given
         LocalDateTime loginTime = LocalDateTime.of(2024, 1, 20, 10, 30);
         UserLoggedInEvent loginEvent = new UserLoggedInEvent("user@example.com", loginTime);
-        
+
         doNothing().when(userService).updateLastLogin(loginEvent.email(), loginEvent.timestamp());
 
         // When
@@ -140,7 +154,7 @@ class UserEventListenerTest {
                 .when(userService).createUserProfile(any(), any(), any(), any(), any(), any(), any());
 
         // When & Then
-        assertThrows(RuntimeException.class, 
+        assertThrows(RuntimeException.class,
                 () -> userEventListener.handleUserRegistration(userRegisteredEvent));
 
         verify(userService).createUserProfile(
@@ -162,7 +176,7 @@ class UserEventListenerTest {
                 .when(userService).updateLastLogin(any(), any());
 
         // When & Then
-        assertThrows(RuntimeException.class, 
+        assertThrows(RuntimeException.class,
                 () -> userEventListener.handleUserLogin(userLoggedInEvent));
 
         verify(userService).updateLastLogin(
@@ -204,7 +218,7 @@ class UserEventListenerTest {
         // Given
         LocalDateTime time1 = LocalDateTime.of(2024, 1, 20, 10, 0);
         LocalDateTime time2 = LocalDateTime.of(2024, 1, 20, 15, 30);
-        
+
         UserLoggedInEvent login1 = new UserLoggedInEvent("user1@example.com", time1);
         UserLoggedInEvent login2 = new UserLoggedInEvent("user2@example.com", time2);
 

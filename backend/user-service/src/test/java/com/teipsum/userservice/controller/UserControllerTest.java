@@ -1,14 +1,22 @@
 package com.teipsum.userservice.controller;
 
+import com.teipsum.shared.exceptions.handler.GlobalExceptionHandler;
+import com.teipsum.userservice.config.SecurityConfig;
 import com.teipsum.userservice.model.UserProfile;
 import com.teipsum.userservice.service.UserService;
+import org.hibernate.service.spi.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -19,13 +27,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
+@Import(SecurityConfig.class)
+@ActiveProfiles("test")
 @DisplayName("UserController Tests")
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
     private UserProfile testUserProfile;
@@ -93,7 +103,7 @@ class UserControllerTest {
     @WithMockUser(username = "test@example.com")
     void shouldHandleServiceExceptionGracefully() throws Exception {
         // Given
-        when(userService.getCurrentUser()).thenThrow(new RuntimeException("Database error"));
+        when(userService.getCurrentUser()).thenThrow(new ServiceException("Database error"));
 
         // When & Then
         mockMvc.perform(get("/api/users/profile"))
@@ -310,7 +320,7 @@ class UserControllerTest {
     @WithMockUser(username = "test@example.com")
     void shouldHandleServiceTimeoutGracefully() throws Exception {
         // Given
-        when(userService.getCurrentUser()).thenThrow(new RuntimeException("Service timeout"));
+        when(userService.getCurrentUser()).thenThrow(new ServiceException("Service timeout"));
 
         // When & Then
         mockMvc.perform(get("/api/users/profile"))

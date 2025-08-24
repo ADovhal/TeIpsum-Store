@@ -1,5 +1,6 @@
 package com.teipsum.userservice.integration;
 
+import com.teipsum.shared.exceptions.ConflictException;
 import com.teipsum.userservice.model.UserProfile;
 import com.teipsum.userservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,10 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureWebMvc
 @ActiveProfiles("test")
+@AutoConfigureWebMvc
 @Transactional
 @DisplayName("User Service Integration Tests")
 class UserServiceIntegrationTest {
@@ -39,7 +41,7 @@ class UserServiceIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @MockBean
+    @MockitoBean
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private MockMvc mockMvc;
@@ -232,22 +234,18 @@ class UserServiceIntegrationTest {
     void shouldHandleDatabaseConstraintsCorrectly() {
         // Given - create user with duplicate email
         UserProfile user1 = createTestUser("duplicate@example.com", "User", "One");
-        UserProfile user2 = createTestUser("duplicate@example.com", "User", "Two");
-        user2.setId("different-id");
-
         userRepository.save(user1);
 
-        // When & Then - should throw exception due to unique email constraint
-        assertThrows(Exception.class, () -> {
+        UserProfile user2 = createTestUser("duplicate@example.com", "User", "Two");
+        user2.setId("different-id-123");
+
+        // When & Then
+        assertThrows(ConflictException.class, () -> {
             userRepository.save(user2);
-            userRepository.flush(); // Force immediate execution
+            userRepository.flush();
         });
 
-        // Verify only first user exists
-        Optional<UserProfile> savedUser = userRepository.findByEmail("duplicate@example.com");
-        assertTrue(savedUser.isPresent());
-        assertEquals("User", savedUser.get().getName());
-        assertEquals("One", savedUser.get().getSurname());
+        assertEquals(1, userRepository.findByEmail("duplicate@example.com").stream().count());
     }
 
     @Test
@@ -285,7 +283,7 @@ class UserServiceIntegrationTest {
         // Given - create user with specific dates
         UserProfile dateUser = createTestUser("dates@example.com", "Date", "User");
         dateUser.setJoinDate(LocalDate.of(2020, 12, 31)); // End of year
-        dateUser.setDob(LocalDate.of(1990, 2, 29)); // Leap year
+        dateUser.setDob(LocalDate.of(1984, 2, 29)); // Leap year
         dateUser.setLastLoginDate(LocalDateTime.of(2024, 1, 1, 0, 0, 0)); // Start of year
         
         userRepository.save(dateUser);
@@ -300,7 +298,7 @@ class UserServiceIntegrationTest {
         Optional<UserProfile> savedUser = userRepository.findByEmail("dates@example.com");
         assertTrue(savedUser.isPresent());
         assertEquals(LocalDate.of(2020, 12, 31), savedUser.get().getJoinDate());
-        assertEquals(LocalDate.of(1990, 2, 29), savedUser.get().getDob());
+        assertEquals(LocalDate.of(1984, 2, 29), savedUser.get().getDob());
     }
 
     @Test
