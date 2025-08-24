@@ -45,7 +45,7 @@ class ProductEventListenerTest {
                 "Test Description",
                 new BigDecimal("99.99"),
                 new BigDecimal("10.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
                 List.of("url1", "url2"),
@@ -59,9 +59,9 @@ class ProductEventListenerTest {
                 "Updated Description",
                 new BigDecimal("149.99"),
                 new BigDecimal("15.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.HOODIES,
-                Gender.MALE,
+                Gender.MEN,
                 List.of("new-url1", "new-url2"),
                 List.of("M", "L", "XL"),
                 false
@@ -203,7 +203,7 @@ class ProductEventListenerTest {
                 null, // null description
                 new BigDecimal("0.00"),
                 new BigDecimal("0.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
                 List.of(), // empty image URLs
@@ -217,7 +217,7 @@ class ProductEventListenerTest {
                 null, // null description
                 new BigDecimal("0.00"),
                 new BigDecimal("0.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
                 List.of(), // empty image URLs
@@ -246,14 +246,14 @@ class ProductEventListenerTest {
         ProductCreatedEvent event1 = new ProductCreatedEvent(
                 productId1, "Product 1", "Description 1",
                 new BigDecimal("99.99"), new BigDecimal("0.00"),
-                ProductCategory.CLOTHING, ProductSubcategory.T_SHIRTS, Gender.UNISEX,
+                ProductCategory.TOPS, ProductSubcategory.T_SHIRTS, Gender.UNISEX,
                 List.of(), List.of("M"), true
         );
 
         ProductCreatedEvent event2 = new ProductCreatedEvent(
                 productId2, "Product 2", "Description 2",
                 new BigDecimal("149.99"), new BigDecimal("10.00"),
-                ProductCategory.ACCESSORIES, ProductSubcategory.HATS, Gender.FEMALE,
+                ProductCategory.ACCESSORIES, ProductSubcategory.HATS, Gender.WOMEN,
                 List.of(), List.of("ONE_SIZE"), true
         );
 
@@ -288,7 +288,7 @@ class ProductEventListenerTest {
                 "This product has many images and sizes for testing purposes",
                 new BigDecimal("999.99"),
                 new BigDecimal("100.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
                 manyImageUrls,

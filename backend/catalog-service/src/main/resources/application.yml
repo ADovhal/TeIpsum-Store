@@ -1,67 +1,70 @@
-server:
-  port: ${SERVICE_SERVER_PORT}
-  address: 0.0.0.0
-
-spring:
-  application:
-    name: catalog-service
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-
-  kafka:
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-    consumer:
-      group-id: catalog-service-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "com.teipsum.shared.product,com.teipsum.shared.product.event,com.teipsum.shared.event"
-    listener:
-      type: single
-      ack-mode: manual
-
-springdoc:
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-
-#  cache:
-#    type: redis
-#    redis:
-#      time-to-live: 300000
-
-logging:
-  system:
-    service.name: ${spring.application.name}
-  level:
-    com.teipsum.catalogservice: debug
-    org.springframework.security: info
-    org.hibernate.SQL: warn
-    CATALOG: info
-
-cors:
-  allowed:
-    origins: ${CORS_ALLOWED_ORIGINS}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "health,info,metrics"
+#server:
+#  port: ${SERVICE_SERVER_PORT}
+#  address: 0.0.0.0
+#
+#spring:
+#  application:
+#    name: catalog-service
+#  datasource:
+#    url: ${DB_URL}
+#    username: ${DB_USER}
+#    password: ${DB_PASSWORD}
+#    driver-class-name: org.postgresql.Driver
+#    hikari:
+#      maximum-pool-size: 10
+#  jpa:
+#    hibernate:
+#      ddl-auto: validate
+#    show-sql: false
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format_sql: true
+#
+#  kafka:
+#    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+#    consumer:
+#      group-id: catalog-service-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring.json.trusted.packages: "com.teipsum.shared.product,com.teipsum.shared.product.event,com.teipsum.shared.event"
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#    listener:
+#      type: single
+#      ack-mode: manual
+#
+#springdoc:
+#  swagger-ui:
+#    enabled: true
+#    path: /swagger-ui.html
+#  api-docs:
+#    enabled: true
+#    path: /v3/api-docs
+#
+##  cache:
+##    type: redis
+##    redis:
+##      time-to-live: 300000
+#
+#logging:
+#  system:
+#    service.name: ${spring.application.name}
+#  level:
+#    com.teipsum.catalogservice: debug
+#    org.springframework.security: info
+#    org.hibernate.SQL: warn
+#    CATALOG: info
+#
+#cors:
+#  allowed:
+#    origins: ${CORS_ALLOWED_ORIGINS}
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "health,info,metrics"

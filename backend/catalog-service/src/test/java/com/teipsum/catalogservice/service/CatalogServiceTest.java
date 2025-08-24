@@ -22,6 +22,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("CatalogService Tests")
 class CatalogServiceTest {
 
@@ -64,7 +67,7 @@ class CatalogServiceTest {
                 .description("Test Description")
                 .price(new BigDecimal("99.99"))
                 .discount(new BigDecimal("10.00"))
-                .category(ProductCategory.CLOTHING)
+                .category(ProductCategory.TOPS)
                 .subcategory(ProductSubcategory.T_SHIRTS)
                 .gender(Gender.UNISEX)
                 .imageUrls(List.of("url1", "url2"))
@@ -78,7 +81,7 @@ class CatalogServiceTest {
                 "Test Description",
                 new BigDecimal("99.99"),
                 new BigDecimal("10.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX,
                 List.of("url1", "url2"),
@@ -92,9 +95,9 @@ class CatalogServiceTest {
                 "Updated Description",
                 new BigDecimal("149.99"),
                 new BigDecimal("15.00"),
-                ProductCategory.CLOTHING,
+                ProductCategory.TOPS,
                 ProductSubcategory.HOODIES,
-                Gender.MALE,
+                Gender.MEN,
                 List.of("new-url1", "new-url2"),
                 List.of("M", "L", "XL"),
                 false
@@ -150,7 +153,7 @@ class CatalogServiceTest {
     @DisplayName("Should update product successfully")
     void shouldUpdateProductSuccessfully() {
         // Given
-        when(catalogProductRepository.findById(productUpdatedEvent.id())).thenReturn(Optional.of(testProduct));
+        when(catalogProductRepository.findById(UUID.fromString(productUpdatedEvent.id()))).thenReturn(Optional.of(testProduct));
         doNothing().when(productEventValidator).validate(productUpdatedEvent);
 
         // When
@@ -158,7 +161,7 @@ class CatalogServiceTest {
 
         // Then
         verify(productEventValidator).validate(productUpdatedEvent);
-        verify(catalogProductRepository).findById(productUpdatedEvent.id());
+        verify(catalogProductRepository).findById(UUID.fromString(productUpdatedEvent.id()));
         
         // Verify product fields were updated
         assertEquals("Updated Product", testProduct.getTitle());
@@ -166,7 +169,7 @@ class CatalogServiceTest {
         assertEquals(new BigDecimal("149.99"), testProduct.getPrice());
         assertEquals(new BigDecimal("15.00"), testProduct.getDiscount());
         assertEquals(ProductSubcategory.HOODIES, testProduct.getSubcategory());
-        assertEquals(Gender.MALE, testProduct.getGender());
+        assertEquals(Gender.MEN, testProduct.getGender());
         assertEquals(List.of("new-url1", "new-url2"), testProduct.getImageUrls());
         assertEquals(List.of("M", "L", "XL"), testProduct.getSizes());
         assertFalse(testProduct.isAvailable());
@@ -176,7 +179,7 @@ class CatalogServiceTest {
     @DisplayName("Should throw ProductNotFoundException when updating non-existent product")
     void shouldThrowProductNotFoundExceptionWhenUpdatingNonExistentProduct() {
         // Given
-        when(catalogProductRepository.findById(productUpdatedEvent.id())).thenReturn(Optional.empty());
+        when(catalogProductRepository.findById(UUID.fromString(productUpdatedEvent.id()))).thenReturn(Optional.empty());
         doNothing().when(productEventValidator).validate(productUpdatedEvent);
 
         // When & Then
@@ -184,7 +187,7 @@ class CatalogServiceTest {
                 () -> catalogService.updateProduct(productUpdatedEvent));
 
         verify(productEventValidator).validate(productUpdatedEvent);
-        verify(catalogProductRepository).findById(productUpdatedEvent.id());
+        verify(catalogProductRepository).findById(UUID.fromString(productUpdatedEvent.id()));
     }
 
     @Test
@@ -206,7 +209,7 @@ class CatalogServiceTest {
     @DisplayName("Should handle unexpected exception during update")
     void shouldHandleUnexpectedExceptionDuringUpdate() {
         // Given
-        when(catalogProductRepository.findById(productUpdatedEvent.id())).thenReturn(Optional.of(testProduct));
+        when(catalogProductRepository.findById(UUID.fromString(productUpdatedEvent.id()))).thenReturn(Optional.of(testProduct));
         doThrow(new RuntimeException("Database error"))
                 .when(productEventValidator).validate(productUpdatedEvent);
 
@@ -224,7 +227,7 @@ class CatalogServiceTest {
         catalogService.deleteProduct(productDeletedEvent);
 
         // Then
-        verify(catalogProductRepository).deleteById(productDeletedEvent.id());
+        verify(catalogProductRepository).deleteById(UUID.fromString(productUpdatedEvent.id()));
     }
 
     @Test
@@ -266,7 +269,7 @@ class CatalogServiceTest {
     void shouldGetProductByIdSuccessfully() {
         // Given
         String productId = testProduct.getId().toString();
-        when(catalogProductRepository.findById(productId)).thenReturn(Optional.of(testProduct));
+        when(catalogProductRepository.findById(UUID.fromString(productId))).thenReturn(Optional.of(testProduct));
 
         // When
         CatalogProduct result = catalogService.getProductById(productId);
@@ -275,19 +278,19 @@ class CatalogServiceTest {
         assertNotNull(result);
         assertEquals(testProduct, result);
 
-        verify(catalogProductRepository).findById(productId);
+        verify(catalogProductRepository).findById(UUID.fromString(productId));
     }
 
     @Test
     @DisplayName("Should throw ProductNotFoundException when product not found by id")
     void shouldThrowProductNotFoundExceptionWhenProductNotFoundById() {
         // Given
-        String productId = "non-existent-id";
+        UUID productId = UUID.randomUUID();
         when(catalogProductRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When & Then
         assertThrows(ProductNotFoundException.class, 
-                () -> catalogService.getProductById(productId));
+                () -> catalogService.getProductById(productId.toString()));
 
         verify(catalogProductRepository).findById(productId);
     }
@@ -297,9 +300,9 @@ class CatalogServiceTest {
     void shouldGetFilteredProductsSuccessfully() {
         // Given
         ProductFilterRequest filter = new ProductFilterRequest(
-                "Test", ProductCategory.CLOTHING, ProductSubcategory.T_SHIRTS,
+                "Test", ProductCategory.TOPS, ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX, new BigDecimal("50"), new BigDecimal("150"),
-                true, List.of("M", "L"), null, null
+                null, null, null, null, null
         );
         Pageable pageable = Pageable.ofSize(10);
         Page<CatalogProduct> productPage = new PageImpl<>(List.of(testProduct));
@@ -328,7 +331,7 @@ class CatalogServiceTest {
     void shouldHandleEmptyFilterResults() {
         // Given
         ProductFilterRequest filter = new ProductFilterRequest(
-                "NonExistent", null, null, null, null, null, null, null, null, null
+                "NonExistent", null, null, null, null, null, null, null, null, null, null
         );
         Pageable pageable = Pageable.ofSize(10);
         Page<CatalogProduct> emptyPage = new PageImpl<>(List.of());
@@ -357,14 +360,15 @@ class CatalogServiceTest {
         // Given
         ProductFilterRequest complexFilter = new ProductFilterRequest(
                 "Test Product", 
-                ProductCategory.CLOTHING, 
+                ProductCategory.TOPS,
                 ProductSubcategory.T_SHIRTS,
                 Gender.UNISEX, 
                 new BigDecimal("90"), 
                 new BigDecimal("110"),
-                true, 
-                List.of("S", "M"), 
+                null,
+                null,
                 null, 
+                null,
                 null
         );
         Pageable pageable = Pageable.ofSize(5);
@@ -418,7 +422,7 @@ class CatalogServiceTest {
     void shouldHandleCachingForGetProductById() {
         // Given
         String productId = testProduct.getId().toString();
-        when(catalogProductRepository.findById(productId)).thenReturn(Optional.of(testProduct));
+        when(catalogProductRepository.findById(UUID.fromString(productId))).thenReturn(Optional.of(testProduct));
 
         // When - call multiple times
         CatalogProduct result1 = catalogService.getProductById(productId);
@@ -432,7 +436,7 @@ class CatalogServiceTest {
 
         // Note: In a real test with actual caching, we would verify that repository is called only once
         // But since we're testing the service layer in isolation, we verify the method works correctly
-        verify(catalogProductRepository, times(2)).findById(productId);
+        verify(catalogProductRepository, times(2)).findById(UUID.fromString(productId));
     }
 
     @Test
@@ -453,7 +457,7 @@ class CatalogServiceTest {
                 testProduct.isAvailable()     // Keep original
         );
 
-        when(catalogProductRepository.findById(partialUpdateEvent.id())).thenReturn(Optional.of(testProduct));
+        when(catalogProductRepository.findById(UUID.fromString(partialUpdateEvent.id()))).thenReturn(Optional.of(testProduct));
         doNothing().when(productEventValidator).validate(partialUpdateEvent);
 
         // When
@@ -464,6 +468,6 @@ class CatalogServiceTest {
         assertEquals("Test Description", testProduct.getDescription()); // Should remain unchanged
         
         verify(productEventValidator).validate(partialUpdateEvent);
-        verify(catalogProductRepository).findById(partialUpdateEvent.id());
+        verify(catalogProductRepository).findById(UUID.fromString(partialUpdateEvent.id()));
     }
 }

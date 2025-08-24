@@ -2,6 +2,7 @@ package com.teipsum.catalogservice.integration;
 
 import com.teipsum.catalogservice.model.CatalogProduct;
 import com.teipsum.catalogservice.repository.CatalogProductRepository;
+import com.teipsum.shared.exceptions.handler.GlobalExceptionHandler;
 import com.teipsum.shared.product.enums.Gender;
 import com.teipsum.shared.product.enums.ProductCategory;
 import com.teipsum.shared.product.enums.ProductSubcategory;
@@ -11,9 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureWebMvc
+@Import(GlobalExceptionHandler.class)
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("Catalog Service Integration Tests")
@@ -40,7 +43,7 @@ class CatalogServiceIntegrationTest {
     @Autowired
     private CatalogProductRepository catalogProductRepository;
 
-    @MockBean
+    @MockitoBean
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private MockMvc mockMvc;
@@ -56,7 +59,7 @@ class CatalogServiceIntegrationTest {
     @DisplayName("Should get all products with full integration")
     void shouldGetAllProductsWithFullIntegration() throws Exception {
         // Given - create test products
-        CatalogProduct product1 = createTestProduct("Product 1", ProductCategory.CLOTHING, new BigDecimal("99.99"));
+        CatalogProduct product1 = createTestProduct("Product 1", ProductCategory.TOPS, new BigDecimal("99.99"));
         CatalogProduct product2 = createTestProduct("Product 2", ProductCategory.ACCESSORIES, new BigDecimal("49.99"));
         
         catalogProductRepository.save(product1);
@@ -84,13 +87,13 @@ class CatalogServiceIntegrationTest {
     void shouldGetProductByIdWithFullIntegration() throws Exception {
         // Given - create and save test product
         CatalogProduct testProduct = createTestProduct("Integration Test Product", 
-                ProductCategory.CLOTHING, new BigDecimal("199.99"));
+                ProductCategory.TOPS, new BigDecimal("199.99"));
         CatalogProduct savedProduct = catalogProductRepository.save(testProduct);
 
         // When & Then
         mockMvc.perform(get("/api/products/{id}", savedProduct.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(savedProduct.getId().toString()))
+                .andExpect(jsonPath("$.id").value(savedProduct.getId()))
                 .andExpect(jsonPath("$.title").value("Integration Test Product"))
                 .andExpect(jsonPath("$.price").value(199.99))
                 .andExpect(jsonPath("$.category").value("CLOTHING"))
@@ -124,7 +127,7 @@ class CatalogServiceIntegrationTest {
     void shouldFilterProductsByCategory() throws Exception {
         // Given - create products with different categories
         CatalogProduct clothingProduct = createTestProduct("T-Shirt", 
-                ProductCategory.CLOTHING, new BigDecimal("29.99"));
+                ProductCategory.TOPS, new BigDecimal("29.99"));
         CatalogProduct accessoryProduct = createTestProduct("Hat", 
                 ProductCategory.ACCESSORIES, new BigDecimal("19.99"));
 
@@ -155,11 +158,11 @@ class CatalogServiceIntegrationTest {
     void shouldFilterProductsByPriceRange() throws Exception {
         // Given - create products with different prices
         CatalogProduct cheapProduct = createTestProduct("Cheap Product", 
-                ProductCategory.CLOTHING, new BigDecimal("25.00"));
+                ProductCategory.TOPS, new BigDecimal("25.00"));
         CatalogProduct expensiveProduct = createTestProduct("Expensive Product", 
-                ProductCategory.CLOTHING, new BigDecimal("150.00"));
+                ProductCategory.TOPS, new BigDecimal("150.00"));
         CatalogProduct midRangeProduct = createTestProduct("Mid Range Product", 
-                ProductCategory.CLOTHING, new BigDecimal("75.00"));
+                ProductCategory.TOPS, new BigDecimal("75.00"));
 
         catalogProductRepository.save(cheapProduct);
         catalogProductRepository.save(expensiveProduct);
@@ -185,7 +188,7 @@ class CatalogServiceIntegrationTest {
                 .description("This product is available")
                 .price(new BigDecimal("99.99"))
                 .discount(new BigDecimal("0.00"))
-                .category(ProductCategory.CLOTHING)
+                .category(ProductCategory.TOPS)
                 .subcategory(ProductSubcategory.T_SHIRTS)
                 .gender(Gender.UNISEX)
                 .imageUrls(List.of())
@@ -199,7 +202,7 @@ class CatalogServiceIntegrationTest {
                 .description("This product is not available")
                 .price(new BigDecimal("99.99"))
                 .discount(new BigDecimal("0.00"))
-                .category(ProductCategory.CLOTHING)
+                .category(ProductCategory.TOPS)
                 .subcategory(ProductSubcategory.T_SHIRTS)
                 .gender(Gender.UNISEX)
                 .imageUrls(List.of())
@@ -226,7 +229,7 @@ class CatalogServiceIntegrationTest {
         // Given - create multiple products
         for (int i = 1; i <= 25; i++) {
             CatalogProduct product = createTestProduct("Product " + i, 
-                    ProductCategory.CLOTHING, new BigDecimal("99.99"));
+                    ProductCategory.TOPS, new BigDecimal("99.99"));
             catalogProductRepository.save(product);
         }
 
@@ -269,11 +272,11 @@ class CatalogServiceIntegrationTest {
     void shouldHandleSortingCorrectly() throws Exception {
         // Given - create products with different prices and titles
         CatalogProduct productA = createTestProduct("A Product", 
-                ProductCategory.CLOTHING, new BigDecimal("150.00"));
+                ProductCategory.TOPS, new BigDecimal("150.00"));
         CatalogProduct productB = createTestProduct("B Product", 
-                ProductCategory.CLOTHING, new BigDecimal("100.00"));
+                ProductCategory.TOPS, new BigDecimal("100.00"));
         CatalogProduct productC = createTestProduct("C Product", 
-                ProductCategory.CLOTHING, new BigDecimal("200.00"));
+                ProductCategory.TOPS, new BigDecimal("200.00"));
 
         catalogProductRepository.save(productA);
         catalogProductRepository.save(productB);
@@ -307,7 +310,7 @@ class CatalogServiceIntegrationTest {
                 .description("This matches all criteria")
                 .price(new BigDecimal("75.00"))
                 .discount(new BigDecimal("5.00"))
-                .category(ProductCategory.CLOTHING)
+                .category(ProductCategory.TOPS)
                 .subcategory(ProductSubcategory.T_SHIRTS)
                 .gender(Gender.UNISEX)
                 .imageUrls(List.of("url1"))
@@ -323,7 +326,7 @@ class CatalogServiceIntegrationTest {
                 .discount(new BigDecimal("0.00"))
                 .category(ProductCategory.ACCESSORIES)
                 .subcategory(ProductSubcategory.HATS)
-                .gender(Gender.FEMALE)
+                .gender(Gender.WOMEN)
                 .imageUrls(List.of())
                 .sizes(List.of("ONE_SIZE"))
                 .available(false)
@@ -352,7 +355,7 @@ class CatalogServiceIntegrationTest {
     void shouldReturnEmptyResultWhenNoProductsMatchFilters() throws Exception {
         // Given - create a product that won't match the filter
         CatalogProduct product = createTestProduct("Test Product", 
-                ProductCategory.CLOTHING, new BigDecimal("99.99"));
+                ProductCategory.TOPS, new BigDecimal("99.99"));
         catalogProductRepository.save(product);
 
         // When & Then - apply filter that won't match

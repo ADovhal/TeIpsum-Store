@@ -59,7 +59,7 @@ public class CatalogService {
 
             productEventValidator.validate(event);
 
-            CatalogProduct product = catalogProductRepository.findById(event.id())
+            CatalogProduct product = catalogProductRepository.findById(UUID.fromString(event.id()))
                     .orElseThrow(() -> new ProductNotFoundException(event.id()));
 
             product.setTitle(event.title());
@@ -84,7 +84,7 @@ public class CatalogService {
 
     @Transactional
     public void deleteProduct(ProductDeletedEvent event) {
-        catalogProductRepository.deleteById(event.id());
+        catalogProductRepository.deleteById(UUID.fromString(event.id()));
     }
 
     public List<CatalogProduct> getAllProducts() {
@@ -94,8 +94,8 @@ public class CatalogService {
     @Transactional(readOnly = true)
     @Cacheable(value = "products", key = "#id")
     public CatalogProduct getProductById(String id) {
-        return catalogProductRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        return catalogProductRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new ProductNotFoundException(UUID.fromString(id)));
     }
 
     @Transactional(readOnly = true)

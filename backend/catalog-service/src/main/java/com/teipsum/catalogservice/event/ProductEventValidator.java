@@ -106,12 +106,12 @@ public class ProductEventValidator {
         }
 
         if (gender != null) {
-            if (category == ProductCategory.MENS_CLOTHING && gender != Gender.MEN) {
+            if (category == ProductCategory.TOPS && gender != Gender.MEN) {
                 throw new InvalidProductDataException(
                         "Mens clothing category requires MEN gender");
             }
 
-            if (category == ProductCategory.WOMENS_CLOTHING && gender != Gender.WOMEN) {
+            if (category == ProductCategory.TOPS && gender != Gender.WOMEN) {
                 throw new InvalidProductDataException(
                         "Womens clothing category requires WOMEN gender");
             }
