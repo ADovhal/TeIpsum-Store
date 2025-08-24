@@ -11,15 +11,16 @@ import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final UserCredentials user;
+    private final String userId;
+    private final String username;
+    private final String password;
+    private final Set<GrantedAuthority> authorities;
 
     public CustomUserDetails(UserCredentials user) {
-        this.user = user;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles() == null
+        this.userId = user.getId();
+        this.username = user.getEmail();
+        this.password = user.getPassword();
+        this.authorities = user.getRoles() == null
                 ? Set.of()
                 : user.getRoles()
                 .stream()
@@ -27,14 +28,42 @@ public class CustomUserDetails implements UserDetails {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // или ваша бизнес-логика
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // или ваша бизнес-логика
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // или ваша бизнес-логика
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // или ваша бизнес-логика
+    }
 }
