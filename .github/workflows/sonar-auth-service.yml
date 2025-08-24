@@ -45,10 +45,17 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Install shared dependencies
-        run: |
-          cd backend
-          mvn -B clean install -DskipTests -pl :teipsum-shared-dto,:shared-logger,:teipsum-shared-exceptions -am
+      - name: Build and install shared-dto
+        working-directory: backend/shared-dto
+        run: mvn -B clean install -DskipTests
+
+      - name: Build and install shared-logger
+        working-directory: backend/shared-logger
+        run: mvn -B clean install -DskipTests
+
+      - name: Build and install shared-exceptions
+        working-directory: backend/shared-exceptions
+        run: mvn -B clean install -DskipTests
 
       - name: Build & Sonar analyze Auth Service
         working-directory: backend/auth-service
