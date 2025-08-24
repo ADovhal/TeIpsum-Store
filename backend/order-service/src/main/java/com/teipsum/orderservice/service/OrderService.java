@@ -28,123 +28,123 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    
-        private static final Logger logger = LogManager.getLogger(OrderService.class);
 
-        private final OrderRepository repo;
-        private final OrderEventPublisher publisher;
-        private final KafkaTemplate<String, Object> kafkaTemplate;
+    private static final Logger logger = LogManager.getLogger(OrderService.class);
 
-        @Transactional
-        public Order createOrder(UUID userId, OrderRequest req) {
-                BigDecimal total = req.items().stream()
-                        .map(i -> i.priceSnapshot().multiply(BigDecimal.valueOf(i.quantity())))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    private final OrderRepository repo;
+    private final OrderEventPublisher publisher;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-                Order order = Order.builder()
+    @Transactional
+    public Order createOrder(UUID userId, OrderRequest req) {
+        BigDecimal total = req.items().stream()
+                .map(i -> i.priceSnapshot().multiply(BigDecimal.valueOf(i.quantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Order order = Order.builder()
+                .id(UUID.randomUUID())
+                .userId(userId)
+                .status(OrderStatus.PENDING)
+                .totalAmount(total)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+
+        order.setItems(req.items().stream()
+                .map(i -> OrderItem.builder()
                         .id(UUID.randomUUID())
-                        .userId(userId)
-                        .status(OrderStatus.PENDING)
-                        .totalAmount(total)
-                        .createdAt(Instant.now())
-                        .updatedAt(Instant.now())
-                        .build();
+                        .order(order)
+                        .productId(i.productId())
+                        .quantity(i.quantity())
+                        .priceSnapshot(i.priceSnapshot())
+                        .build())
+                .toList());
 
-                order.setItems(req.items().stream()
-                        .map(i -> OrderItem.builder()
-                                .id(UUID.randomUUID())
-                                .order(order)
-                                .productId(i.productId())
-                                .quantity(i.quantity())
-                                .priceSnapshot(i.priceSnapshot())
-                                .build())
-                        .toList());
+        repo.save(order);
 
-                repo.save(order);
+        publisher.publishOrderCreated(order);
+        return order;
+    }
 
-                publisher.publishOrderCreated(order);
-                return order;
+    @Transactional
+    public void cancel(UUID orderId, UUID userId) {
+        Order order = repo.findByIdAndUserId(orderId, userId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new ConflictException("Order cannot be cancelled");
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setUpdatedAt(Instant.now());
+        repo.save(order);
+
+        publisher.publishOrderCancelled(order);
+    }
+
+    public Order findByIdAndUserId(UUID id, UUID userId) {
+        return repo.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+    }
+
+    public List<Order> findAllByUser(UUID userId) {
+        return repo.findAllByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    /**
+     * Gets order information for a user (for deletion purposes)
+     */
+    @Transactional(readOnly = true)
+    public UserOrderInfoResponse getUserOrderInfo(UUID userId) {
+        List<Order> userOrders = repo.findAllByUserIdOrderByCreatedAtDesc(userId);
+
+        boolean hasActiveOrders = userOrders.stream()
+                .anyMatch(order -> order.getStatus() == OrderStatus.PENDING);
+
+        return new UserOrderInfoResponse(userOrders.size(), hasActiveOrders);
+    }
+
+    /**
+     * Anonymizes all orders for a user instead of deleting them
+     * This preserves business data while removing personal information
+     */
+    @Transactional
+    public void anonymizeUserOrders(UUID userId, String userEmail) {
+        List<Order> userOrders = repo.findAllByUserIdOrderByCreatedAtDesc(userId);
+
+        if (userOrders.isEmpty()) {
+            logger.info("No orders found for user: {}", userId);
+            // Still publish event to complete the deletion process
+            publishAnonymizationEvent(userId, userEmail, 0);
+            return;
         }
 
-        @Transactional
-        public void cancel(UUID orderId, UUID userId) {
-                Order order = repo.findByIdAndUserId(orderId, userId)
-                        .orElseThrow(() -> new NotFoundException("Order not found"));
-                if (order.getStatus() != OrderStatus.PENDING) {
-                    throw new ConflictException("Order cannot be cancelled");
-                }
-                order.setStatus(OrderStatus.CANCELLED);
-                order.setUpdatedAt(Instant.now());
-                repo.save(order);
-        
-                publisher.publishOrderCancelled(order);
-        }
+        logger.info("Anonymizing {} orders for user: {}", userOrders.size(), userId);
 
-        public Order findByIdAndUserId(UUID id, UUID userId) {
-                return repo.findByIdAndUserId(id, userId)
-                        .orElseThrow(() -> new NotFoundException("Order not found"));
-        }
+        // Set userId to null to anonymize orders
+        // Orders remain in the system for business analytics but are no longer linked to the user
+        userOrders.forEach(order -> {
+            order.setUserId(null);
+            // Update timestamp to track when anonymization occurred
+            order.setUpdatedAt(Instant.now());
+        });
 
-        public List<Order> findAllByUser(UUID userId) {
-                return repo.findAllByUserIdOrderByCreatedAtDesc(userId);
-        }
+        // Save all anonymized orders
+        repo.saveAll(userOrders);
 
-        /**
-         * Gets order information for a user (for deletion purposes)
-         */
-        @Transactional(readOnly = true)
-        public UserOrderInfoResponse getUserOrderInfo(UUID userId) {
-            List<Order> userOrders = repo.findAllByUserIdOrderByCreatedAtDesc(userId);
-            
-            boolean hasActiveOrders = userOrders.stream()
-                    .anyMatch(order -> order.getStatus() == OrderStatus.PENDING);
-            
-            return new UserOrderInfoResponse(userOrders.size(), hasActiveOrders);
-        }
+        logger.info("Successfully anonymized {} orders for user: {}", userOrders.size(), userId);
 
-        /**
-         * Anonymizes all orders for a user instead of deleting them
-         * This preserves business data while removing personal information
-         */
-        @Transactional
-        public void anonymizeUserOrders(UUID userId, String userEmail) {
-            List<Order> userOrders = repo.findAllByUserIdOrderByCreatedAtDesc(userId);
-            
-            if (userOrders.isEmpty()) {
-                logger.info("No orders found for user: {}", userId);
-                // Still publish event to complete the deletion process
-                publishAnonymizationEvent(userId, userEmail, 0);
-                return;
-            }
+        // Publish event to notify that orders are anonymized
+        publishAnonymizationEvent(userId, userEmail, userOrders.size());
+    }
 
-            logger.info("Anonymizing {} orders for user: {}", userOrders.size(), userId);
+    private void publishAnonymizationEvent(UUID userId, String userEmail, int orderCount) {
+        UserOrdersAnonymizedEvent event = new UserOrdersAnonymizedEvent(
+                userId.toString(),
+                userEmail,
+                orderCount,
+                LocalDateTime.now()
+        );
 
-            // Set userId to null to anonymize orders
-            // Orders remain in the system for business analytics but are no longer linked to the user
-            userOrders.forEach(order -> {
-                order.setUserId(null);
-                // Update timestamp to track when anonymization occurred
-                order.setUpdatedAt(Instant.now());
-            });
-
-            // Save all anonymized orders
-            repo.saveAll(userOrders);
-            
-            logger.info("Successfully anonymized {} orders for user: {}", userOrders.size(), userId);
-
-            // Publish event to notify that orders are anonymized
-            publishAnonymizationEvent(userId, userEmail, userOrders.size());
-        }
-
-        private void publishAnonymizationEvent(UUID userId, String userEmail, int orderCount) {
-            UserOrdersAnonymizedEvent event = new UserOrdersAnonymizedEvent(
-                    userId.toString(),
-                    userEmail,
-                    orderCount,
-                    LocalDateTime.now()
-            );
-
-            kafkaTemplate.send("user-orders-anonymized", userId.toString(), event);
-            logger.info("Published user orders anonymized event for user: {} with {} orders", userId, orderCount);
-        }
+        kafkaTemplate.send("user-orders-anonymized", userId.toString(), event);
+        logger.info("Published user orders anonymized event for user: {} with {} orders", userId, orderCount);
+    }
 }

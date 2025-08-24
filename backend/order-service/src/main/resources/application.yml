@@ -34,7 +34,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: com.teipsum.shared.product.event,com.teipsum.shared.order.event
+        spring.json.trusted.packages: com.teipsum.shared.product.event,com.teipsum.shared.event
 
 springdoc:
   swagger-ui:
