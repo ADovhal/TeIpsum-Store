@@ -22,25 +22,25 @@ const DeleteAccountDialog = ({ open, onClose, onConfirm }) => {
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h2>{t('deleteAccountConfirmTitle')}</h2>
+        <h2>{t('deleteAccount.deleteAccountConfirmTitle')}</h2>
 
         {isLoadingDeletionInfo && <p>{t('loading')}</p>}
         {deletionInfo && (
           <ul className={styles.warningList}>
-            <li>{t('ordersToBeDeleted', { count: deletionInfo.orderCount })}</li>
+            <li>{t('deleteAccount.ordersToBeDeleted', { count: deletionInfo.orderCount })}</li>
             {deletionInfo.hasActiveOrders && (
-              <li className={styles.warning}>{t('activeOrdersWarning')}</li>
+              <li className={styles.warning}>{t('deleteAccount.activeOrdersWarning')}</li>
             )}
-            <li>{t('profileAndHistory')}</li>
+            <li>{t('deleteAccount.profileAndHistory')}</li>
           </ul>
         )}
 
         <div className={styles.actions}>
           <button type="button" onClick={onClose} className={styles.cancelBtn}>
-            {t('cancel')}
+            {t('deleteAccount.cancel')}
           </button>
           <button type="button" onClick={onConfirm} className={styles.deleteBtn}>
-            {t('deleteAnyway')}
+            {t('deleteAccount.deleteAnyway')}
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchProfileData, deleteAccount, updateProfileData } from '../profile/UserService';
+import { fetchProfileData, fetchDeletionInfo as fetchDeletionInfoService, deleteAccount, updateProfileData } from '../profile/UserService';
 
 
 export const loadProfile = createAsyncThunk(
@@ -31,7 +31,7 @@ export const fetchDeletionInfo = createAsyncThunk(
   'profile/fetchDeletionInfo',
   async (_, thunkAPI) => {
     try {
-      const res = await fetchDeletionInfo();
+      const res = await fetchDeletionInfoService();
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || 'Error');
