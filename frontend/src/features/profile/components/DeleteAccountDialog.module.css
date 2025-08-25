@@ -1,0 +1,74 @@
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px 24px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: system-ui, sans-serif;
+}
+
+.modal h2 {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+  color: #222;
+}
+
+.warningList {
+  margin: 0 0 24px;
+  padding-left: 20px;
+  line-height: 1.4;
+}
+
+.warningList li {
+  margin-bottom: 8px;
+}
+
+.warning {
+  color: #e53935;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancelBtn,
+.deleteBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.cancelBtn:hover {
+  background: #e0e0e0;
+}
+
+.deleteBtn {
+  background: #e53935;
+  color: #fff;
+}
+
+.deleteBtn:hover {
+  background: #c62828;
+}

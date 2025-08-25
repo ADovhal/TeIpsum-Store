@@ -27,6 +27,18 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+export const fetchDeletionInfo = createAsyncThunk(
+  'profile/fetchDeletionInfo',
+  async (_, thunkAPI) => {
+    try {
+      const res = await fetchDeletionInfo();
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Error');
+    }
+  }
+);
+
 export const deleteUserAccount = createAsyncThunk(
   'profile/deleteUserAccount',
   async (_, thunkAPI ) => {
@@ -44,6 +56,8 @@ const profileSlice = createSlice({
   initialState: {
     profileData: JSON.parse(localStorage.getItem('profileData')) || null,
     isLoading: false,
+    deletionInfo: null,
+    isLoadingDeletionInfo: false,
     error: null,
     isDeleted: false,
   },
@@ -75,6 +89,17 @@ const profileSlice = createSlice({
     })
     .addCase(deleteUserAccount.rejected, (state, action) => {
       state.isLoading = false;
+      state.error = action.payload;
+    })
+    .addCase(fetchDeletionInfo.pending, (state) => {
+      state.isLoadingDeletionInfo = true;
+    })
+    .addCase(fetchDeletionInfo.fulfilled, (state, action) => {
+      state.deletionInfo = action.payload;
+      state.isLoadingDeletionInfo = false;
+    })
+    .addCase(fetchDeletionInfo.rejected, (state, action) => {
+      state.isLoadingDeletionInfo = false;
       state.error = action.payload;
     })
     .addCase(updateProfile.pending, (state) => {

@@ -29,13 +29,20 @@ export const updateProfileData = async (profileData) => {
     }
 };
 
+export const fetchDeletionInfo = async () => {
+  try {
+    const res = await apiUser.get('/users/deletion-info');
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to load deletion info');
+  }
+};
+
 export const deleteAccount = async () => {
-    try {
-        console.log('Sending DELETE request...');
-        const response = await apiUser.delete('/users/delete');
-        console.log('Delete response:', response.data);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data?.message || 'Failed to delete account');
-    }
+  try {
+    const res = await apiUser.post('/users/initiate-deletion');
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to delete account');
+  }
 };

@@ -5,6 +5,7 @@ import { logoutAsync } from '../../auth/authSlice';
 import { deleteUserAccount } from '../profileSlice';
 import ProfileData from './ProfileData';
 import ProfileEditForm from './ProfileEditForm';
+import DeleteAccountDialog from './DeleteAccountDialog';
 import { useLanguage } from '../../../context/LanguageContext';
 import styles from './ProfileForm.module.css';
 
@@ -13,6 +14,7 @@ const ProfileForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
     
     const profileData = useSelector(state => state.profile.profileData);
     const error = useSelector(state => state.profile.error);
@@ -23,15 +25,11 @@ const ProfileForm = () => {
         navigate('/login');
     };
 
-    const handleDeleteAccount = async () => {
-        if (window.confirm('Are you sure you want to delete your account? This action is irreversible.')) {
-            try {
-                dispatch(deleteUserAccount());
-                navigate('/login')
-            } catch (error) {
-                console.error('Error deleting account:', error);
-            }
-        }
+    const handleDeleteAccount = () => setDialogOpen(true);
+
+    const handleConfirmDelete = () => {
+      dispatch(deleteUserAccount());
+      setDialogOpen(false);
     };
 
 
@@ -66,7 +64,7 @@ const ProfileForm = () => {
                             {t('editProfile')}
                         </button>
                         <button onClick={handleDeleteAccount} className={styles.deleteButton}>
-                            {t('deleteAccount')}
+                            {t('deleteAccount.deleteAccount')}
                         </button>
                         <button onClick={handleLogout} className={styles.logoutButton}>
                             {t('logout')}
@@ -76,6 +74,12 @@ const ProfileForm = () => {
             ) : (
                 <p>{t('loading')}</p>
             )}
+
+            <DeleteAccountDialog
+              open={dialogOpen}
+              onClose={() => setDialogOpen(false)}
+              onConfirm={handleConfirmDelete}
+            />
         </div>
     );
 };
