@@ -14,6 +14,7 @@ The TeIpsum backend is built using a **microservices architecture** with Spring 
 | [Order Service](order-service/README.md) | 8084 | ✅ Active | Order processing, order management |
 | [Inventory Service](inventory-service/README.md) | 8085 | ✅ Active | Stock management, inventory tracking |
 | [Admin Product Service](admin-product-service/README.md) | 8086 | ✅ Active | Admin product management, CRUD operations |
+| [Fit Service](fitservice/README.md) | 8087 | ✅ Active | 3D mannequin rendering with ThreeJS for virtual fitting |
 
 ## 🔧 Shared Modules
 

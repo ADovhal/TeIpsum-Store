@@ -1,0 +1,17 @@
+services:
+  stage-fitservice:
+    container_name: stage-fitservice
+    build:
+      context: ../..
+      dockerfile: backend/fitservice/Dockerfile
+    ports:
+      - '22097:${SERVICE_SERVER_PORT:-8087}'
+    image: stage-fitservice:latest
+    env_file: .env
+    networks:
+      - stage-net
+
+networks:
+  stage-net:
+    external: true
+

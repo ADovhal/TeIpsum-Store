@@ -1253,6 +1253,29 @@
     "contactEmail": "📧 E-mail: returns@teipsum.com",
     "contactPhone": "📞 Telefon: +48 123 456 789",
     "contactHours": "🕒 Poniedziałek - Piątek: 9:00 - 18:00 CET"
+  },
+  "fitService": {
+    "title": "Wirtualna Przymierzalnia",
+    "bodyParams": "Parametry Ciała",
+    "height": "Wzrost (cm)",
+    "chest": "Obwód Klatki (cm)",
+    "waist": "Obwód Talii (cm)",
+    "hips": "Obwód Bioder (cm)",
+    "shoulderWidth": "Szerokość Ramion (cm)",
+    "selectedProducts": "Wybrane Produkty",
+    "availableProducts": "Dostępne Produkty",
+    "noProductsSelected": "Wybierz produkty z listy poniżej, aby dodać je do manekina",
+    "remove": "Usuń",
+    "type": "Typ",
+    "color": "Kolor",
+    "price": "Cena",
+    "firstTimeTitle": "Ustaw Parametry Ciała",
+    "firstTimeDescription": "Aby korzystać z wirtualnej przymierzalni, podaj swoje wymiary. Możesz je później zaktualizować w ustawieniach profilu.",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "loading": "Ładowanie...",
+    "errorLoading": "Błąd ładowania produktów",
+    "tryAgain": "Spróbuj ponownie",
+    "fitServiceButton": "Wirtualna Przymierzalnia"
   }
-
 }

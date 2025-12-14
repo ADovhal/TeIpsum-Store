@@ -258,7 +258,13 @@ CREATE TABLE user_profiles (
     join_date DATE NOT NULL DEFAULT CURRENT_DATE,
     last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Body parameters for fit service (added in migration)
+    body_height DOUBLE PRECISION,
+    body_chest DOUBLE PRECISION,
+    body_waist DOUBLE PRECISION,
+    body_hips DOUBLE PRECISION,
+    body_shoulder_width DOUBLE PRECISION
 );
 
 -- Indexes for performance
@@ -266,6 +272,8 @@ CREATE INDEX idx_user_profiles_email ON user_profiles(email);
 CREATE INDEX idx_user_profiles_join_date ON user_profiles(join_date);
 CREATE INDEX idx_user_profiles_is_admin ON user_profiles(is_admin);
 ```
+
+**Note:** The body parameter columns (`body_height`, `body_chest`, `body_waist`, `body_hips`, `body_shoulder_width`) need to be added via database migration. See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for details.
 
 ## 📡 Event Processing
 

@@ -1252,5 +1252,29 @@
     "product2Title": "Elegantes Sommerkleid",
     "product3Title": "Premium Denim Jeans",
     "product4Title": "Lässige Sneaker"
+  },
+  "fitService": {
+    "title": "Virtuelle Anprobe",
+    "bodyParams": "Körpermaße",
+    "height": "Größe (cm)",
+    "chest": "Brustumfang (cm)",
+    "waist": "Taillenumfang (cm)",
+    "hips": "Hüftumfang (cm)",
+    "shoulderWidth": "Schulterbreite (cm)",
+    "selectedProducts": "Ausgewählte Produkte",
+    "availableProducts": "Verfügbare Produkte",
+    "noProductsSelected": "Wählen Sie Produkte aus der Liste unten aus, um sie dem Schaufensterpuppe hinzuzufügen",
+    "remove": "Entfernen",
+    "type": "Typ",
+    "color": "Farbe",
+    "price": "Preis",
+    "firstTimeTitle": "Ihre Körpermaße festlegen",
+    "firstTimeDescription": "Um die virtuelle Anprobe zu nutzen, geben Sie bitte Ihre Körpermaße an. Sie können diese später in Ihren Profileinstellungen aktualisieren.",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "loading": "Laden...",
+    "errorLoading": "Fehler beim Laden der Produkte",
+    "tryAgain": "Erneut versuchen",
+    "fitServiceButton": "Virtuelle Anprobe"
   }
 }

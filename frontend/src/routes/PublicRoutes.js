@@ -24,6 +24,7 @@ import TermsOfServicePage from '../pages/TermsOfServicePage';
 import AccessibilityPage from '../pages/AccessibilityPage';
 import CareersPage from '../pages/CareersPage';
 import BlogPage from '../pages/BlogPage';
+import FitServicePage from '../pages/FitServicePage';
 
 export default function PublicRoutes() {
   return (
@@ -54,6 +55,7 @@ export default function PublicRoutes() {
       <Route path="/careers" element={<CareersPage />} />
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/fit-service" element={<FitServicePage />} />
     </Routes>
   );
 }

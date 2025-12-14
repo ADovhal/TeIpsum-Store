@@ -1218,5 +1218,29 @@
     "product2Title": "Elegant Summer Dress",
     "product3Title": "Premium Denim Jeans",
     "product4Title": "Casual Sneakers"
+  },
+  "fitService": {
+    "title": "Virtual Fitting Room",
+    "bodyParams": "Body Parameters",
+    "height": "Height (cm)",
+    "chest": "Chest (cm)",
+    "waist": "Waist (cm)",
+    "hips": "Hips (cm)",
+    "shoulderWidth": "Shoulder Width (cm)",
+    "selectedProducts": "Selected Products",
+    "availableProducts": "Available Products",
+    "noProductsSelected": "Select products from the list below to add them to the mannequin",
+    "remove": "Remove",
+    "type": "Type",
+    "color": "Color",
+    "price": "Price",
+    "firstTimeTitle": "Set Your Body Parameters",
+    "firstTimeDescription": "To use the virtual fitting room, please provide your body measurements. You can update these later in your profile settings.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "errorLoading": "Error loading products",
+    "tryAgain": "Try again",
+    "fitServiceButton": "Virtual Fitting"
   }
 }

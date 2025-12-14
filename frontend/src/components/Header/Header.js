@@ -148,6 +148,9 @@ const Header = () => {
             {isAuthenticated ? (
               <div className={styles.userMenu}>
                 <AdminNavigationButton />
+                <Link to="/fit-service" className={styles.iconButton} onClick={closeMenu} title={t('fitService.fitServiceButton')}>
+                  <i className="fa fa-magic" style={{ color: theme.textPrimary }}></i>
+                </Link>
                 <Link to="/profile" className={styles.iconButton} onClick={closeMenu}>
                   <i className="fa fa-user" style={{ color: theme.textPrimary }}></i>
                 </Link>

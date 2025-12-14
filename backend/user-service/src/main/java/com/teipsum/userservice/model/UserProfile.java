@@ -39,4 +39,20 @@ public class UserProfile {
 
     @Column(nullable = false)
     private LocalDateTime lastLoginDate;
+
+    // Body parameters for fit service
+    @Column
+    private Double bodyHeight; // Height in cm
+
+    @Column
+    private Double bodyChest; // Chest circumference in cm
+
+    @Column
+    private Double bodyWaist; // Waist circumference in cm
+
+    @Column
+    private Double bodyHips; // Hips circumference in cm
+
+    @Column
+    private Double bodyShoulderWidth; // Shoulder width in cm
 }

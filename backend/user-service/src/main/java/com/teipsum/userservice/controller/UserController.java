@@ -192,4 +192,97 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
     }
+
+    @GetMapping("/body-parameters")
+    @Operation(
+        summary = "Get user body parameters",
+        description = "Retrieves body parameters for fit service (height, chest, waist, hips, shoulder width)",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Body parameters retrieved successfully"
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "User not authenticated"
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "Body parameters not set"
+            )
+        }
+    )
+    public ResponseEntity<Map<String, Double>> getBodyParameters() {
+        try {
+            Map<String, Double> bodyParams = userService.getBodyParameters();
+            if (bodyParams.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(bodyParams);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/body-parameters")
+    @Operation(
+        summary = "Save user body parameters",
+        description = "Saves or updates body parameters for fit service",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Body parameters saved successfully"
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "Invalid body parameters"
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "User not authenticated"
+            )
+        }
+    )
+    public ResponseEntity<Map<String, String>> saveBodyParameters(
+            @RequestBody Map<String, Double> bodyParams) {
+        try {
+            // Validate required parameters
+            if (bodyParams == null || 
+                bodyParams.get("height") == null ||
+                bodyParams.get("chest") == null ||
+                bodyParams.get("waist") == null ||
+                bodyParams.get("hips") == null ||
+                bodyParams.get("shoulderWidth") == null) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "All body parameters are required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            // Validate parameter ranges
+            Double height = bodyParams.get("height");
+            Double chest = bodyParams.get("chest");
+            Double waist = bodyParams.get("waist");
+            Double hips = bodyParams.get("hips");
+            Double shoulderWidth = bodyParams.get("shoulderWidth");
+
+            if (height < 100 || height > 250 ||
+                chest < 50 || chest > 200 ||
+                waist < 40 || waist > 200 ||
+                hips < 50 || hips > 200 ||
+                shoulderWidth < 20 || shoulderWidth > 100) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Body parameters are out of valid range");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            userService.saveBodyParameters(height, chest, waist, hips, shoulderWidth);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Body parameters saved successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to save body parameters: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
 }

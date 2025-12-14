@@ -238,4 +238,45 @@ public class UserService {
             logger.warn("Error requesting order info for user {}: {}", userId, e.getMessage());
         }
     }
+
+    /**
+     * Get body parameters for the current user
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Double> getBodyParameters() {
+        UserProfile user = getCurrentUser();
+        if (user == null) {
+            throw new UserNotFoundException("User not authenticated");
+        }
+
+        Map<String, Double> bodyParams = new java.util.HashMap<>();
+        if (user.getBodyHeight() != null) {
+            bodyParams.put("height", user.getBodyHeight());
+            bodyParams.put("chest", user.getBodyChest());
+            bodyParams.put("waist", user.getBodyWaist());
+            bodyParams.put("hips", user.getBodyHips());
+            bodyParams.put("shoulderWidth", user.getBodyShoulderWidth());
+        }
+        return bodyParams;
+    }
+
+    /**
+     * Save or update body parameters for the current user
+     */
+    @Transactional
+    public void saveBodyParameters(Double height, Double chest, Double waist, Double hips, Double shoulderWidth) {
+        UserProfile user = getCurrentUser();
+        if (user == null) {
+            throw new UserNotFoundException("User not authenticated");
+        }
+
+        user.setBodyHeight(height);
+        user.setBodyChest(chest);
+        user.setBodyWaist(waist);
+        user.setBodyHips(hips);
+        user.setBodyShoulderWidth(shoulderWidth);
+
+        userRepository.save(user);
+        logger.info("Saved body parameters for user: {}", user.getId());
+    }
 }

@@ -1,0 +1,17 @@
+services:
+  prod-fitservice:
+    container_name: prod-fitservice
+    build:
+      context: ../..
+      dockerfile: backend/fitservice/Dockerfile
+    ports:
+      - '22097:${SERVICE_SERVER_PORT:-8087}'
+    image: prod-fitservice:latest
+    env_file: .env
+    networks:
+      - prod-net
+
+networks:
+  prod-net:
+    external: true
+
