@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import ThreeMannequinCanvas from './ThreeMannequinCanvas';
 
 const FitServiceContainer = styled.div`
   display: flex;
@@ -27,13 +28,6 @@ const MannequinViewerSection = styled.div`
   @media (max-width: 768px) {
     min-height: 500px;
   }
-`;
-
-const ViewerIframe = styled.iframe`
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
 `;
 
 const ProductsPanel = styled.div`
@@ -157,13 +151,12 @@ const LoadingSpinner = styled.div`
  * 
  * 
  * @param {Object} props
- * @param {string} props.fitserviceUrl - 
+ * @param {string} props.fitserviceUrl - (deprecated, no longer used; kept for backward compatibility)
  * @param {Array} props.availableProducts
  * @param {Object} props.initialBodyParams
  * @param {Function} props.onProductsChange
  */
 const MannequinViewer = ({
-  fitserviceUrl = process.env.REACT_APP_FITSERVICE_URL || 'http://localhost:8087',
   availableProducts = [],
   initialBodyParams = {
     height: 175,
@@ -177,36 +170,6 @@ const MannequinViewer = ({
   const { t } = useTranslation();
   const [bodyParams, setBodyParams] = useState(initialBodyParams);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [iframeUrl, setIframeUrl] = useState('');
-  const iframeRef = useRef(null);
-
-  const generateIframeUrl = useCallback(
-    (params, products) => {
-      const baseUrl = `${fitserviceUrl}/api/render`;
-      
-      const num = (v, def) => Number.isFinite(+v) ? +v : def;
-    
-      const queryParams = new URLSearchParams({
-        height: num(params.height, 175).toString(),
-        chest: num(params.chest, 100).toString(),
-        waist: num(params.waist, 85).toString(),
-        hips: num(params.hips, 95).toString(),
-        shoulderWidth: num(params.shoulderWidth, 45).toString(),
-      });
-    
-      if (products?.length) {
-        queryParams.append('products', JSON.stringify(products));
-      }
-    
-      return `${baseUrl}?${queryParams.toString()}`;
-    },
-    [fitserviceUrl]
-  );
-
-  useEffect(() => {
-    const url = generateIframeUrl(bodyParams, selectedProducts);
-    setIframeUrl(url);
-  }, [bodyParams, selectedProducts, generateIframeUrl]);
 
   useEffect(() => {
     if (onProductsChange) {
@@ -242,16 +205,10 @@ const MannequinViewer = ({
   return (
     <FitServiceContainer>
       <MannequinViewerSection>
-        {iframeUrl ? (
-          <ViewerIframe
-            ref={iframeRef}
-            src={iframeUrl}
-            title="3D Mannequin Viewer"
-            allow="fullscreen"
-          />
-        ) : (
-          <LoadingSpinner>{t('fitService.loading')}</LoadingSpinner>
-        )}
+        <ThreeMannequinCanvas
+          bodyParams={bodyParams}
+          products={selectedProducts}
+        />
       </MannequinViewerSection>
 
       <ProductsPanel>
