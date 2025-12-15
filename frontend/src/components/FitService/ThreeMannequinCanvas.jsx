@@ -64,139 +64,217 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     );
     camera.lookAt(0, safeParams.height / 100 / 2, 0);
 
-    // Helper: create mannequin group (ported from backend render.js)
+    // Helper: create mannequin group (more realistic human-like proportions)
     function createMannequin(params) {
       const mannequinGroup = new THREE.Group();
 
-      const heightScale = params.height / 175; // base height 175
+      const heightMeters = params.height / 100;
+      const heightScale = params.height / 175; // relative to base 175 cm
 
-      // Head
-      const headGeometry = new THREE.SphereGeometry(0.15 * heightScale, 32, 32);
-      const headMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffdbac,
-        roughness: 0.8,
-        metalness: 0.1,
+      // Base materials
+      const skinMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffe0c2,
+        roughness: 0.7,
+        metalness: 0.05,
       });
-      const head = new THREE.Mesh(headGeometry, headMaterial);
-      head.position.y = params.height / 100 * 0.9;
+      const bodyMaterial = new THREE.MeshStandardMaterial({
+        color: 0xf5f5f5,
+        roughness: 0.6,
+        metalness: 0.05,
+      });
+
+      // ===== HEAD & NECK =====
+      const headHeight = heightMeters * 0.12; // ~1/8 of body
+      const headRadius = headHeight * 0.32;
+
+      const headGeometry = new THREE.SphereGeometry(headRadius, 48, 48);
+      const head = new THREE.Mesh(headGeometry, skinMaterial);
+      head.position.y = heightMeters * 0.92;
       head.castShadow = true;
       mannequinGroup.add(head);
 
-      // Neck
+      const neckHeight = headHeight * 0.35;
+      const neckRadius = headRadius * 0.45;
       const neckGeometry = new THREE.CylinderGeometry(
-        0.08 * heightScale,
-        0.1 * heightScale,
-        0.1 * heightScale,
+        neckRadius,
+        neckRadius * 1.05,
+        neckHeight,
         32
       );
-      const neck = new THREE.Mesh(neckGeometry, headMaterial);
-      neck.position.y = params.height / 100 * 0.85;
+      const neck = new THREE.Mesh(neckGeometry, skinMaterial);
+      neck.position.y = heightMeters * 0.85;
       neck.castShadow = true;
       mannequinGroup.add(neck);
 
-      // Torso (chest)
+      // ===== TORSO =====
       const chestScale = params.chest / 100;
-      const chestGeometry = new THREE.CylinderGeometry(
-        0.25 * chestScale,
-        0.3 * chestScale,
-        (params.height / 100) * 0.35,
-        32
-      );
-      const chest = new THREE.Mesh(chestGeometry, headMaterial);
-      chest.position.y = params.height / 100 * 0.65;
-      chest.castShadow = true;
-      mannequinGroup.add(chest);
-
-      // Waist
       const waistScale = params.waist / 85;
-      const waistGeometry = new THREE.CylinderGeometry(
-        0.2 * waistScale,
-        0.25 * chestScale,
-        (params.height / 100) * 0.1,
-        32
-      );
-      const waist = new THREE.Mesh(waistGeometry, headMaterial);
-      waist.position.y = params.height / 100 * 0.5;
-      waist.castShadow = true;
-      mannequinGroup.add(waist);
-
-      // Hips
       const hipsScale = params.hips / 95;
-      const hipsGeometry = new THREE.CylinderGeometry(
-        0.25 * hipsScale,
-        0.2 * waistScale,
-        (params.height / 100) * 0.25,
-        32
-      );
-      const hips = new THREE.Mesh(hipsGeometry, headMaterial);
-      hips.position.y = params.height / 100 * 0.35;
-      hips.castShadow = true;
-      mannequinGroup.add(hips);
-
-      // Shoulders
       const shoulderScale = params.shoulderWidth / 45;
-      const shoulderGeometry = new THREE.BoxGeometry(
-        0.4 * shoulderScale,
-        0.08 * heightScale,
-        0.15 * heightScale
+
+      const torsoHeight = heightMeters * 0.38;
+      const upperTorsoHeight = torsoHeight * 0.55;
+      const lowerTorsoHeight = torsoHeight * 0.45;
+
+      // Upper torso (rib cage) – more rounded
+      const upperTorsoGeometry = new THREE.CylinderGeometry(
+        0.20 * chestScale,
+        0.26 * chestScale,
+        upperTorsoHeight,
+        40
       );
-      const shoulders = new THREE.Mesh(shoulderGeometry, headMaterial);
-      shoulders.position.y = params.height / 100 * 0.8;
+      const upperTorso = new THREE.Mesh(upperTorsoGeometry, bodyMaterial);
+      upperTorso.position.y = heightMeters * 0.68;
+      upperTorso.castShadow = true;
+      mannequinGroup.add(upperTorso);
+
+      // Lower torso (abs/waist)
+      const lowerTorsoGeometry = new THREE.CylinderGeometry(
+        0.16 * waistScale,
+        0.20 * chestScale,
+        lowerTorsoHeight,
+        36
+      );
+      const lowerTorso = new THREE.Mesh(lowerTorsoGeometry, bodyMaterial);
+      lowerTorso.position.y = heightMeters * 0.54;
+      lowerTorso.castShadow = true;
+      mannequinGroup.add(lowerTorso);
+
+      // Pelvis / hips block – slightly wider
+      const pelvisHeight = heightMeters * 0.20;
+      const pelvisGeometry = new THREE.CapsuleGeometry(
+        0.18 * hipsScale,
+        pelvisHeight * 0.4,
+        8,
+        24
+      );
+      const pelvis = new THREE.Mesh(pelvisGeometry, bodyMaterial);
+      pelvis.rotation.z = Math.PI / 2;
+      pelvis.position.y = heightMeters * 0.40;
+      pelvis.castShadow = true;
+      mannequinGroup.add(pelvis);
+
+      // ===== SHOULDERS & ARMS =====
+      const shoulderWidth = 0.45 * shoulderScale; // overall span
+      const shoulderRadius = heightMeters * 0.05;
+
+      const shouldersGeometry = new THREE.CapsuleGeometry(
+        shoulderRadius,
+        shoulderWidth,
+        8,
+        24
+      );
+      const shoulders = new THREE.Mesh(shouldersGeometry, bodyMaterial);
+      shoulders.rotation.z = Math.PI / 2;
+      shoulders.position.y = heightMeters * 0.80;
       shoulders.castShadow = true;
       mannequinGroup.add(shoulders);
 
-      // Arms (upper)
-      const armUpperGeometry = new THREE.CylinderGeometry(
-        0.06 * heightScale,
-        0.07 * heightScale,
-        (params.height / 100) * 0.25,
-        32
+      const upperArmLength = heightMeters * 0.26;
+      const lowerArmLength = heightMeters * 0.24;
+      const armRadius = heightMeters * 0.035 * heightScale;
+
+      const upperArmGeometry = new THREE.CapsuleGeometry(
+        armRadius,
+        upperArmLength * 0.4,
+        8,
+        24
       );
-      const armUpperL = new THREE.Mesh(armUpperGeometry, headMaterial);
-      armUpperL.position.set(-0.15 * shoulderScale, params.height / 100 * 0.65, 0);
-      armUpperL.rotation.z = Math.PI / 6;
-      armUpperL.castShadow = true;
-      mannequinGroup.add(armUpperL);
-
-      const armUpperR = new THREE.Mesh(armUpperGeometry, headMaterial);
-      armUpperR.position.set(0.15 * shoulderScale, params.height / 100 * 0.65, 0);
-      armUpperR.rotation.z = -Math.PI / 6;
-      armUpperR.castShadow = true;
-      mannequinGroup.add(armUpperR);
-
-      // Arms (lower)
-      const armLowerGeometry = new THREE.CylinderGeometry(
-        0.05 * heightScale,
-        0.06 * heightScale,
-        (params.height / 100) * 0.25,
-        32
+      const lowerArmGeometry = new THREE.CapsuleGeometry(
+        armRadius * 0.9,
+        lowerArmLength * 0.3,
+        8,
+        24
       );
-      const armLowerL = new THREE.Mesh(armLowerGeometry, headMaterial);
-      armLowerL.position.set(-0.25 * shoulderScale, params.height / 100 * 0.45, 0);
-      armLowerL.castShadow = true;
-      mannequinGroup.add(armLowerL);
 
-      const armLowerR = new THREE.Mesh(armLowerGeometry, headMaterial);
-      armLowerR.position.set(0.25 * shoulderScale, params.height / 100 * 0.45, 0);
-      armLowerR.castShadow = true;
-      mannequinGroup.add(armLowerR);
+      // Left upper arm
+      const upperArmL = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+      upperArmL.position.set(-shoulderWidth * 0.55, heightMeters * 0.73, 0);
+      upperArmL.rotation.z = Math.PI / 9;
+      upperArmL.castShadow = true;
+      mannequinGroup.add(upperArmL);
 
-      // Legs
-      const legGeometry = new THREE.CylinderGeometry(
-        0.08 * heightScale,
-        0.1 * heightScale,
-        (params.height / 100) * 0.5,
-        32
+      // Right upper arm
+      const upperArmR = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+      upperArmR.position.set(shoulderWidth * 0.55, heightMeters * 0.73, 0);
+      upperArmR.rotation.z = -Math.PI / 9;
+      upperArmR.castShadow = true;
+      mannequinGroup.add(upperArmR);
+
+      // Left lower arm
+      const lowerArmL = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
+      lowerArmL.position.set(-shoulderWidth * 0.65, heightMeters * 0.55, 0.02);
+      lowerArmL.castShadow = true;
+      mannequinGroup.add(lowerArmL);
+
+      // Right lower arm
+      const lowerArmR = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
+      lowerArmR.position.set(shoulderWidth * 0.65, heightMeters * 0.55, 0.02);
+      lowerArmR.castShadow = true;
+      mannequinGroup.add(lowerArmR);
+
+      // ===== LEGS =====
+      const legRadius = heightMeters * 0.055;
+      const upperLegLength = heightMeters * 0.26;
+      const lowerLegLength = heightMeters * 0.25;
+
+      const upperLegGeometry = new THREE.CapsuleGeometry(
+        legRadius,
+        upperLegLength * 0.5,
+        8,
+        24
       );
-      const legL = new THREE.Mesh(legGeometry, headMaterial);
-      legL.position.set(-0.1 * hipsScale, params.height / 100 * 0.1, 0);
-      legL.castShadow = true;
-      mannequinGroup.add(legL);
+      const lowerLegGeometry = new THREE.CapsuleGeometry(
+        legRadius * 0.9,
+        lowerLegLength * 0.4,
+        8,
+        24
+      );
 
-      const legR = new THREE.Mesh(legGeometry, headMaterial);
-      legR.position.set(0.1 * hipsScale, params.height / 100 * 0.1, 0);
-      legR.castShadow = true;
-      mannequinGroup.add(legR);
+      const hipOffsetX = 0.10 * hipsScale;
+
+      // Left upper leg
+      const upperLegL = new THREE.Mesh(upperLegGeometry, bodyMaterial);
+      upperLegL.position.set( -hipOffsetX, heightMeters * 0.27, 0);
+      upperLegL.castShadow = true;
+      mannequinGroup.add(upperLegL);
+
+      // Right upper leg
+      const upperLegR = new THREE.Mesh(upperLegGeometry, bodyMaterial);
+      upperLegR.position.set( hipOffsetX, heightMeters * 0.27, 0);
+      upperLegR.castShadow = true;
+      mannequinGroup.add(upperLegR);
+
+      // Left lower leg
+      const lowerLegL = new THREE.Mesh(lowerLegGeometry, bodyMaterial);
+      lowerLegL.position.set( -hipOffsetX, heightMeters * 0.08, 0.01);
+      lowerLegL.castShadow = true;
+      mannequinGroup.add(lowerLegL);
+
+      // Right lower leg
+      const lowerLegR = new THREE.Mesh(lowerLegGeometry, bodyMaterial);
+      lowerLegR.position.set( hipOffsetX, heightMeters * 0.08, 0.01);
+      lowerLegR.castShadow = true;
+      mannequinGroup.add(lowerLegR);
+
+      // ===== SIMPLE FEET =====
+      const footLength = heightMeters * 0.12;
+      const footHeight = heightMeters * 0.04;
+      const footGeometry = new THREE.BoxGeometry(
+        footLength,
+        footHeight,
+        legRadius * 1.4
+      );
+
+      const footL = new THREE.Mesh(footGeometry, bodyMaterial);
+      footL.position.set(-hipOffsetX, 0.02, footLength * 0.2);
+      footL.castShadow = true;
+      mannequinGroup.add(footL);
+
+      const footR = new THREE.Mesh(footGeometry, bodyMaterial);
+      footR.position.set(hipOffsetX, 0.02, footLength * 0.2);
+      footR.castShadow = true;
+      mannequinGroup.add(footR);
 
       return mannequinGroup;
     }
