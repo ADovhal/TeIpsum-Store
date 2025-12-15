@@ -154,13 +154,13 @@ const LoadingSpinner = styled.div`
 `;
 
 /**
- * Компонент для отображения 3D манекена с возможностью наложения одежды
+ * 
  * 
  * @param {Object} props
- * @param {string} props.fitserviceUrl - URL микросервиса fitservice (по умолчанию: http://localhost:8087)
- * @param {Array} props.availableProducts - Массив доступных продуктов для выбора
- * @param {Object} props.initialBodyParams - Начальные параметры тела
- * @param {Function} props.onProductsChange - Callback при изменении выбранных продуктов
+ * @param {string} props.fitserviceUrl - 
+ * @param {Array} props.availableProducts
+ * @param {Object} props.initialBodyParams
+ * @param {Function} props.onProductsChange
  */
 const MannequinViewer = ({
   fitserviceUrl = process.env.REACT_APP_FITSERVICE_URL || 'http://localhost:8087',
@@ -180,38 +180,40 @@ const MannequinViewer = ({
   const [iframeUrl, setIframeUrl] = useState('');
   const iframeRef = useRef(null);
 
-  // Генерация URL для iframe
-  const generateIframeUrl = useCallback((params, products) => {
-    const baseUrl = `${fitserviceUrl}/api/render`;
-    const queryParams = new URLSearchParams({
-      height: params.height.toString(),
-      chest: params.chest.toString(),
-      waist: params.waist.toString(),
-      hips: params.hips.toString(),
-      shoulderWidth: params.shoulderWidth.toString(),
-    });
+  const generateIframeUrl = useCallback(
+    (params, products) => {
+      const baseUrl = `${fitserviceUrl}/api/render`;
+      
+      const num = (v, def) => Number.isFinite(+v) ? +v : def;
+    
+      const queryParams = new URLSearchParams({
+        height: num(params.height, 175).toString(),
+        chest: num(params.chest, 100).toString(),
+        waist: num(params.waist, 85).toString(),
+        hips: num(params.hips, 95).toString(),
+        shoulderWidth: num(params.shoulderWidth, 45).toString(),
+      });
+    
+      if (products?.length) {
+        queryParams.append('products', JSON.stringify(products));
+      }
+    
+      return `${baseUrl}?${queryParams.toString()}`;
+    },
+    [fitserviceUrl]
+  );
 
-    if (products.length > 0) {
-      queryParams.append('products', JSON.stringify(products));
-    }
-
-    return `${baseUrl}?${queryParams.toString()}`;
-  }, [fitserviceUrl]);
-
-  // Обновление iframe при изменении параметров
   useEffect(() => {
     const url = generateIframeUrl(bodyParams, selectedProducts);
     setIframeUrl(url);
   }, [bodyParams, selectedProducts, generateIframeUrl]);
 
-  // Уведомление родительского компонента об изменении продуктов
   useEffect(() => {
     if (onProductsChange) {
       onProductsChange(selectedProducts);
     }
   }, [selectedProducts, onProductsChange]);
 
-  // Обработчик изменения параметров тела
   const handleParamChange = (param, value) => {
     setBodyParams(prev => ({
       ...prev,
@@ -219,25 +221,20 @@ const MannequinViewer = ({
     }));
   };
 
-  // Добавление продукта
   const handleProductSelect = (product) => {
-    // Проверяем, не добавлен ли уже продукт такого типа
     const existingIndex = selectedProducts.findIndex(
       p => p.type === product.type
     );
 
     if (existingIndex >= 0) {
-      // Заменяем существующий продукт
       const updated = [...selectedProducts];
       updated[existingIndex] = product;
       setSelectedProducts(updated);
     } else {
-      // Добавляем новый продукт
       setSelectedProducts([...selectedProducts, product]);
     }
   };
 
-  // Удаление продукта
   const handleProductRemove = (productId) => {
     setSelectedProducts(prev => prev.filter(p => p.id !== productId));
   };
