@@ -16,21 +16,43 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     const container = containerRef.current;
     if (!container) return;
 
+    // Helper to get container dimensions (handles mobile properly)
+    const getContainerSize = () => {
+      const rect = container.getBoundingClientRect();
+      return {
+        width: rect.width || container.clientWidth || window.innerWidth,
+        height: rect.height || container.clientHeight || window.innerHeight,
+      };
+    };
+
+    const initialSize = getContainerSize();
+    
     // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a1a);
 
     const camera = new THREE.PerspectiveCamera(
       75,
-      container.clientWidth / container.clientHeight,
+      initialSize.width / initialSize.height || 1,
       0.1,
       1000
     );
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      powerPreference: 'high-performance',
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Better mobile performance
+    renderer.setSize(initialSize.width, initialSize.height);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    
+    // Ensure canvas has proper styles for mobile
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.touchAction = 'none'; // Prevent default touch behaviors
+    
     container.appendChild(renderer.domElement);
 
     // Lights
@@ -64,217 +86,139 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     );
     camera.lookAt(0, safeParams.height / 100 / 2, 0);
 
-    // Helper: create mannequin group (more realistic human-like proportions)
+    // Helper: create mannequin group (ported from backend render.js)
     function createMannequin(params) {
       const mannequinGroup = new THREE.Group();
 
-      const heightMeters = params.height / 100;
-      const heightScale = params.height / 175; // relative to base 175 cm
+      const heightScale = params.height / 175; // base height 175
 
-      // Base materials
-      const skinMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffe0c2,
-        roughness: 0.7,
-        metalness: 0.05,
+      // Head
+      const headGeometry = new THREE.SphereGeometry(0.15 * heightScale, 32, 32);
+      const headMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffdbac,
+        roughness: 0.8,
+        metalness: 0.1,
       });
-      const bodyMaterial = new THREE.MeshStandardMaterial({
-        color: 0xf5f5f5,
-        roughness: 0.6,
-        metalness: 0.05,
-      });
-
-      // ===== HEAD & NECK =====
-      const headHeight = heightMeters * 0.12; // ~1/8 of body
-      const headRadius = headHeight * 0.32;
-
-      const headGeometry = new THREE.SphereGeometry(headRadius, 48, 48);
-      const head = new THREE.Mesh(headGeometry, skinMaterial);
-      head.position.y = heightMeters * 0.92;
+      const head = new THREE.Mesh(headGeometry, headMaterial);
+      head.position.y = params.height / 100 * 0.9;
       head.castShadow = true;
       mannequinGroup.add(head);
 
-      const neckHeight = headHeight * 0.35;
-      const neckRadius = headRadius * 0.45;
+      // Neck
       const neckGeometry = new THREE.CylinderGeometry(
-        neckRadius,
-        neckRadius * 1.05,
-        neckHeight,
+        0.08 * heightScale,
+        0.1 * heightScale,
+        0.1 * heightScale,
         32
       );
-      const neck = new THREE.Mesh(neckGeometry, skinMaterial);
-      neck.position.y = heightMeters * 0.85;
+      const neck = new THREE.Mesh(neckGeometry, headMaterial);
+      neck.position.y = params.height / 100 * 0.85;
       neck.castShadow = true;
       mannequinGroup.add(neck);
 
-      // ===== TORSO =====
+      // Torso (chest)
       const chestScale = params.chest / 100;
+      const chestGeometry = new THREE.CylinderGeometry(
+        0.25 * chestScale,
+        0.3 * chestScale,
+        (params.height / 100) * 0.35,
+        32
+      );
+      const chest = new THREE.Mesh(chestGeometry, headMaterial);
+      chest.position.y = params.height / 100 * 0.65;
+      chest.castShadow = true;
+      mannequinGroup.add(chest);
+
+      // Waist
       const waistScale = params.waist / 85;
+      const waistGeometry = new THREE.CylinderGeometry(
+        0.2 * waistScale,
+        0.25 * chestScale,
+        (params.height / 100) * 0.1,
+        32
+      );
+      const waist = new THREE.Mesh(waistGeometry, headMaterial);
+      waist.position.y = params.height / 100 * 0.5;
+      waist.castShadow = true;
+      mannequinGroup.add(waist);
+
+      // Hips
       const hipsScale = params.hips / 95;
+      const hipsGeometry = new THREE.CylinderGeometry(
+        0.25 * hipsScale,
+        0.2 * waistScale,
+        (params.height / 100) * 0.25,
+        32
+      );
+      const hips = new THREE.Mesh(hipsGeometry, headMaterial);
+      hips.position.y = params.height / 100 * 0.35;
+      hips.castShadow = true;
+      mannequinGroup.add(hips);
+
+      // Shoulders
       const shoulderScale = params.shoulderWidth / 45;
-
-      const torsoHeight = heightMeters * 0.38;
-      const upperTorsoHeight = torsoHeight * 0.55;
-      const lowerTorsoHeight = torsoHeight * 0.45;
-
-      // Upper torso (rib cage) – more rounded
-      const upperTorsoGeometry = new THREE.CylinderGeometry(
-        0.20 * chestScale,
-        0.26 * chestScale,
-        upperTorsoHeight,
-        40
+      const shoulderGeometry = new THREE.BoxGeometry(
+        0.4 * shoulderScale,
+        0.08 * heightScale,
+        0.15 * heightScale
       );
-      const upperTorso = new THREE.Mesh(upperTorsoGeometry, bodyMaterial);
-      upperTorso.position.y = heightMeters * 0.68;
-      upperTorso.castShadow = true;
-      mannequinGroup.add(upperTorso);
-
-      // Lower torso (abs/waist)
-      const lowerTorsoGeometry = new THREE.CylinderGeometry(
-        0.16 * waistScale,
-        0.20 * chestScale,
-        lowerTorsoHeight,
-        36
-      );
-      const lowerTorso = new THREE.Mesh(lowerTorsoGeometry, bodyMaterial);
-      lowerTorso.position.y = heightMeters * 0.54;
-      lowerTorso.castShadow = true;
-      mannequinGroup.add(lowerTorso);
-
-      // Pelvis / hips block – slightly wider
-      const pelvisHeight = heightMeters * 0.20;
-      const pelvisGeometry = new THREE.CapsuleGeometry(
-        0.18 * hipsScale,
-        pelvisHeight * 0.4,
-        8,
-        24
-      );
-      const pelvis = new THREE.Mesh(pelvisGeometry, bodyMaterial);
-      pelvis.rotation.z = Math.PI / 2;
-      pelvis.position.y = heightMeters * 0.40;
-      pelvis.castShadow = true;
-      mannequinGroup.add(pelvis);
-
-      // ===== SHOULDERS & ARMS =====
-      const shoulderWidth = 0.45 * shoulderScale; // overall span
-      const shoulderRadius = heightMeters * 0.05;
-
-      const shouldersGeometry = new THREE.CapsuleGeometry(
-        shoulderRadius,
-        shoulderWidth,
-        8,
-        24
-      );
-      const shoulders = new THREE.Mesh(shouldersGeometry, bodyMaterial);
-      shoulders.rotation.z = Math.PI / 2;
-      shoulders.position.y = heightMeters * 0.80;
+      const shoulders = new THREE.Mesh(shoulderGeometry, headMaterial);
+      shoulders.position.y = params.height / 100 * 0.8;
       shoulders.castShadow = true;
       mannequinGroup.add(shoulders);
 
-      const upperArmLength = heightMeters * 0.26;
-      const lowerArmLength = heightMeters * 0.24;
-      const armRadius = heightMeters * 0.035 * heightScale;
-
-      const upperArmGeometry = new THREE.CapsuleGeometry(
-        armRadius,
-        upperArmLength * 0.4,
-        8,
-        24
+      // Arms (upper)
+      const armUpperGeometry = new THREE.CylinderGeometry(
+        0.06 * heightScale,
+        0.07 * heightScale,
+        (params.height / 100) * 0.25,
+        32
       );
-      const lowerArmGeometry = new THREE.CapsuleGeometry(
-        armRadius * 0.9,
-        lowerArmLength * 0.3,
-        8,
-        24
+      const armUpperL = new THREE.Mesh(armUpperGeometry, headMaterial);
+      armUpperL.position.set(-0.15 * shoulderScale, params.height / 100 * 0.65, 0);
+      armUpperL.rotation.z = Math.PI / 6;
+      armUpperL.castShadow = true;
+      mannequinGroup.add(armUpperL);
+
+      const armUpperR = new THREE.Mesh(armUpperGeometry, headMaterial);
+      armUpperR.position.set(0.15 * shoulderScale, params.height / 100 * 0.65, 0);
+      armUpperR.rotation.z = -Math.PI / 6;
+      armUpperR.castShadow = true;
+      mannequinGroup.add(armUpperR);
+
+      // Arms (lower)
+      const armLowerGeometry = new THREE.CylinderGeometry(
+        0.05 * heightScale,
+        0.06 * heightScale,
+        (params.height / 100) * 0.25,
+        32
       );
+      const armLowerL = new THREE.Mesh(armLowerGeometry, headMaterial);
+      armLowerL.position.set(-0.25 * shoulderScale, params.height / 100 * 0.45, 0);
+      armLowerL.castShadow = true;
+      mannequinGroup.add(armLowerL);
 
-      // Left upper arm
-      const upperArmL = new THREE.Mesh(upperArmGeometry, bodyMaterial);
-      upperArmL.position.set(-shoulderWidth * 0.55, heightMeters * 0.73, 0);
-      upperArmL.rotation.z = Math.PI / 9;
-      upperArmL.castShadow = true;
-      mannequinGroup.add(upperArmL);
+      const armLowerR = new THREE.Mesh(armLowerGeometry, headMaterial);
+      armLowerR.position.set(0.25 * shoulderScale, params.height / 100 * 0.45, 0);
+      armLowerR.castShadow = true;
+      mannequinGroup.add(armLowerR);
 
-      // Right upper arm
-      const upperArmR = new THREE.Mesh(upperArmGeometry, bodyMaterial);
-      upperArmR.position.set(shoulderWidth * 0.55, heightMeters * 0.73, 0);
-      upperArmR.rotation.z = -Math.PI / 9;
-      upperArmR.castShadow = true;
-      mannequinGroup.add(upperArmR);
-
-      // Left lower arm
-      const lowerArmL = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
-      lowerArmL.position.set(-shoulderWidth * 0.65, heightMeters * 0.55, 0.02);
-      lowerArmL.castShadow = true;
-      mannequinGroup.add(lowerArmL);
-
-      // Right lower arm
-      const lowerArmR = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
-      lowerArmR.position.set(shoulderWidth * 0.65, heightMeters * 0.55, 0.02);
-      lowerArmR.castShadow = true;
-      mannequinGroup.add(lowerArmR);
-
-      // ===== LEGS =====
-      const legRadius = heightMeters * 0.055;
-      const upperLegLength = heightMeters * 0.26;
-      const lowerLegLength = heightMeters * 0.25;
-
-      const upperLegGeometry = new THREE.CapsuleGeometry(
-        legRadius,
-        upperLegLength * 0.5,
-        8,
-        24
+      // Legs
+      const legGeometry = new THREE.CylinderGeometry(
+        0.08 * heightScale,
+        0.1 * heightScale,
+        (params.height / 100) * 0.5,
+        32
       );
-      const lowerLegGeometry = new THREE.CapsuleGeometry(
-        legRadius * 0.9,
-        lowerLegLength * 0.4,
-        8,
-        24
-      );
+      const legL = new THREE.Mesh(legGeometry, headMaterial);
+      legL.position.set(-0.1 * hipsScale, params.height / 100 * 0.1, 0);
+      legL.castShadow = true;
+      mannequinGroup.add(legL);
 
-      const hipOffsetX = 0.10 * hipsScale;
-
-      // Left upper leg
-      const upperLegL = new THREE.Mesh(upperLegGeometry, bodyMaterial);
-      upperLegL.position.set( -hipOffsetX, heightMeters * 0.27, 0);
-      upperLegL.castShadow = true;
-      mannequinGroup.add(upperLegL);
-
-      // Right upper leg
-      const upperLegR = new THREE.Mesh(upperLegGeometry, bodyMaterial);
-      upperLegR.position.set( hipOffsetX, heightMeters * 0.27, 0);
-      upperLegR.castShadow = true;
-      mannequinGroup.add(upperLegR);
-
-      // Left lower leg
-      const lowerLegL = new THREE.Mesh(lowerLegGeometry, bodyMaterial);
-      lowerLegL.position.set( -hipOffsetX, heightMeters * 0.08, 0.01);
-      lowerLegL.castShadow = true;
-      mannequinGroup.add(lowerLegL);
-
-      // Right lower leg
-      const lowerLegR = new THREE.Mesh(lowerLegGeometry, bodyMaterial);
-      lowerLegR.position.set( hipOffsetX, heightMeters * 0.08, 0.01);
-      lowerLegR.castShadow = true;
-      mannequinGroup.add(lowerLegR);
-
-      // ===== SIMPLE FEET =====
-      const footLength = heightMeters * 0.12;
-      const footHeight = heightMeters * 0.04;
-      const footGeometry = new THREE.BoxGeometry(
-        footLength,
-        footHeight,
-        legRadius * 1.4
-      );
-
-      const footL = new THREE.Mesh(footGeometry, bodyMaterial);
-      footL.position.set(-hipOffsetX, 0.02, footLength * 0.2);
-      footL.castShadow = true;
-      mannequinGroup.add(footL);
-
-      const footR = new THREE.Mesh(footGeometry, bodyMaterial);
-      footR.position.set(hipOffsetX, 0.02, footLength * 0.2);
-      footR.castShadow = true;
-      mannequinGroup.add(footR);
+      const legR = new THREE.Mesh(legGeometry, headMaterial);
+      legR.position.set(0.1 * hipsScale, params.height / 100 * 0.1, 0);
+      legR.castShadow = true;
+      mannequinGroup.add(legR);
 
       return mannequinGroup;
     }
@@ -436,24 +380,111 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     renderer.domElement.addEventListener('mouseleave', onMouseUp);
     renderer.domElement.addEventListener('mousemove', onMouseMove);
 
-    // Wheel zoom
+    // Touch controls for mobile devices
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let isTouching = false;
+
+    const onTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        isTouching = true;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        lastTouchX = touchStartX;
+        lastTouchY = touchStartY;
+        e.preventDefault();
+      } else if (e.touches.length === 2) {
+        // Pinch zoom - prevent default to avoid page zoom
+        e.preventDefault();
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (e.touches.length === 1 && isTouching) {
+        const deltaX = e.touches[0].clientX - lastTouchX;
+        const deltaY = e.touches[0].clientY - lastTouchY;
+
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(camera.position);
+        spherical.theta -= deltaX * 0.01;
+        spherical.phi += deltaY * 0.01;
+        spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+
+        camera.position.setFromSpherical(spherical);
+        camera.lookAt(0, safeParams.height / 100 / 2, 0);
+
+        lastTouchX = e.touches[0].clientX;
+        lastTouchY = e.touches[0].clientY;
+        e.preventDefault();
+      } else if (e.touches.length === 2) {
+        // Pinch zoom
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const distance = Math.hypot(
+          touch2.clientX - touch1.clientX,
+          touch2.clientY - touch1.clientY
+        );
+        
+        if (e.touches.length === 2 && e.changedTouches.length === 2) {
+          const prevDistance = Math.hypot(
+            e.changedTouches[0].clientX - e.changedTouches[1].clientX,
+            e.changedTouches[0].clientY - e.changedTouches[1].clientY
+          );
+          const scale = distance / prevDistance;
+          const currentDistance = camera.position.length();
+          const newDistance = currentDistance / scale;
+          if (newDistance > 1 && newDistance < 10) {
+            camera.position.normalize().multiplyScalar(newDistance);
+          }
+        }
+        e.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.touches.length === 0) {
+        isTouching = false;
+      }
+    };
+
+    renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+    renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+    renderer.domElement.addEventListener('touchend', onTouchEnd);
+
+    // Wheel zoom - prevent page scroll when hovering over canvas
     const onWheel = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
       const distance = camera.position.length();
       const newDistance = distance + e.deltaY * 0.01;
       if (newDistance > 1 && newDistance < 10) {
         camera.position.normalize().multiplyScalar(newDistance);
       }
     };
-    renderer.domElement.addEventListener('wheel', onWheel);
+    renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
 
-    // Resize
+    // Resize handler - properly handles mobile orientation changes
     const onResize = () => {
       if (!container) return;
-      camera.aspect = container.clientWidth / container.clientHeight;
+      const size = getContainerSize();
+      
+      camera.aspect = size.width / size.height || 1;
       camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setSize(size.width, size.height);
     };
+    
+    // Use ResizeObserver for better mobile support
+    const resizeObserver = new ResizeObserver(() => {
+      onResize();
+    });
+    resizeObserver.observe(container);
+    
+    // Fallback for older browsers
     window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
 
     // Animation loop
     let animationFrameId;
@@ -466,14 +497,25 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     // Cleanup
     return () => {
       cancelAnimationFrame(animationFrameId);
+      
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+      
       renderer.domElement.removeEventListener('mousedown', onMouseDown);
       renderer.domElement.removeEventListener('mouseup', onMouseUp);
       renderer.domElement.removeEventListener('mouseleave', onMouseUp);
       renderer.domElement.removeEventListener('mousemove', onMouseMove);
       renderer.domElement.removeEventListener('wheel', onWheel);
+      renderer.domElement.removeEventListener('touchstart', onTouchStart);
+      renderer.domElement.removeEventListener('touchmove', onTouchMove);
+      renderer.domElement.removeEventListener('touchend', onTouchEnd);
 
-      container.removeChild(renderer.domElement);
+      if (container && renderer.domElement.parentNode === container) {
+        container.removeChild(renderer.domElement);
+      }
 
       scene.traverse((object) => {
         if (object.isMesh) {
@@ -495,7 +537,13 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
   return (
     <div
       ref={containerRef}
-      style={{ width: '100%', height: '100%' }}
+      style={{ 
+        width: '100%', 
+        height: '100%',
+        minHeight: '400px', // Ensure minimum height on mobile
+        position: 'relative',
+        display: 'block',
+      }}
     />
   );
 };
