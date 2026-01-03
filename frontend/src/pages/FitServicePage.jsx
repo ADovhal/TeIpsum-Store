@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import MannequinViewer from '../components/FitService/MannequinViewer';
@@ -12,13 +11,12 @@ import apiUser from '../services/apiUser';
  * Uses fitservice microservice for rendering
  */
 const FitServicePage = () => {
-  const { theme } = useTheme();
   const { t } = useTranslation();
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [, setSelectedProducts] = useState([]);
   const [bodyParams, setBodyParams] = useState({
     height: 175,
     chest: 100,
@@ -59,66 +57,121 @@ const FitServicePage = () => {
     loadBodyParams();
   }, [isAuthenticated]);
 
+  // Default fallback products when API is unavailable or returns empty
+  const getFallbackProducts = () => [
+    {
+      id: 'demo-1',
+      name: 'Shirt (Shirt for Men)',
+      type: 'shirt',
+      color: '#3498db',
+      price: 1500,
+    },
+    {
+      id: 'demo-2',
+      name: 'Base shirt (Basic T-Shirt)',
+      type: 't-shirt',
+      color: '#2c3e50',
+      price: 1200,
+    },
+    {
+      id: 'demo-3',
+      name: 'T-Shirt (T-Shirt)',
+      type: 't_shirt',
+      color: '#e74c3c',
+      price: 1100,
+    },
+    {
+      id: 'demo-4',
+      name: 'Slayer (Baselayer)',
+      type: 'baselayer',
+      color: '#95a5a6',
+      price: 1800,
+    },
+  ];
+
   // Load available products on mount
   useEffect(() => {
+    let isMounted = true;
+    let timeoutId = null;
+
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const response = await productApi.getProducts({ size: 50 });
-        
-        // Transform products to format expected by MannequinViewer
-        const formattedProducts = response.products.map(product => ({
-          id: product.id?.toString() || product.productId?.toString(),
-          name: product.name || product.title,
-          type: mapProductCategoryToClothingType(product.category),
-          color: product.color || '#3498db',
-          price: product.price,
-          modelUrl: product.model3dUrl || product.modelUrl,
-        }));
-
-        setAvailableProducts(formattedProducts);
         setError(null);
-      } catch (err) {
-        console.error('Error loading products:', err);
-        setError('Не удалось загрузить продукты. Попробуйте позже.');
-        
-        // Fallback
-        setAvailableProducts([
-          {
-            id: 'demo-1',
-            name: 'Shirt (Shirt for Men)',
-            type: 'shirt',
-            color: '#3498db',
-            price: 1500,
-          },
-          {
-            id: 'demo-2',
-            name: 'Base shirt (Basic T-Shirt)',
-            type: 't-shirt',
-            color: '#2c3e50',
-            price: 1200,
-          },
-          {
-            id: 'demo-3',
-            name: 'T-Shirt (T-Shirt)',
-            type: 't_shirt',
-            color: '#e74c3c',
-            price: 1100,
-          },
-          {
-            id: 'demo-4',
-            name: 'Slayer (Baselayer)',
-            type: 'baselayer',
-            color: '#95a5a6',
-            price: 1800,
-          },
+
+        // Create a timeout promise to prevent hanging requests
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            reject(new Error('Request timeout'));
+          }, 10000); // 10 second timeout
+        });
+
+        // Race between API call and timeout
+        const response = await Promise.race([
+          productApi.getProducts({ size: 50 }),
+          timeoutPromise,
         ]);
+
+        // Clear timeout if request succeeded
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+
+        if (!isMounted) return;
+
+        // Check if response has products
+        if (response && response.products && Array.isArray(response.products) && response.products.length > 0) {
+          // Transform products to format expected by MannequinViewer
+          const formattedProducts = response.products.map(product => ({
+            id: product.id?.toString() || product.productId?.toString(),
+            name: product.name || product.title,
+            type: mapProductCategoryToClothingType(product.category),
+            color: product.color || '#3498db',
+            price: product.price,
+            modelUrl: product.model3dUrl || product.modelUrl,
+          }));
+
+          setAvailableProducts(formattedProducts);
+        } else {
+          // Empty response - use fallback
+          console.warn('No products received from API, using fallback products');
+          setAvailableProducts(getFallbackProducts());
+        }
+      } catch (err) {
+        // Clear timeout if it was set
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+
+        if (!isMounted) return;
+
+        console.error('Error loading products:', err);
+        
+        // Always set fallback products on error
+        setAvailableProducts(getFallbackProducts());
+        
+        // Only show error message if it's not a timeout (timeout is expected behavior)
+        if (err.message !== 'Request timeout') {
+          setError('Не удалось загрузить продукты. Используются демо-продукты.');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     loadProducts();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   // Map product category to clothing type for ThreeJS
@@ -140,7 +193,7 @@ const FitServicePage = () => {
       return 'jacket';
     }
     
-    return 'shirt';
+    return 'shirt'; // Default to shirt
   };
 
   // Handle body parameters save
@@ -174,7 +227,9 @@ const FitServicePage = () => {
     );
   }
 
-  if (error && availableProducts.length === 0) {
+  // Don't block rendering if we have fallback products
+  // Only show error screen if we truly have no products and an error
+  if (error && availableProducts.length === 0 && !loading) {
     return (
       <div style={{ 
         display: 'flex', 
