@@ -52,7 +52,21 @@ jobs:
             echo "📁 Writing frontend .env file"
             echo "REACT_APP_API_URL=${{ github.ref == 'refs/heads/main' && secrets.PROD_REACT_APP_API_URL || secrets.STAGE_REACT_APP_API_URL }}" > .env
 
+            echo "🛑 Stopping and removing old containers..."
             docker compose -f $COMPOSE_FILE down --remove-orphans --volumes
-            docker compose -f $COMPOSE_FILE up -d --build
+            
+            echo "🧹 Cleaning up old images and build cache..."
+            docker system prune -f
+            docker builder prune -f --all
+            
+            echo "🔨 Building and starting new containers..."
+            docker compose -f $COMPOSE_FILE build --no-cache
+            docker compose -f $COMPOSE_FILE up -d
+            
+            echo "⏳ Waiting for containers to be ready..."
+            sleep 5
+            
+            echo "🔍 Checking container status..."
+            docker compose -f $COMPOSE_FILE ps
 
             echo "✅ Frontend deployed!"
