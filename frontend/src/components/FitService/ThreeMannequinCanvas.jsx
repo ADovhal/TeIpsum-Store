@@ -115,6 +115,7 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     let mannequinGroup = null;
     let bodyMesh = null;
     const clothingMeshes = new Map(); // Map of product ID to clothing mesh group
+    let bodyPosition = new THREE.Vector3(0, 0, 0); // Store body position for clothing alignment
 
     /**
      * Smooth weight function for blending between zones
@@ -328,6 +329,9 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
           // Position model on floor
           const minY = box.min.y - center.y;
           mannequinGroup.position.y = -minY;
+
+          // Store body position for clothing alignment
+          bodyPosition.copy(mannequinGroup.position);
 
           scene.add(mannequinGroup);
 
@@ -559,12 +563,22 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
               applyClothingDeformation(mesh, safeParams);
             });
 
-            // Center and position the clothing (same as body)
+            // Center clothing at origin first
             const box = new THREE.Box3().setFromObject(clothingGroupItem);
             const center = box.getCenter(new THREE.Vector3());
             clothingGroupItem.position.sub(center);
-            const minY = box.min.y - center.y;
-            clothingGroupItem.position.y = -minY;
+            
+            // Position clothing based on its type (upper body vs lower body)
+            const bodyBox = mannequinGroup ? new THREE.Box3().setFromObject(mannequinGroup) : null;
+            if (bodyBox) {
+              positionClothingByType(clothingGroupItem, product, bodyBox);
+            } else {
+              // Fallback: position on floor like body
+              const minY = box.min.y - center.y;
+              clothingGroupItem.position.y = -minY;
+              clothingGroupItem.position.x = bodyPosition.x;
+              clothingGroupItem.position.z = bodyPosition.z;
+            }
 
             // Store reference to this clothing
             clothingMeshes.set(product.id, clothingGroupItem);
@@ -597,15 +611,86 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     }
 
     /**
+     * Position clothing based on its type (upper body vs lower body)
+     * Upper body clothing (shirts, t-shirts) should start at neck/shoulder level and go down
+     * Lower body clothing (pants) should start at waist/hips level and go down
+     */
+    function positionClothingByType(clothingGroupItem, product, bodyBox) {
+      if (!bodyBox || !mannequinGroup) return;
+      
+      // Get clothing dimensions
+      // Note: clothing should already be centered at this point
+      const box = new THREE.Box3().setFromObject(clothingGroupItem);
+      const clothingHeight = box.max.y - box.min.y;
+      
+      // Get body dimensions
+      const bodyHeight = bodyBox.max.y - bodyBox.min.y;
+      const bodyMinY = bodyBox.min.y;
+      
+      // Determine clothing type
+      const type = (product.type || '').toLowerCase();
+      const isUpperBody = type.includes('shirt') || type.includes('t-shirt') || 
+                         type.includes('t_shirt') || type.includes('baselayer') ||
+                         type.includes('jacket') || type.includes('sweater');
+      const isLowerBody = type.includes('pants') || type.includes('trousers') || 
+                         type.includes('jeans') || type.includes('shorts');
+      
+      // Calculate target Y position for clothing center based on clothing type
+      // After centering, clothing's center is at (0, 0, 0) relative to its local space
+      // We need to position it so the TOP of clothing aligns with the target point on body
+      let targetCenterY = bodyPosition.y;
+      
+      if (isUpperBody) {
+        // Upper body clothing: top should be at neck/shoulder level (around 80% of body height from bottom)
+        // Clothing goes DOWN from this point
+        const neckShoulderY = bodyMinY + (bodyHeight * 0.80);
+        // After centering, top of clothing is at: center.y + (clothingHeight / 2)
+        // We want: clothingCenterY + (clothingHeight / 2) = bodyPosition.y + neckShoulderY
+        // So: clothingCenterY = bodyPosition.y + neckShoulderY - (clothingHeight / 2)
+        const clothingTopOffset = clothingHeight / 2; // Distance from center to top
+        targetCenterY = bodyPosition.y + neckShoulderY - clothingTopOffset;
+      } else if (isLowerBody) {
+        // Lower body clothing: top should be at waist/hips level (around 45% of body height from bottom)
+        // Clothing goes DOWN from this point
+        const waistHipsY = bodyMinY + (bodyHeight * 0.45);
+        // Same logic: position center so top aligns with waist/hips
+        const clothingTopOffset = clothingHeight / 2;
+        targetCenterY = bodyPosition.y + waistHipsY - clothingTopOffset;
+      } else {
+        // Default: align bottom with body bottom (fallback)
+        const clothingBottomOffset = clothingHeight / 2; // Distance from center to bottom
+        targetCenterY = bodyPosition.y + bodyMinY + clothingBottomOffset;
+      }
+      
+      // Apply position
+      clothingGroupItem.position.x = bodyPosition.x;
+      clothingGroupItem.position.y = targetCenterY;
+      clothingGroupItem.position.z = bodyPosition.z;
+    }
+
+    /**
      * Update clothing deformations when body params change
      */
     function updateClothingDeformations(params) {
-      clothingMeshes.forEach((clothingGroupItem) => {
+      clothingMeshes.forEach((clothingGroupItem, productId) => {
         clothingGroupItem.traverse((object) => {
           if (object.isMesh) {
             applyClothingDeformation(object, params);
           }
         });
+        
+        // Re-align clothing with body after deformation
+        if (mannequinGroup) {
+          const bodyBox = new THREE.Box3().setFromObject(mannequinGroup);
+          
+          // Find the product to get its type
+          const currentProducts = Array.isArray(products) ? products : [];
+          const product = currentProducts.find(p => p.id === productId);
+          
+          if (product) {
+            positionClothingByType(clothingGroupItem, product, bodyBox);
+          }
+        }
       });
     }
 
@@ -775,8 +860,17 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
 
     // Update model when parameters change
     const updateModel = (newParams) => {
-      if (bodyMesh) {
+      if (bodyMesh && mannequinGroup) {
         applyBodyDeformation(bodyMesh, newParams);
+        
+        // Update body position after deformation
+        const box = new THREE.Box3().setFromObject(mannequinGroup);
+        const center = box.getCenter(new THREE.Vector3());
+        const minY = box.min.y - center.y;
+        mannequinGroup.position.y = -minY;
+        bodyPosition.copy(mannequinGroup.position);
+        
+        // Update clothing deformations and positions
         updateClothingDeformations(newParams);
         
         // Update camera position based on new height
