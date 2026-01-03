@@ -95,11 +95,32 @@ const ProductCard = styled.div`
   background: ${props => props.selected ? '#ebf5fb' : props.theme?.cardBackground || 'white'};
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 
   &:hover {
     border-color: #3498db;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
   }
+`;
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+  flex-shrink: 0;
+`;
+
+const Checkbox = styled.input`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #3498db;
+`;
+
+const ProductContent = styled.div`
+  flex: 1;
 `;
 
 const ProductTitle = styled.h3`
@@ -184,18 +205,21 @@ const MannequinViewer = ({
     }));
   };
 
-  const handleProductSelect = (product) => {
-    const existingIndex = selectedProducts.findIndex(
-      p => p.type === product.type
-    );
-
-    if (existingIndex >= 0) {
-      const updated = [...selectedProducts];
-      updated[existingIndex] = product;
-      setSelectedProducts(updated);
+  const handleProductSelect = (product, isChecked) => {
+    if (isChecked) {
+      // Add product if not already selected
+      const existingIndex = selectedProducts.findIndex(p => p.id === product.id);
+      if (existingIndex < 0) {
+        setSelectedProducts([...selectedProducts, product]);
+      }
     } else {
-      setSelectedProducts([...selectedProducts, product]);
+      // Remove product
+      setSelectedProducts(prev => prev.filter(p => p.id !== product.id));
     }
+  };
+
+  const isProductSelected = (productId) => {
+    return selectedProducts.some(p => p.id === productId);
   };
 
   const handleProductRemove = (productId) => {
@@ -271,17 +295,43 @@ const MannequinViewer = ({
           ) : (
             <ProductsList>
               {selectedProducts.map((product) => (
-                <ProductCard key={product.id} selected>
-                  <ProductTitle>{product.name || product.title}</ProductTitle>
-                  <ProductInfo>{t('fitService.type')}: {product.type}</ProductInfo>
-                  {product.color && (
-                    <ProductInfo>
-                      {t('fitService.color')}: <span style={{ color: product.color }}>●</span>
-                    </ProductInfo>
-                  )}
-                  <RemoveButton onClick={() => handleProductRemove(product.id)}>
-                    {t('fitService.remove')}
-                  </RemoveButton>
+                <ProductCard 
+                  key={product.id} 
+                  selected
+                  onClick={(e) => {
+                    if (e.target.type !== 'checkbox' && e.target.tagName !== 'BUTTON') {
+                      handleProductSelect(product, false);
+                    }
+                  }}
+                >
+                  <CheckboxContainer>
+                    <Checkbox
+                      type="checkbox"
+                      checked={true}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        handleProductSelect(product, false);
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </CheckboxContainer>
+                  <ProductContent>
+                    <ProductTitle>{product.name || product.title}</ProductTitle>
+                    <ProductInfo>{t('fitService.type')}: {product.type}</ProductInfo>
+                    {product.color && (
+                      <ProductInfo>
+                        {t('fitService.color')}: <span style={{ color: product.color }}>●</span>
+                      </ProductInfo>
+                    )}
+                    <RemoveButton 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProductRemove(product.id);
+                      }}
+                    >
+                      {t('fitService.remove')}
+                    </RemoveButton>
+                  </ProductContent>
                 </ProductCard>
               ))}
             </ProductsList>
@@ -292,18 +342,40 @@ const MannequinViewer = ({
           <div style={{ marginTop: '32px' }}>
             <SectionTitle>{t('fitService.availableProducts')}</SectionTitle>
             <ProductsList>
-              {availableProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  onClick={() => handleProductSelect(product)}
-                >
-                  <ProductTitle>{product.name || product.title}</ProductTitle>
-                  <ProductInfo>{t('fitService.type')}: {product.type}</ProductInfo>
-                  {product.price && (
-                    <ProductInfo>{t('fitService.price')}: {product.price} ₽</ProductInfo>
-                  )}
-                </ProductCard>
-              ))}
+              {availableProducts.map((product) => {
+                const isSelected = isProductSelected(product.id);
+                return (
+                  <ProductCard
+                    key={product.id}
+                    selected={isSelected}
+                    onClick={(e) => {
+                      // Prevent double toggle when clicking checkbox
+                      if (e.target.type !== 'checkbox') {
+                        handleProductSelect(product, !isSelected);
+                      }
+                    }}
+                  >
+                    <CheckboxContainer>
+                      <Checkbox
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          handleProductSelect(product, e.target.checked);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </CheckboxContainer>
+                    <ProductContent>
+                      <ProductTitle>{product.name || product.title}</ProductTitle>
+                      <ProductInfo>{t('fitService.type')}: {product.type}</ProductInfo>
+                      {product.price && (
+                        <ProductInfo>{t('fitService.price')}: {product.price} ₽</ProductInfo>
+                      )}
+                    </ProductContent>
+                  </ProductCard>
+                );
+              })}
             </ProductsList>
           </div>
         )}

@@ -82,21 +82,35 @@ const FitServicePage = () => {
         console.error('Error loading products:', err);
         setError('Не удалось загрузить продукты. Попробуйте позже.');
         
-        // Fallback: демо продукты
+        // Fallback: демо продукты с доступными моделями одежды
         setAvailableProducts([
           {
             id: 'demo-1',
-            name: 'Синяя футболка',
+            name: 'Футболка (Shirt for Men)',
             type: 'shirt',
             color: '#3498db',
             price: 1500,
           },
           {
             id: 'demo-2',
-            name: 'Черные брюки',
-            type: 'pants',
+            name: 'Базовая футболка (Basic T-Shirt)',
+            type: 't-shirt',
             color: '#2c3e50',
-            price: 2500,
+            price: 1200,
+          },
+          {
+            id: 'demo-3',
+            name: 'Футболка (T-Shirt)',
+            type: 't_shirt',
+            color: '#e74c3c',
+            price: 1100,
+          },
+          {
+            id: 'demo-4',
+            name: 'Базовый слой (Baselayer)',
+            type: 'baselayer',
+            color: '#95a5a6',
+            price: 1800,
           },
         ]);
       } finally {
