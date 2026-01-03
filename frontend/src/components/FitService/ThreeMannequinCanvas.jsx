@@ -107,7 +107,20 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     let bodyMesh = null;
 
     /**
+     * Smooth weight function for blending between zones
+     * Uses smoothstep for natural transitions
+     */
+    function smoothWeight(value, min, max) {
+      if (value <= min) return 0;
+      if (value >= max) return 1;
+      const t = (value - min) / (max - min);
+      return t * t * (3 - 2 * t); // smoothstep
+    }
+
+    /**
      * Apply body parameter deformations to the loaded model
+     * Uses smooth weight functions to blend between body regions
+     * and applies proportional scaling to maintain natural body structure
      */
     function applyBodyDeformation(mesh, params) {
       if (!mesh || !mesh.geometry) return;
@@ -129,17 +142,52 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
       const positions = geometry.attributes.position;
       const vertexCount = positions.count;
 
-      // Calculate scale factors
+      // Calculate scale factors (relative to base parameters)
       const heightScale = params.height / baseParams.height;
       const chestScale = params.chest / baseParams.chest;
       const waistScale = params.waist / baseParams.waist;
       const hipsScale = params.hips / baseParams.hips;
       const shoulderScale = params.shoulderWidth / baseParams.shoulderWidth;
 
+      // Calculate proportional influences between adjacent body parts
+      // This ensures natural transitions and prevents "square" shapes
+      const chestToShoulderInfluence = 0.3; // Chest changes affect shoulders by 30%
+      const chestToWaistInfluence = 0.25;  // Chest changes affect waist by 25%
+      const waistToChestInfluence = 0.2;   // Waist changes affect chest by 20%
+      const waistToHipsInfluence = 0.3;     // Waist changes affect hips by 30%
+      const hipsToWaistInfluence = 0.25;    // Hips changes affect waist by 25%
+
+      // Calculate effective scales with cross-influences
+      const effectiveShoulderScale = shoulderScale * (1 - chestToShoulderInfluence) + 
+                                     chestScale * chestToShoulderInfluence;
+      const effectiveChestScale = chestScale * (1 - waistToChestInfluence) + 
+                                  waistScale * waistToChestInfluence;
+      const effectiveWaistScale = waistScale * (1 - chestToWaistInfluence - hipsToWaistInfluence) + 
+                                   chestScale * chestToWaistInfluence + 
+                                   hipsScale * hipsToWaistInfluence;
+      const effectiveHipsScale = hipsScale * (1 - waistToHipsInfluence) + 
+                                waistScale * waistToHipsInfluence;
+
       // Calculate bounding box to determine body regions
       const bbox = new THREE.Box3().setFromBufferAttribute(positions);
       const bodyHeight = bbox.max.y - bbox.min.y;
       const bodyCenterY = (bbox.max.y + bbox.min.y) / 2;
+
+      // Body region definitions (normalized Y positions: 0 = bottom, 1 = top)
+      const headStart = 0.88;
+      const headEnd = 1.0;
+      const neckStart = 0.80;
+      const neckEnd = 0.88;
+      const shoulderStart = 0.70;
+      const shoulderEnd = 0.80;
+      const chestStart = 0.50;
+      const chestEnd = 0.70;
+      const waistStart = 0.40;
+      const waistEnd = 0.50;
+      const hipsStart = 0.20;
+      const hipsEnd = 0.40;
+      const legsStart = 0.0;
+      const legsEnd = 0.20;
 
       // Apply deformations to each vertex
       for (let i = 0; i < vertexCount; i++) {
@@ -154,40 +202,43 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
         // Apply height scaling (uniform vertical scaling)
         y = bodyCenterY + (y - bodyCenterY) * heightScale;
 
-        // Determine body region and apply appropriate scaling
-        let scaleX = 1;
-        let scaleZ = 1;
+        // Calculate smooth weights for each body region
+        // Each vertex can be influenced by multiple regions with smooth transitions
+        const headWeight = smoothWeight(normalizedY, headStart, headEnd);
+        const neckWeight = smoothWeight(normalizedY, neckStart, neckEnd);
+        const shoulderWeight = smoothWeight(normalizedY, shoulderStart, shoulderEnd);
+        const chestWeight = smoothWeight(normalizedY, chestStart, chestEnd);
+        const waistWeight = smoothWeight(normalizedY, waistStart, waistEnd);
+        const hipsWeight = smoothWeight(normalizedY, hipsStart, hipsEnd);
+        const legsWeight = smoothWeight(normalizedY, legsStart, legsEnd);
 
-        if (normalizedY > 0.85) {
-          // Head region - scale with height only
-          scaleX = heightScale;
-          scaleZ = heightScale;
-        } else if (normalizedY > 0.75) {
-          // Shoulder/neck region - scale with shoulder width
-          const blend = (normalizedY - 0.75) / 0.1;
-          scaleX = 1 + (shoulderScale - 1) * blend;
-          scaleZ = 1 + (chestScale - 1) * blend * 0.5;
-        } else if (normalizedY > 0.55) {
-          // Chest region - scale with chest
-          scaleX = chestScale;
-          scaleZ = chestScale;
-        } else if (normalizedY > 0.45) {
-          // Waist region - scale with waist
-          const blend = (normalizedY - 0.45) / 0.1;
-          const chestBlend = 1 - blend;
-          scaleX = chestScale * chestBlend + waistScale * blend;
-          scaleZ = chestScale * chestBlend + waistScale * blend;
-        } else if (normalizedY > 0.25) {
-          // Hips region - scale with hips
-          const blend = (normalizedY - 0.25) / 0.2;
-          const waistBlend = 1 - blend;
-          scaleX = waistScale * waistBlend + hipsScale * blend;
-          scaleZ = waistScale * waistBlend + hipsScale * blend;
-        } else {
-          // Legs region - scale with height and hips proportionally
-          scaleX = heightScale * 0.7 + hipsScale * 0.3;
-          scaleZ = heightScale * 0.7 + hipsScale * 0.3;
-        }
+        // Normalize weights to ensure smooth blending
+        const totalWeight = headWeight + neckWeight + shoulderWeight + 
+                           chestWeight + waistWeight + hipsWeight + legsWeight;
+        const normalizedHeadWeight = totalWeight > 0 ? headWeight / totalWeight : 0;
+        const normalizedNeckWeight = totalWeight > 0 ? neckWeight / totalWeight : 0;
+        const normalizedShoulderWeight = totalWeight > 0 ? shoulderWeight / totalWeight : 0;
+        const normalizedChestWeight = totalWeight > 0 ? chestWeight / totalWeight : 0;
+        const normalizedWaistWeight = totalWeight > 0 ? waistWeight / totalWeight : 0;
+        const normalizedHipsWeight = totalWeight > 0 ? hipsWeight / totalWeight : 0;
+        const normalizedLegsWeight = totalWeight > 0 ? legsWeight / totalWeight : 0;
+
+        // Calculate final scale by blending all influences
+        // Head and neck scale primarily with height and shoulders
+        const headScale = heightScale * 0.7 + effectiveShoulderScale * 0.3;
+        const neckScale = heightScale * 0.5 + effectiveShoulderScale * 0.5;
+        
+        // Combine all influences for smooth, natural scaling
+        const scaleX = 
+          normalizedHeadWeight * headScale +
+          normalizedNeckWeight * neckScale +
+          normalizedShoulderWeight * effectiveShoulderScale +
+          normalizedChestWeight * effectiveChestScale +
+          normalizedWaistWeight * effectiveWaistScale +
+          normalizedHipsWeight * effectiveHipsScale +
+          normalizedLegsWeight * (heightScale * 0.6 + effectiveHipsScale * 0.4);
+
+        const scaleZ = scaleX; // Keep circular cross-section for natural body shape
 
         // Apply horizontal scaling (X and Z axes)
         x *= scaleX;
