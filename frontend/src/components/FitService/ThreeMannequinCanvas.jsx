@@ -2,6 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+// Path to the body model
+// For Create React App: if direct import doesn't work, 
+// copy the file to public/models/ and use '/models/base_male_body_meshy.glb'
+// For now, using a path that should work with webpack's file-loader
+const baseMaleBodyModel = require('../../assets/models/base_male_body_meshy.glb');
+
 /**
  * Pure Three.js mannequin renderer that runs fully on the client.
  * 
@@ -86,146 +92,194 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     );
     camera.lookAt(0, safeParams.height / 100 / 2, 0);
 
-    // Helper: create mannequin group (ported from backend render.js)
-    function createMannequin(params) {
-      const mannequinGroup = new THREE.Group();
+    // Base parameters for the model (default values)
+    const baseParams = {
+      height: 175,
+      chest: 100,
+      waist: 85,
+      hips: 95,
+      shoulderWidth: 45,
+    };
 
-      const heightScale = params.height / 175; // base height 175
+    // Store original vertex positions for morphing
+    const originalVertices = new Map();
+    let mannequinGroup = null;
+    let bodyMesh = null;
 
-      // Head
-      const headGeometry = new THREE.SphereGeometry(0.15 * heightScale, 32, 32);
-      const headMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffdbac,
-        roughness: 0.8,
-        metalness: 0.1,
-      });
-      const head = new THREE.Mesh(headGeometry, headMaterial);
-      head.position.y = params.height / 100 * 0.9;
-      head.castShadow = true;
-      mannequinGroup.add(head);
+    /**
+     * Apply body parameter deformations to the loaded model
+     */
+    function applyBodyDeformation(mesh, params) {
+      if (!mesh || !mesh.geometry) return;
 
-      // Neck
-      const neckGeometry = new THREE.CylinderGeometry(
-        0.08 * heightScale,
-        0.1 * heightScale,
-        0.1 * heightScale,
-        32
-      );
-      const neck = new THREE.Mesh(neckGeometry, headMaterial);
-      neck.position.y = params.height / 100 * 0.85;
-      neck.castShadow = true;
-      mannequinGroup.add(neck);
+      const geometry = mesh.geometry;
+      
+      // Ensure we have position attribute
+      if (!geometry.attributes.position) return;
 
-      // Torso (chest)
-      const chestScale = params.chest / 100;
-      const chestGeometry = new THREE.CylinderGeometry(
-        0.25 * chestScale,
-        0.3 * chestScale,
-        (params.height / 100) * 0.35,
-        32
-      );
-      const chest = new THREE.Mesh(chestGeometry, headMaterial);
-      chest.position.y = params.height / 100 * 0.65;
-      chest.castShadow = true;
-      mannequinGroup.add(chest);
+      // Get or store original vertices
+      if (!originalVertices.has(mesh.uuid)) {
+        const positions = geometry.attributes.position;
+        const originalPos = new Float32Array(positions.array.length);
+        originalPos.set(positions.array);
+        originalVertices.set(mesh.uuid, originalPos);
+      }
 
-      // Waist
-      const waistScale = params.waist / 85;
-      const waistGeometry = new THREE.CylinderGeometry(
-        0.2 * waistScale,
-        0.25 * chestScale,
-        (params.height / 100) * 0.1,
-        32
-      );
-      const waist = new THREE.Mesh(waistGeometry, headMaterial);
-      waist.position.y = params.height / 100 * 0.5;
-      waist.castShadow = true;
-      mannequinGroup.add(waist);
+      const originalPos = originalVertices.get(mesh.uuid);
+      const positions = geometry.attributes.position;
+      const vertexCount = positions.count;
 
-      // Hips
-      const hipsScale = params.hips / 95;
-      const hipsGeometry = new THREE.CylinderGeometry(
-        0.25 * hipsScale,
-        0.2 * waistScale,
-        (params.height / 100) * 0.25,
-        32
-      );
-      const hips = new THREE.Mesh(hipsGeometry, headMaterial);
-      hips.position.y = params.height / 100 * 0.35;
-      hips.castShadow = true;
-      mannequinGroup.add(hips);
+      // Calculate scale factors
+      const heightScale = params.height / baseParams.height;
+      const chestScale = params.chest / baseParams.chest;
+      const waistScale = params.waist / baseParams.waist;
+      const hipsScale = params.hips / baseParams.hips;
+      const shoulderScale = params.shoulderWidth / baseParams.shoulderWidth;
 
-      // Shoulders
-      const shoulderScale = params.shoulderWidth / 45;
-      const shoulderGeometry = new THREE.BoxGeometry(
-        0.4 * shoulderScale,
-        0.08 * heightScale,
-        0.15 * heightScale
-      );
-      const shoulders = new THREE.Mesh(shoulderGeometry, headMaterial);
-      shoulders.position.y = params.height / 100 * 0.8;
-      shoulders.castShadow = true;
-      mannequinGroup.add(shoulders);
+      // Calculate bounding box to determine body regions
+      const bbox = new THREE.Box3().setFromBufferAttribute(positions);
+      const bodyHeight = bbox.max.y - bbox.min.y;
+      const bodyCenterY = (bbox.max.y + bbox.min.y) / 2;
 
-      // Arms (upper)
-      const armUpperGeometry = new THREE.CylinderGeometry(
-        0.06 * heightScale,
-        0.07 * heightScale,
-        (params.height / 100) * 0.25,
-        32
-      );
-      const armUpperL = new THREE.Mesh(armUpperGeometry, headMaterial);
-      armUpperL.position.set(-0.15 * shoulderScale, params.height / 100 * 0.65, 0);
-      armUpperL.rotation.z = Math.PI / 6;
-      armUpperL.castShadow = true;
-      mannequinGroup.add(armUpperL);
+      // Apply deformations to each vertex
+      for (let i = 0; i < vertexCount; i++) {
+        const idx = i * 3;
+        let x = originalPos[idx];
+        let y = originalPos[idx + 1];
+        let z = originalPos[idx + 2];
 
-      const armUpperR = new THREE.Mesh(armUpperGeometry, headMaterial);
-      armUpperR.position.set(0.15 * shoulderScale, params.height / 100 * 0.65, 0);
-      armUpperR.rotation.z = -Math.PI / 6;
-      armUpperR.castShadow = true;
-      mannequinGroup.add(armUpperR);
+        // Normalize Y position relative to body (0 = bottom, 1 = top)
+        const normalizedY = (y - bbox.min.y) / bodyHeight;
 
-      // Arms (lower)
-      const armLowerGeometry = new THREE.CylinderGeometry(
-        0.05 * heightScale,
-        0.06 * heightScale,
-        (params.height / 100) * 0.25,
-        32
-      );
-      const armLowerL = new THREE.Mesh(armLowerGeometry, headMaterial);
-      armLowerL.position.set(-0.25 * shoulderScale, params.height / 100 * 0.45, 0);
-      armLowerL.castShadow = true;
-      mannequinGroup.add(armLowerL);
+        // Apply height scaling (uniform vertical scaling)
+        y = bodyCenterY + (y - bodyCenterY) * heightScale;
 
-      const armLowerR = new THREE.Mesh(armLowerGeometry, headMaterial);
-      armLowerR.position.set(0.25 * shoulderScale, params.height / 100 * 0.45, 0);
-      armLowerR.castShadow = true;
-      mannequinGroup.add(armLowerR);
+        // Determine body region and apply appropriate scaling
+        let scaleX = 1;
+        let scaleZ = 1;
 
-      // Legs
-      const legGeometry = new THREE.CylinderGeometry(
-        0.08 * heightScale,
-        0.1 * heightScale,
-        (params.height / 100) * 0.5,
-        32
-      );
-      const legL = new THREE.Mesh(legGeometry, headMaterial);
-      legL.position.set(-0.1 * hipsScale, params.height / 100 * 0.1, 0);
-      legL.castShadow = true;
-      mannequinGroup.add(legL);
+        if (normalizedY > 0.85) {
+          // Head region - scale with height only
+          scaleX = heightScale;
+          scaleZ = heightScale;
+        } else if (normalizedY > 0.75) {
+          // Shoulder/neck region - scale with shoulder width
+          const blend = (normalizedY - 0.75) / 0.1;
+          scaleX = 1 + (shoulderScale - 1) * blend;
+          scaleZ = 1 + (chestScale - 1) * blend * 0.5;
+        } else if (normalizedY > 0.55) {
+          // Chest region - scale with chest
+          scaleX = chestScale;
+          scaleZ = chestScale;
+        } else if (normalizedY > 0.45) {
+          // Waist region - scale with waist
+          const blend = (normalizedY - 0.45) / 0.1;
+          const chestBlend = 1 - blend;
+          scaleX = chestScale * chestBlend + waistScale * blend;
+          scaleZ = chestScale * chestBlend + waistScale * blend;
+        } else if (normalizedY > 0.25) {
+          // Hips region - scale with hips
+          const blend = (normalizedY - 0.25) / 0.2;
+          const waistBlend = 1 - blend;
+          scaleX = waistScale * waistBlend + hipsScale * blend;
+          scaleZ = waistScale * waistBlend + hipsScale * blend;
+        } else {
+          // Legs region - scale with height and hips proportionally
+          scaleX = heightScale * 0.7 + hipsScale * 0.3;
+          scaleZ = heightScale * 0.7 + hipsScale * 0.3;
+        }
 
-      const legR = new THREE.Mesh(legGeometry, headMaterial);
-      legR.position.set(0.1 * hipsScale, params.height / 100 * 0.1, 0);
-      legR.castShadow = true;
-      mannequinGroup.add(legR);
+        // Apply horizontal scaling (X and Z axes)
+        x *= scaleX;
+        z *= scaleZ;
 
-      return mannequinGroup;
+        // Update vertex position
+        positions.array[idx] = x;
+        positions.array[idx + 1] = y;
+        positions.array[idx + 2] = z;
+      }
+
+      // Mark position attribute as needing update
+      positions.needsUpdate = true;
+      
+      // Recalculate normals for proper lighting
+      geometry.computeVertexNormals();
+      
+      // Update bounding box
+      geometry.computeBoundingBox();
+      geometry.computeBoundingSphere();
     }
 
-    // Mannequin
-    const mannequin = createMannequin(safeParams);
-    scene.add(mannequin);
+    /**
+     * Load and setup the GLB body model
+     */
+    function loadBodyModel(params) {
+      const loader = new GLTFLoader();
+      
+      loader.load(
+        baseMaleBodyModel,
+        (gltf) => {
+          // Remove old mannequin if exists
+          if (mannequinGroup) {
+            scene.remove(mannequinGroup);
+            // Dispose of old geometry
+            mannequinGroup.traverse((object) => {
+              if (object.isMesh) {
+                if (object.geometry) object.geometry.dispose();
+                if (object.material) {
+                  if (Array.isArray(object.material)) {
+                    object.material.forEach((m) => m.dispose && m.dispose());
+                  } else if (object.material.dispose) {
+                    object.material.dispose();
+                  }
+                }
+              }
+            });
+          }
+
+          mannequinGroup = gltf.scene.clone();
+          
+          // Find the main body mesh
+          mannequinGroup.traverse((object) => {
+            if (object.isMesh) {
+              object.castShadow = true;
+              object.receiveShadow = true;
+              
+              // Store reference to main body mesh (usually the largest mesh)
+              if (!bodyMesh || object.geometry.attributes.position.count > bodyMesh.geometry.attributes.position.count) {
+                bodyMesh = object;
+              }
+            }
+          });
+
+          // Apply initial deformation
+          if (bodyMesh) {
+            applyBodyDeformation(bodyMesh, params);
+          }
+
+          // Center and position the model
+          const box = new THREE.Box3().setFromObject(mannequinGroup);
+          const center = box.getCenter(new THREE.Vector3());
+          
+          // Center the model at origin
+          mannequinGroup.position.sub(center);
+          
+          // Position model on floor
+          const minY = box.min.y - center.y;
+          mannequinGroup.position.y = -minY;
+
+          scene.add(mannequinGroup);
+        },
+        undefined,
+        (error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error loading body model:', error);
+        }
+      );
+    }
+
+    // Load the body model
+    loadBodyModel(safeParams);
 
     // Clothing
     const loader = new GLTFLoader();
@@ -486,10 +540,48 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);
 
+    // Update model when parameters change
+    const updateModel = (newParams) => {
+      if (bodyMesh) {
+        applyBodyDeformation(bodyMesh, newParams);
+        
+        // Update camera position based on new height
+        const newHeight = newParams.height / 100;
+        camera.position.set(
+          0,
+          newHeight,
+          newHeight * 1.5
+        );
+        camera.lookAt(0, newHeight / 2, 0);
+      }
+    };
+
     // Animation loop
     let animationFrameId;
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      
+      // Update model if parameters changed
+      const currentParams = {
+        height: bodyParams?.height || 175,
+        chest: bodyParams?.chest || 100,
+        waist: bodyParams?.waist || 85,
+        hips: bodyParams?.hips || 95,
+        shoulderWidth: bodyParams?.shoulderWidth || 45,
+      };
+      
+      // Check if parameters changed
+      if (bodyMesh && (
+        currentParams.height !== safeParams.height ||
+        currentParams.chest !== safeParams.chest ||
+        currentParams.waist !== safeParams.waist ||
+        currentParams.hips !== safeParams.hips ||
+        currentParams.shoulderWidth !== safeParams.shoulderWidth
+      )) {
+        Object.assign(safeParams, currentParams);
+        updateModel(safeParams);
+      }
+      
       renderer.render(scene, camera);
     };
     animate();
@@ -516,6 +608,9 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
       if (container && renderer.domElement.parentNode === container) {
         container.removeChild(renderer.domElement);
       }
+
+      // Clear original vertices cache
+      originalVertices.clear();
 
       scene.traverse((object) => {
         if (object.isMesh) {
