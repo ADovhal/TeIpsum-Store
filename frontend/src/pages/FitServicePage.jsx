@@ -73,7 +73,7 @@ const FitServicePage = () => {
           type: mapProductCategoryToClothingType(product.category),
           color: product.color || '#3498db',
           price: product.price,
-          modelUrl: product.model3dUrl || product.modelUrl, // URL к 3D модели если есть
+          modelUrl: product.model3dUrl || product.modelUrl,
         }));
 
         setAvailableProducts(formattedProducts);
@@ -82,32 +82,32 @@ const FitServicePage = () => {
         console.error('Error loading products:', err);
         setError('Не удалось загрузить продукты. Попробуйте позже.');
         
-        // Fallback: демо продукты с доступными моделями одежды
+        // Fallback
         setAvailableProducts([
           {
             id: 'demo-1',
-            name: 'Футболка (Shirt for Men)',
+            name: 'Shirt (Shirt for Men)',
             type: 'shirt',
             color: '#3498db',
             price: 1500,
           },
           {
             id: 'demo-2',
-            name: 'Базовая футболка (Basic T-Shirt)',
+            name: 'Base shirt (Basic T-Shirt)',
             type: 't-shirt',
             color: '#2c3e50',
             price: 1200,
           },
           {
             id: 'demo-3',
-            name: 'Футболка (T-Shirt)',
+            name: 'T-Shirt (T-Shirt)',
             type: 't_shirt',
             color: '#e74c3c',
             price: 1100,
           },
           {
             id: 'demo-4',
-            name: 'Базовый слой (Baselayer)',
+            name: 'Slayer (Baselayer)',
             type: 'baselayer',
             color: '#95a5a6',
             price: 1800,
@@ -140,7 +140,7 @@ const FitServicePage = () => {
       return 'jacket';
     }
     
-    return 'shirt'; // По умолчанию
+    return 'shirt';
   };
 
   // Handle body parameters save
