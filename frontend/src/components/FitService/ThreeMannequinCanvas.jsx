@@ -3,34 +3,66 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // Path to the body model
-// For Create React App: if direct import doesn't work, 
-// copy the file to public/models/ and use '/models/base_male_body_meshy.glb'
-// For now, using a path that should work with webpack's file-loader
-const baseMaleBodyModel = require('../../assets/models/base_male_body_meshy.glb');
+const baseMaleBodyModel = require('../../assets/models/final_version.glb');
 
-// Clothing model paths
-const clothingModels = {
-  'shirt': require('../../assets/models/shirt_for_men.glb'),
-  't-shirt': require('../../assets/models/male_basic_t_shirt.glb'),
-  't_shirt': require('../../assets/models/t_shirt.glb'),
-  'baselayer': require('../../assets/models/baselayer_shirt_men.glb'),
+// Body parameter ranges - matches Blender Shape Keys (0 = min, 1 = max)
+const BODY_PARAM_RANGES = {
+  height: { min: 160, max: 200 },
+  chest: { min: 80, max: 120 },
+  waist: { min: 60, max: 100 },
+  hips: { min: 80, max: 120 },
+  shoulderWidth: { min: 40, max: 60 }
+};
+
+// Default body parameters
+const DEFAULT_BODY_PARAMS = {
+  height: 175,
+  chest: 100,
+  waist: 85,
+  hips: 95,
+  shoulderWidth: 45,
+};
+
+// Product color to material mapping
+const PRODUCT_MATERIALS = {
+  'tshirt-white': { color: 0xffffff },
+  'tshirt-black': { color: 0x1a1a1a },
+  'tshirt-red': { color: 0xe74c3c },
+  'tshirt-blue': { color: 0x3498db },
+  'tshirt-green': { color: 0x27ae60 },
+  'tshirt-navy': { color: 0x2c3e50 },
+  'tshirt-gray': { color: 0x7f8c8d },
+};
+
+const MODEL_FEATURES = {
+  NONE: 'none',
+  MORPH_TARGETS: 'morphTargets',
+  ARMATURE: 'armature',
+  VERTEX_DEFORM: 'vertexDeform'
 };
 
 /**
- * Pure Three.js mannequin renderer that runs fully on the client.
- * 
- * Props:
- * - bodyParams: { height, chest, waist, hips, shoulderWidth }
- * - products: [{ id, type, color, modelUrl }]
+ * Pure Three.js mannequin renderer with Shape Keys support.
+ * Shape Keys from Blender: Height, Shoulders, Chest, Waist, Hips
  */
 const ThreeMannequinCanvas = ({ bodyParams, products }) => {
   const containerRef = useRef(null);
+  const bodyParamsRef = useRef(bodyParams);
+  const productsRef = useRef(products);
+  
+  useEffect(() => {
+    bodyParamsRef.current = bodyParams;
+  }, [bodyParams]);
+  
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Helper to get container dimensions (handles mobile properly)
+    // ========== SCENE SETUP ==========
     const getContainerSize = () => {
       const rect = container.getBoundingClientRect();
       return {
@@ -41,12 +73,11 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
 
     const initialSize = getContainerSize();
     
-    // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a1a);
 
     const camera = new THREE.PerspectiveCamera(
-      75,
+      50,
       initialSize.width / initialSize.height || 1,
       0.1,
       1000
@@ -56,653 +87,471 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
       antialias: true,
       powerPreference: 'high-performance',
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Better mobile performance
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(initialSize.width, initialSize.height);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
     
-    // Ensure canvas has proper styles for mobile
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
-    renderer.domElement.style.touchAction = 'none'; // Prevent default touch behaviors
+    renderer.domElement.style.touchAction = 'none';
     
     container.appendChild(renderer.domElement);
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    // ========== LIGHTS ==========
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
     directionalLight1.position.set(5, 10, 5);
     directionalLight1.castShadow = true;
     directionalLight1.shadow.mapSize.width = 2048;
     directionalLight1.shadow.mapSize.height = 2048;
     scene.add(directionalLight1);
 
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
     directionalLight2.position.set(-5, 5, -5);
     scene.add(directionalLight2);
 
-    // Camera position based on height
-    const safeParams = {
-      height: bodyParams?.height || 175,
-      chest: bodyParams?.chest || 100,
-      waist: bodyParams?.waist || 85,
-      hips: bodyParams?.hips || 95,
-      shoulderWidth: bodyParams?.shoulderWidth || 45,
-    };
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    rimLight.position.set(0, 3, -5);
+    scene.add(rimLight);
 
-    camera.position.set(
-      0,
-      safeParams.height / 100,
-      (safeParams.height / 100) * 1.5
-    );
-    camera.lookAt(0, safeParams.height / 100 / 2, 0);
-
-    // Base parameters for the model (default values)
-    const baseParams = {
-      height: 175,
-      chest: 100,
-      waist: 85,
-      hips: 95,
-      shoulderWidth: 45,
-    };
-
-    // Store original vertex positions for morphing
-    const originalVertices = new Map();
-    const clothingOriginalVertices = new Map();
+    // ========== STATE ==========
+    const appliedParams = { ...DEFAULT_BODY_PARAMS };
+    
     let mannequinGroup = null;
     let bodyMesh = null;
-    const clothingMeshes = new Map(); // Map of product ID to clothing mesh group
-    let bodyPosition = new THREE.Vector3(0, 0, 0); // Store body position for clothing alignment
+    let clothingMesh = null;
+    let previousProductIds = '';
+    let modelHeight = 1.8;
+    let isModelLoaded = false;
+    
+    // Camera state - FIXED: proper initial distance
+    let cameraDistance = 4.0;
+    let targetDistance = 4.0; // Same as cameraDistance - no initial zoom animation
+    let cameraTheta = 0;
+    let cameraPhi = Math.PI / 3;
+    const lookAtTarget = new THREE.Vector3(0, 0.9, 0);
+    
+    const MIN_PHI = 0.15;
+    const MAX_PHI = Math.PI / 2 - 0.05;
+    const MIN_DISTANCE = 1.5;
+    const MAX_DISTANCE = 8;
+    const ZOOM_SMOOTHNESS = 0.1;
 
-    /**
-     * Smooth weight function for blending between zones
-     * Uses smoothstep for natural transitions
-     */
-    function smoothWeight(value, min, max) {
-      if (value <= min) return 0;
-      if (value >= max) return 1;
-      const t = (value - min) / (max - min);
-      return t * t * (3 - 2 * t); // smoothstep
+    function updateCameraPosition() {
+      camera.position.x = cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta);
+      camera.position.y = lookAtTarget.y + cameraDistance * Math.cos(cameraPhi);
+      camera.position.z = cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta);
+      camera.lookAt(lookAtTarget);
     }
 
-    /**
-     * Apply body parameter deformations to the loaded model
-     * Uses smooth weight functions to blend between body regions
-     * and applies proportional scaling to maintain natural body structure
-     */
-    function applyBodyDeformation(mesh, params) {
-      if (!mesh || !mesh.geometry) return;
+    updateCameraPosition();
 
-      const geometry = mesh.geometry;
-      
-      // Ensure we have position attribute
-      if (!geometry.attributes.position) return;
+    // ========== MODEL FEATURE DETECTION ==========
+    
+    function detectModelFeatures(gltfScene) {
+      const result = {
+        feature: MODEL_FEATURES.NONE,
+        meshes: [],
+        bodyMesh: null,
+        clothingMesh: null
+      };
 
-      // Get or store original vertices
-      if (!originalVertices.has(mesh.uuid)) {
-        const positions = geometry.attributes.position;
-        const originalPos = new Float32Array(positions.array.length);
-        originalPos.set(positions.array);
-        originalVertices.set(mesh.uuid, originalPos);
-      }
+      gltfScene.traverse((object) => {
+        if (object.isMesh) {
+          const meshInfo = {
+            name: object.name,
+            vertexCount: object.geometry?.attributes?.position?.count || 0,
+            hasMorphTargets: !!(object.morphTargetInfluences && object.morphTargetDictionary),
+            morphTargetNames: object.morphTargetDictionary ? Object.keys(object.morphTargetDictionary) : []
+          };
+          result.meshes.push(meshInfo);
 
-      const originalPos = originalVertices.get(mesh.uuid);
-      const positions = geometry.attributes.position;
-      const vertexCount = positions.count;
+          const nameLower = object.name.toLowerCase();
+          
+          // Detect body mesh
+          if (nameLower.includes('body') || nameLower === 'body' || nameLower === 'mesh') {
+            result.bodyMesh = object;
+          }
+          // Detect clothing mesh
+          if (nameLower.includes('cloth') || nameLower.includes('shirt') || 
+              nameLower.includes('tshirt') || nameLower.includes('t-shirt')) {
+            result.clothingMesh = object;
+          }
 
-      // Calculate scale factors (relative to base parameters)
-      const heightScale = params.height / baseParams.height;
-      const chestScale = params.chest / baseParams.chest;
-      const waistScale = params.waist / baseParams.waist;
-      const hipsScale = params.hips / baseParams.hips;
-      const shoulderScale = params.shoulderWidth / baseParams.shoulderWidth;
-
-      // Calculate proportional influences between adjacent body parts
-      // This ensures natural transitions and prevents "square" shapes
-      const chestToShoulderInfluence = 0.3; // Chest changes affect shoulders by 30%
-      const chestToWaistInfluence = 0.25;  // Chest changes affect waist by 25%
-      const waistToChestInfluence = 0.2;   // Waist changes affect chest by 20%
-      const waistToHipsInfluence = 0.3;     // Waist changes affect hips by 30%
-      const hipsToWaistInfluence = 0.25;    // Hips changes affect waist by 25%
-
-      // Calculate effective scales with cross-influences
-      const effectiveShoulderScale = shoulderScale * (1 - chestToShoulderInfluence) + 
-                                     chestScale * chestToShoulderInfluence;
-      const effectiveChestScale = chestScale * (1 - waistToChestInfluence) + 
-                                  waistScale * waistToChestInfluence;
-      const effectiveWaistScale = waistScale * (1 - chestToWaistInfluence - hipsToWaistInfluence) + 
-                                   chestScale * chestToWaistInfluence + 
-                                   hipsScale * hipsToWaistInfluence;
-      const effectiveHipsScale = hipsScale * (1 - waistToHipsInfluence) + 
-                                waistScale * waistToHipsInfluence;
-
-      // Calculate bounding box to determine body regions
-      const bbox = new THREE.Box3().setFromBufferAttribute(positions);
-      const bodyHeight = bbox.max.y - bbox.min.y;
-      const bodyCenterY = (bbox.max.y + bbox.min.y) / 2;
-
-      // Body region definitions (normalized Y positions: 0 = bottom, 1 = top)
-      const headStart = 0.88;
-      const headEnd = 1.0;
-      const neckStart = 0.80;
-      const neckEnd = 0.88;
-      const shoulderStart = 0.70;
-      const shoulderEnd = 0.80;
-      const chestStart = 0.50;
-      const chestEnd = 0.70;
-      const waistStart = 0.40;
-      const waistEnd = 0.50;
-      const hipsStart = 0.20;
-      const hipsEnd = 0.40;
-      const legsStart = 0.0;
-      const legsEnd = 0.20;
-
-      // Apply deformations to each vertex
-      for (let i = 0; i < vertexCount; i++) {
-        const idx = i * 3;
-        let x = originalPos[idx];
-        let y = originalPos[idx + 1];
-        let z = originalPos[idx + 2];
-
-        // Normalize Y position relative to body (0 = bottom, 1 = top)
-        const normalizedY = (y - bbox.min.y) / bodyHeight;
-
-        // Apply height scaling (uniform vertical scaling)
-        y = bodyCenterY + (y - bodyCenterY) * heightScale;
-
-        // Calculate smooth weights for each body region
-        // Each vertex can be influenced by multiple regions with smooth transitions
-        const headWeight = smoothWeight(normalizedY, headStart, headEnd);
-        const neckWeight = smoothWeight(normalizedY, neckStart, neckEnd);
-        const shoulderWeight = smoothWeight(normalizedY, shoulderStart, shoulderEnd);
-        const chestWeight = smoothWeight(normalizedY, chestStart, chestEnd);
-        const waistWeight = smoothWeight(normalizedY, waistStart, waistEnd);
-        const hipsWeight = smoothWeight(normalizedY, hipsStart, hipsEnd);
-        const legsWeight = smoothWeight(normalizedY, legsStart, legsEnd);
-
-        // Normalize weights to ensure smooth blending
-        const totalWeight = headWeight + neckWeight + shoulderWeight + 
-                           chestWeight + waistWeight + hipsWeight + legsWeight;
-        const normalizedHeadWeight = totalWeight > 0 ? headWeight / totalWeight : 0;
-        const normalizedNeckWeight = totalWeight > 0 ? neckWeight / totalWeight : 0;
-        const normalizedShoulderWeight = totalWeight > 0 ? shoulderWeight / totalWeight : 0;
-        const normalizedChestWeight = totalWeight > 0 ? chestWeight / totalWeight : 0;
-        const normalizedWaistWeight = totalWeight > 0 ? waistWeight / totalWeight : 0;
-        const normalizedHipsWeight = totalWeight > 0 ? hipsWeight / totalWeight : 0;
-        const normalizedLegsWeight = totalWeight > 0 ? legsWeight / totalWeight : 0;
-
-        // Calculate final scale by blending all influences
-        // Head and neck scale primarily with height and shoulders
-        const headScale = heightScale * 0.7 + effectiveShoulderScale * 0.3;
-        const neckScale = heightScale * 0.5 + effectiveShoulderScale * 0.5;
-        
-        // Combine all influences for smooth, natural scaling
-        const scaleX = 
-          normalizedHeadWeight * headScale +
-          normalizedNeckWeight * neckScale +
-          normalizedShoulderWeight * effectiveShoulderScale +
-          normalizedChestWeight * effectiveChestScale +
-          normalizedWaistWeight * effectiveWaistScale +
-          normalizedHipsWeight * effectiveHipsScale +
-          normalizedLegsWeight * (heightScale * 0.6 + effectiveHipsScale * 0.4);
-
-        const scaleZ = scaleX; // Keep circular cross-section for natural body shape
-
-        // Apply horizontal scaling (X and Z axes)
-        x *= scaleX;
-        z *= scaleZ;
-
-        // Update vertex position
-        positions.array[idx] = x;
-        positions.array[idx + 1] = y;
-        positions.array[idx + 2] = z;
-      }
-
-      // Mark position attribute as needing update
-      positions.needsUpdate = true;
-      
-      // Recalculate normals for proper lighting
-      geometry.computeVertexNormals();
-      
-      // Update bounding box
-      geometry.computeBoundingBox();
-      geometry.computeBoundingSphere();
-    }
-
-    /**
-     * Load and setup the GLB body model
-     */
-    function loadBodyModel(params) {
-      const loader = new GLTFLoader();
-      
-      loader.load(
-        baseMaleBodyModel,
-        (gltf) => {
-          // Remove old mannequin if exists
-          if (mannequinGroup) {
-            scene.remove(mannequinGroup);
-            // Dispose of old geometry
-            mannequinGroup.traverse((object) => {
-              if (object.isMesh) {
-                if (object.geometry) object.geometry.dispose();
-                if (object.material) {
-                  if (Array.isArray(object.material)) {
-                    object.material.forEach((m) => m.dispose && m.dispose());
-                  } else if (object.material.dispose) {
-                    object.material.dispose();
-                  }
+          // Check for morph targets
+          if (object.morphTargetInfluences && object.morphTargetDictionary) {
+            result.feature = MODEL_FEATURES.MORPH_TARGETS;
                 }
               }
             });
-          }
 
-          mannequinGroup = gltf.scene.clone();
-          
-          // Find the main body mesh
+      // Fallback to vertex deform if no morph targets
+      if (result.feature === MODEL_FEATURES.NONE && result.meshes.length > 0) {
+        result.feature = MODEL_FEATURES.VERTEX_DEFORM;
+      }
+
+      return result;
+    }
+
+    function logModelInfo(features) {
+      console.log('═══════════════════════════════════════════════════');
+      console.log('📦 MODEL ANALYSIS REPORT');
+      console.log('═══════════════════════════════════════════════════');
+      console.log(`🎯 Detected Feature: ${features.feature.toUpperCase()}`);
+      console.log('');
+      
+      console.log('📐 MESHES:');
+      features.meshes.forEach((mesh, idx) => {
+        const isBody = features.bodyMesh?.name === mesh.name ? ' [BODY]' : '';
+        const isClothing = features.clothingMesh?.name === mesh.name ? ' [CLOTHING]' : '';
+        console.log(`  ${idx + 1}. "${mesh.name}" - ${mesh.vertexCount} vertices${isBody}${isClothing}`);
+        if (mesh.hasMorphTargets) {
+          console.log(`     ✓ Morph Targets: [${mesh.morphTargetNames.join(', ')}]`);
+        }
+      });
+
+      console.log('═══════════════════════════════════════════════════');
+      console.log(`💡 Deformation method: ${features.feature}`);
+      console.log('═══════════════════════════════════════════════════');
+    }
+
+    // ========== SHAPE KEY / MORPH TARGET APPLICATION ==========
+    
+    /**
+     * Convert body parameter to Shape Key value (0-1)
+     * Blender Shape Keys: 0 = min value, 1 = max value
+     * 
+     * Example for height (range 160-200):
+     *   height=160 → shapeKey=0.0
+     *   height=180 → shapeKey=0.5
+     *   height=200 → shapeKey=1.0
+     */
+    function paramToShapeKey(param, value) {
+      const range = BODY_PARAM_RANGES[param];
+      if (!range) return 0.5;
+      
+      // Clamp value to range
+      const clampedValue = Math.max(range.min, Math.min(range.max, value));
+      // Linear interpolation: min -> 0, max -> 1
+      const shapeKeyValue = (clampedValue - range.min) / (range.max - range.min);
+      return shapeKeyValue;
+    }
+
+    /**
+     * Apply morph targets (Shape Keys) to a mesh
+     * Matches Blender Shape Keys: Height, Shoulders, Chest, Waist, Hips
+     */
+    function applyMorphTargets(mesh, params) {
+      if (!mesh?.morphTargetInfluences || !mesh?.morphTargetDictionary) {
+        return false;
+      }
+    
+      const influences = mesh.morphTargetInfluences;
+      const dictionary = mesh.morphTargetDictionary;
+      const availableKeys = Object.keys(dictionary);
+      
+      console.log(`Applying morph targets to "${mesh.name}". Available keys:`, availableKeys);
+
+      // Map body params to Blender Shape Key names
+      const paramMappings = [
+        { param: 'height', blenderKeys: ['Height', 'height'] },
+        { param: 'shoulderWidth', blenderKeys: ['Shoulders', 'shoulders', 'Shoulder', 'shoulder'] },
+        { param: 'chest', blenderKeys: ['Chest', 'chest'] },
+        { param: 'waist', blenderKeys: ['Waist', 'waist'] },
+        { param: 'hips', blenderKeys: ['Hips', 'hips', 'Hip', 'hip'] }
+      ];
+
+      let appliedCount = 0;
+
+      paramMappings.forEach(({ param, blenderKeys }) => {
+        const matchedKey = blenderKeys.find(k => availableKeys.includes(k));
+        if (matchedKey) {
+          const paramValue = params[param] || DEFAULT_BODY_PARAMS[param];
+          const range = BODY_PARAM_RANGES[param];
+          const shapeKeyValue = paramToShapeKey(param, paramValue);
+          influences[dictionary[matchedKey]] = shapeKeyValue;
+          appliedCount++;
+          console.log(`  ${param}: ${paramValue} (range ${range.min}-${range.max}) → "${matchedKey}" = ${shapeKeyValue.toFixed(3)}`);
+        }
+      });
+
+      return appliedCount > 0;
+    }
+
+    /**
+     * Compute morphed bounding box for a mesh with morph targets
+     * Standard Box3.setFromObject doesn't account for morph targets
+     */
+    function computeMorphedBoundingBox(mesh) {
+      if (!mesh?.geometry?.attributes?.position) return null;
+      
+      const geometry = mesh.geometry;
+      const position = geometry.attributes.position;
+      const morphAttributes = geometry.morphAttributes.position;
+      const morphInfluences = mesh.morphTargetInfluences;
+      
+      let minY = Infinity;
+      let maxY = -Infinity;
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minZ = Infinity;
+      let maxZ = -Infinity;
+      
+      // If no morph targets, use regular bounding box
+      if (!morphAttributes || !morphInfluences || morphInfluences.length === 0) {
+        geometry.computeBoundingBox();
+        return geometry.boundingBox;
+      }
+      
+      // Compute morphed positions
+      for (let i = 0; i < position.count; i++) {
+        let x = position.getX(i);
+        let y = position.getY(i);
+        let z = position.getZ(i);
+        
+        // Apply morph target influences
+        for (let j = 0; j < morphAttributes.length; j++) {
+          if (morphInfluences[j] !== 0) {
+            const morphAttr = morphAttributes[j];
+            x += morphAttr.getX(i) * morphInfluences[j];
+            y += morphAttr.getY(i) * morphInfluences[j];
+            z += morphAttr.getZ(i) * morphInfluences[j];
+          }
+        }
+        
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+        minZ = Math.min(minZ, z);
+        maxZ = Math.max(maxZ, z);
+      }
+      
+      const box = new THREE.Box3(
+        new THREE.Vector3(minX, minY, minZ),
+        new THREE.Vector3(maxX, maxY, maxZ)
+      );
+      
+      return box;
+    }
+
+    /**
+     * Position model so feet are on floor (y=0)
+     */
+    function positionModelOnFloor() {
+      if (!mannequinGroup || !bodyMesh) return;
+      
+      // Reset position first
+      mannequinGroup.position.set(0, 0, 0);
+      mannequinGroup.updateMatrixWorld(true);
+      
+      // Compute morphed bounding box
+      const morphedBox = computeMorphedBoundingBox(bodyMesh);
+      
+      if (morphedBox) {
+        // Get mesh's local-to-world transform (excluding group transform since we reset it)
+        // The mesh might have its own position/rotation relative to the group
+        const meshLocalMatrix = new THREE.Matrix4();
+        meshLocalMatrix.compose(
+          bodyMesh.position,
+          bodyMesh.quaternion,
+          bodyMesh.scale
+        );
+        morphedBox.applyMatrix4(meshLocalMatrix);
+        
+        const center = morphedBox.getCenter(new THREE.Vector3());
+        
+        // Center horizontally
+        mannequinGroup.position.x = -center.x;
+        mannequinGroup.position.z = -center.z;
+        
+        // Place feet on floor (min.y should be at y=0)
+        mannequinGroup.position.y = -morphedBox.min.y;
+        
+        // Update model height for camera
+        modelHeight = morphedBox.max.y - morphedBox.min.y;
+        lookAtTarget.y = modelHeight * 0.45;
+        
+        console.log(`Floor position: y=${mannequinGroup.position.y.toFixed(3)}, model height=${modelHeight.toFixed(2)}m`);
+      }
+    }
+
+    /**
+     * Apply deformation to body and clothing
+     */
+    function applyDeformation(params) {
+      if (!isModelLoaded) return;
+      
+      // Apply morph targets to body
+      if (bodyMesh) {
+        applyMorphTargets(bodyMesh, params);
+      }
+      
+      // Apply to clothing too if it has morph targets
+      if (clothingMesh && clothingMesh.visible) {
+        applyMorphTargets(clothingMesh, params);
+      }
+
+      // Reposition model on floor after deformation
+      positionModelOnFloor();
+    }
+
+    // ========== CLOTHING MATERIAL ==========
+
+    function updateClothingMaterial(selectedProducts) {
+      if (!clothingMesh) {
+        console.warn('No clothing mesh found');
+        return;
+      }
+
+      if (!selectedProducts || selectedProducts.length === 0) {
+        clothingMesh.visible = false;
+        return;
+      }
+
+      const product = selectedProducts[0];
+      clothingMesh.visible = true;
+
+      let color = 0xffffff;
+      
+      if (product.color) {
+        if (typeof product.color === 'string') {
+          if (product.color.startsWith('#')) {
+            color = parseInt(product.color.slice(1), 16);
+          } else if (product.color.startsWith('0x')) {
+            color = parseInt(product.color, 16);
+          }
+        } else if (typeof product.color === 'number') {
+          color = product.color;
+        }
+      } else if (product.id && PRODUCT_MATERIALS[product.id]) {
+        color = PRODUCT_MATERIALS[product.id].color;
+      }
+
+      if (clothingMesh.material) {
+        if (Array.isArray(clothingMesh.material)) {
+          clothingMesh.material.forEach(mat => {
+            mat.color.setHex(color);
+            mat.needsUpdate = true;
+          });
+        } else {
+          clothingMesh.material.color.setHex(color);
+          clothingMesh.material.needsUpdate = true;
+        }
+      } else {
+        clothingMesh.material = new THREE.MeshStandardMaterial({
+          color: color,
+          roughness: 0.8,
+          metalness: 0.0
+        });
+      }
+
+      // Apply morph targets to clothing when it becomes visible
+      applyMorphTargets(clothingMesh, appliedParams);
+
+      console.log(`✓ Clothing visible with color: #${color.toString(16).padStart(6, '0')}`);
+    }
+
+    // ========== MODEL LOADING ==========
+    
+    function loadBodyModel() {
+      const loader = new GLTFLoader();
+
+      loader.load(
+        baseMaleBodyModel,
+        (gltf) => {
+          mannequinGroup = gltf.scene;
+
+          const features = detectModelFeatures(mannequinGroup);
+          logModelInfo(features);
+
+          bodyMesh = features.bodyMesh;
+          clothingMesh = features.clothingMesh;
+
+          // Fallback mesh detection if named detection fails
           mannequinGroup.traverse((object) => {
             if (object.isMesh) {
               object.castShadow = true;
               object.receiveShadow = true;
               
-              // Store reference to main body mesh (usually the largest mesh)
-              if (!bodyMesh || object.geometry.attributes.position.count > bodyMesh.geometry.attributes.position.count) {
+              // If body/clothing not found by name, use heuristics
+              if (!bodyMesh && !clothingMesh) {
+                if (!bodyMesh) {
+                  bodyMesh = object;
+                } else {
+                  clothingMesh = object;
+                }
+              } else if (!bodyMesh) {
                 bodyMesh = object;
+              } else if (!clothingMesh && object !== bodyMesh) {
+                clothingMesh = object;
               }
             }
           });
 
-          // Apply initial deformation
-          if (bodyMesh) {
-            applyBodyDeformation(bodyMesh, params);
+          scene.add(mannequinGroup);
+          isModelLoaded = true;
+
+          // Hide clothing initially
+          if (clothingMesh) {
+            clothingMesh.visible = false;
+            console.log(`Clothing mesh found: "${clothingMesh.name}"`);
           }
 
-          // Center and position the model
-          const box = new THREE.Box3().setFromObject(mannequinGroup);
-          const center = box.getCenter(new THREE.Vector3());
+          // Apply initial deformation - this will also position model on floor
+          const currentParams = bodyParamsRef.current || DEFAULT_BODY_PARAMS;
+          Object.assign(appliedParams, {
+            height: currentParams.height || DEFAULT_BODY_PARAMS.height,
+            chest: currentParams.chest || DEFAULT_BODY_PARAMS.chest,
+            waist: currentParams.waist || DEFAULT_BODY_PARAMS.waist,
+            hips: currentParams.hips || DEFAULT_BODY_PARAMS.hips,
+            shoulderWidth: currentParams.shoulderWidth || DEFAULT_BODY_PARAMS.shoulderWidth,
+          });
           
-          // Center the model at origin
-          mannequinGroup.position.sub(center);
+          // Apply deformation which handles floor positioning with morphed bounding box
+          applyDeformation(appliedParams);
           
-          // Position model on floor
-          const minY = box.min.y - center.y;
-          mannequinGroup.position.y = -minY;
+          // Set camera distance based on model height
+          cameraDistance = modelHeight * 2.2;
+          targetDistance = cameraDistance;
+          updateCameraPosition();
 
-          // Store body position for clothing alignment
-          bodyPosition.copy(mannequinGroup.position);
+          // Show clothing if products already selected
+          const currentProducts = productsRef.current || [];
+          if (currentProducts.length > 0) {
+            updateClothingMaterial(currentProducts);
+            previousProductIds = currentProducts.map(p => p.id).sort().join(',');
+          }
 
-          scene.add(mannequinGroup);
-
-          // Load clothing after body is loaded
-          const productsSafe = Array.isArray(products) ? products : [];
-          if (productsSafe.length > 0) {
-            Promise.all(productsSafe.map(loadClothingModel))
-              .then(() => {
-                updateClothingVisibility(productsSafe);
-                // Apply current body params to clothing
-                updateClothingDeformations(safeParams);
-              })
-              .catch((error) => {
-                // eslint-disable-next-line no-console
-                console.error('Error loading clothing:', error);
-              });
+          console.log('✓ Model loaded successfully');
+          console.log(`  Height: ${modelHeight.toFixed(2)}m`);
+          console.log(`  Body: ${bodyMesh?.name || 'auto-detected'}`);
+          console.log(`  Clothing: ${clothingMesh?.name || 'auto-detected'}`);
+        },
+        (progress) => {
+          if (progress.total > 0) {
+            console.log(`Loading: ${(progress.loaded / progress.total * 100).toFixed(0)}%`);
           }
         },
-        undefined,
         (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error loading body model:', error);
+          console.error('Error loading model:', error);
         }
       );
     }
 
-    // Load the body model
-    loadBodyModel(safeParams);
-
-    // Clothing loader and management
-    const clothingLoader = new GLTFLoader();
-    const clothingGroup = new THREE.Group();
-    scene.add(clothingGroup);
-
-    /**
-     * Get clothing model path based on product type
-     */
-    function getClothingModelPath(product) {
-      // First check if product has explicit modelUrl
-      if (product.modelUrl) {
-        return product.modelUrl;
-      }
-
-      // Map product type to clothing model
-      const type = (product.type || '').toLowerCase();
-      
-      if (type.includes('shirt') && !type.includes('t-shirt') && !type.includes('t_shirt')) {
-        return clothingModels.shirt;
-      } else if (type.includes('t-shirt') || type.includes('t_shirt') || type.includes('tshirt')) {
-        return clothingModels['t-shirt'];
-      } else if (type.includes('baselayer')) {
-        return clothingModels.baselayer;
-      }
-      
-      // Default to t-shirt
-      return clothingModels['t-shirt'];
-    }
-
-    /**
-     * Store original vertices for clothing mesh
-     */
-    function storeClothingOriginalVertices(mesh) {
-      if (!mesh || !mesh.geometry || !mesh.geometry.attributes.position) return;
-      
-      const geometry = mesh.geometry;
-      const positions = geometry.attributes.position;
-      
-      if (!clothingOriginalVertices.has(mesh.uuid)) {
-        const originalPos = new Float32Array(positions.array.length);
-        originalPos.set(positions.array);
-        clothingOriginalVertices.set(mesh.uuid, originalPos);
-      }
-    }
-
-    /**
-     * Apply body deformations to clothing mesh (same as body)
-     */
-    function applyClothingDeformation(mesh, params) {
-      if (!mesh || !mesh.geometry) return;
-
-      const geometry = mesh.geometry;
-      
-      if (!geometry.attributes.position) return;
-
-      // Store original vertices if not already stored
-      storeClothingOriginalVertices(mesh);
-
-      const originalPos = clothingOriginalVertices.get(mesh.uuid);
-      if (!originalPos) return;
-
-      const positions = geometry.attributes.position;
-      const vertexCount = positions.count;
-
-      // Use the same deformation logic as body
-      const heightScale = params.height / baseParams.height;
-      const chestScale = params.chest / baseParams.chest;
-      const waistScale = params.waist / baseParams.waist;
-      const hipsScale = params.hips / baseParams.hips;
-      const shoulderScale = params.shoulderWidth / baseParams.shoulderWidth;
-
-      // Calculate proportional influences (same as body)
-      const chestToShoulderInfluence = 0.3;
-      const chestToWaistInfluence = 0.25;
-      const waistToChestInfluence = 0.2;
-      const waistToHipsInfluence = 0.3;
-      const hipsToWaistInfluence = 0.25;
-
-      const effectiveShoulderScale = shoulderScale * (1 - chestToShoulderInfluence) + 
-                                     chestScale * chestToShoulderInfluence;
-      const effectiveChestScale = chestScale * (1 - waistToChestInfluence) + 
-                                  waistScale * waistToChestInfluence;
-      const effectiveWaistScale = waistScale * (1 - chestToWaistInfluence - hipsToWaistInfluence) + 
-                                   chestScale * chestToWaistInfluence + 
-                                   hipsScale * hipsToWaistInfluence;
-      const effectiveHipsScale = hipsScale * (1 - waistToHipsInfluence) + 
-                                  waistScale * waistToHipsInfluence;
-
-      // Get bounding box from original positions
-      const tempPositions = new THREE.BufferAttribute(originalPos, 3);
-      const bbox = new THREE.Box3().setFromBufferAttribute(tempPositions);
-      const bodyHeight = bbox.max.y - bbox.min.y;
-      const bodyCenterY = (bbox.max.y + bbox.min.y) / 2;
-
-      // Body region definitions (same as body)
-      const headStart = 0.88;
-      const headEnd = 1.0;
-      const neckStart = 0.80;
-      const neckEnd = 0.88;
-      const shoulderStart = 0.70;
-      const shoulderEnd = 0.80;
-      const chestStart = 0.50;
-      const chestEnd = 0.70;
-      const waistStart = 0.40;
-      const waistEnd = 0.50;
-      const hipsStart = 0.20;
-      const hipsEnd = 0.40;
-      const legsStart = 0.0;
-      const legsEnd = 0.20;
-
-      // Apply deformations to each vertex
-      for (let i = 0; i < vertexCount; i++) {
-        const idx = i * 3;
-        let x = originalPos[idx];
-        let y = originalPos[idx + 1];
-        let z = originalPos[idx + 2];
-
-        const normalizedY = (y - bbox.min.y) / bodyHeight;
-        y = bodyCenterY + (y - bodyCenterY) * heightScale;
-
-        // Calculate smooth weights
-        const headWeight = smoothWeight(normalizedY, headStart, headEnd);
-        const neckWeight = smoothWeight(normalizedY, neckStart, neckEnd);
-        const shoulderWeight = smoothWeight(normalizedY, shoulderStart, shoulderEnd);
-        const chestWeight = smoothWeight(normalizedY, chestStart, chestEnd);
-        const waistWeight = smoothWeight(normalizedY, waistStart, waistEnd);
-        const hipsWeight = smoothWeight(normalizedY, hipsStart, hipsEnd);
-        const legsWeight = smoothWeight(normalizedY, legsStart, legsEnd);
-
-        const totalWeight = headWeight + neckWeight + shoulderWeight + 
-                           chestWeight + waistWeight + hipsWeight + legsWeight;
-        const normalizedHeadWeight = totalWeight > 0 ? headWeight / totalWeight : 0;
-        const normalizedNeckWeight = totalWeight > 0 ? neckWeight / totalWeight : 0;
-        const normalizedShoulderWeight = totalWeight > 0 ? shoulderWeight / totalWeight : 0;
-        const normalizedChestWeight = totalWeight > 0 ? chestWeight / totalWeight : 0;
-        const normalizedWaistWeight = totalWeight > 0 ? waistWeight / totalWeight : 0;
-        const normalizedHipsWeight = totalWeight > 0 ? hipsWeight / totalWeight : 0;
-        const normalizedLegsWeight = totalWeight > 0 ? legsWeight / totalWeight : 0;
-
-        const headScale = heightScale * 0.7 + effectiveShoulderScale * 0.3;
-        const neckScale = heightScale * 0.5 + effectiveShoulderScale * 0.5;
-        
-        const scaleX = 
-          normalizedHeadWeight * headScale +
-          normalizedNeckWeight * neckScale +
-          normalizedShoulderWeight * effectiveShoulderScale +
-          normalizedChestWeight * effectiveChestScale +
-          normalizedWaistWeight * effectiveWaistScale +
-          normalizedHipsWeight * effectiveHipsScale +
-          normalizedLegsWeight * (heightScale * 0.6 + effectiveHipsScale * 0.4);
-
-        const scaleZ = scaleX;
-
-        x *= scaleX;
-        z *= scaleZ;
-
-        positions.array[idx] = x;
-        positions.array[idx + 1] = y;
-        positions.array[idx + 2] = z;
-      }
-
-      positions.needsUpdate = true;
-      geometry.computeVertexNormals();
-      geometry.computeBoundingBox();
-      geometry.computeBoundingSphere();
-    }
-
-    /**
-     * Load clothing model and apply deformations
-     */
-    function loadClothingModel(product) {
-      return new Promise((resolve, reject) => {
-        const modelPath = getClothingModelPath(product);
-        
-        if (!modelPath) {
-          reject(new Error(`No model found for product type: ${product.type}`));
-          return;
-        }
-
-        clothingLoader.load(
-          modelPath,
-          (gltf) => {
-            const clothingGroupItem = gltf.scene.clone();
-            
-            // Find all meshes in the clothing model
-            const meshes = [];
-            clothingGroupItem.traverse((object) => {
-              if (object.isMesh) {
-                object.castShadow = true;
-                object.receiveShadow = true;
-                meshes.push(object);
-                
-                // Store original vertices
-                storeClothingOriginalVertices(object);
-              }
-            });
-
-            // Apply initial deformation to all meshes
-            meshes.forEach(mesh => {
-              applyClothingDeformation(mesh, safeParams);
-            });
-
-            // Center clothing at origin first
-            const box = new THREE.Box3().setFromObject(clothingGroupItem);
-            const center = box.getCenter(new THREE.Vector3());
-            clothingGroupItem.position.sub(center);
-            
-            // Position clothing based on its type (upper body vs lower body)
-            const bodyBox = mannequinGroup ? new THREE.Box3().setFromObject(mannequinGroup) : null;
-            if (bodyBox) {
-              positionClothingByType(clothingGroupItem, product, bodyBox);
-            } else {
-              // Fallback: position on floor like body
-              const minY = box.min.y - center.y;
-              clothingGroupItem.position.y = -minY;
-              clothingGroupItem.position.x = bodyPosition.x;
-              clothingGroupItem.position.z = bodyPosition.z;
-            }
-
-            // Store reference to this clothing
-            clothingMeshes.set(product.id, clothingGroupItem);
-            
-            // Add to scene
-            clothingGroup.add(clothingGroupItem);
-            
-            resolve(clothingGroupItem);
-          },
-          undefined,
-          (error) => {
-            // eslint-disable-next-line no-console
-            console.error(`Error loading clothing model for product ${product.id}:`, error);
-            reject(error);
-          }
-        );
-      });
-    }
-
-    /**
-     * Update clothing visibility based on selected products
-     */
-    function updateClothingVisibility(selectedProducts) {
-      const selectedIds = new Set(selectedProducts.map(p => p.id));
-      
-      // Hide all clothing
-      clothingMeshes.forEach((mesh, productId) => {
-        mesh.visible = selectedIds.has(productId);
-      });
-    }
-
-    /**
-     * Position clothing based on its type (upper body vs lower body)
-     * Upper body clothing (shirts, t-shirts) should start at neck/shoulder level and go down
-     * Lower body clothing (pants) should start at waist/hips level and go down
-     */
-    function positionClothingByType(clothingGroupItem, product, bodyBox) {
-      if (!bodyBox || !mannequinGroup) return;
-      
-      // Get clothing dimensions
-      // Note: clothing should already be centered at this point
-      const box = new THREE.Box3().setFromObject(clothingGroupItem);
-      const clothingHeight = box.max.y - box.min.y;
-      
-      // Get body dimensions
-      const bodyHeight = bodyBox.max.y - bodyBox.min.y;
-      const bodyMinY = bodyBox.min.y;
-      
-      // Determine clothing type
-      const type = (product.type || '').toLowerCase();
-      const isUpperBody = type.includes('shirt') || type.includes('t-shirt') || 
-                         type.includes('t_shirt') || type.includes('baselayer') ||
-                         type.includes('jacket') || type.includes('sweater');
-      const isLowerBody = type.includes('pants') || type.includes('trousers') || 
-                         type.includes('jeans') || type.includes('shorts');
-      
-      // Calculate target Y position for clothing center based on clothing type
-      // After centering, clothing's center is at (0, 0, 0) relative to its local space
-      // We need to position it so the TOP of clothing aligns with the target point on body
-      let targetCenterY = bodyPosition.y;
-      
-      if (isUpperBody) {
-        // Upper body clothing: top should be at neck/shoulder level (around 80% of body height from bottom)
-        // Clothing goes DOWN from this point
-        const neckShoulderY = bodyMinY + (bodyHeight * 0.80);
-        // After centering, top of clothing is at: center.y + (clothingHeight / 2)
-        // We want: clothingCenterY + (clothingHeight / 2) = bodyPosition.y + neckShoulderY
-        // So: clothingCenterY = bodyPosition.y + neckShoulderY - (clothingHeight / 2)
-        const clothingTopOffset = clothingHeight / 2; // Distance from center to top
-        targetCenterY = bodyPosition.y + neckShoulderY - clothingTopOffset;
-      } else if (isLowerBody) {
-        // Lower body clothing: top should be at waist/hips level (around 45% of body height from bottom)
-        // Clothing goes DOWN from this point
-        const waistHipsY = bodyMinY + (bodyHeight * 0.45);
-        // Same logic: position center so top aligns with waist/hips
-        const clothingTopOffset = clothingHeight / 2;
-        targetCenterY = bodyPosition.y + waistHipsY - clothingTopOffset;
-      } else {
-        // Default: align bottom with body bottom (fallback)
-        const clothingBottomOffset = clothingHeight / 2; // Distance from center to bottom
-        targetCenterY = bodyPosition.y + bodyMinY + clothingBottomOffset;
-      }
-      
-      // Apply position
-      clothingGroupItem.position.x = bodyPosition.x;
-      clothingGroupItem.position.y = targetCenterY;
-      clothingGroupItem.position.z = bodyPosition.z;
-    }
-
-    /**
-     * Update clothing deformations when body params change
-     */
-    function updateClothingDeformations(params) {
-      clothingMeshes.forEach((clothingGroupItem, productId) => {
-        clothingGroupItem.traverse((object) => {
-          if (object.isMesh) {
-            applyClothingDeformation(object, params);
-          }
-        });
-        
-        // Re-align clothing with body after deformation
-        if (mannequinGroup) {
-          const bodyBox = new THREE.Box3().setFromObject(mannequinGroup);
-          
-          // Find the product to get its type
-          const currentProducts = Array.isArray(products) ? products : [];
-          const product = currentProducts.find(p => p.id === productId);
-          
-          if (product) {
-            positionClothingByType(clothingGroupItem, product, bodyBox);
-          }
-        }
-      });
-    }
-
-    // Initial products will be loaded after body model is loaded
-    // (see loadBodyModel callback above)
-
-    // Floor
-    const floorGeometry = new THREE.PlaneGeometry(10, 10);
+    // ========== FLOOR ==========
+    
+    const floorGeometry = new THREE.PlaneGeometry(20, 20);
     const floorMaterial = new THREE.MeshStandardMaterial({
-      color: 0x2c2c2c,
-      roughness: 0.8,
-      metalness: 0.2,
+      color: 0x2a2a2a,
+      roughness: 0.9,
+      metalness: 0.1,
     });
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2;
@@ -710,7 +559,12 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Mouse rotation controls
+    const gridHelper = new THREE.GridHelper(10, 20, 0x444444, 0x333333);
+    gridHelper.position.y = 0.001;
+    scene.add(gridHelper);
+
+    // ========== CAMERA CONTROLS ==========
+
     let mouseDown = false;
     let mouseX = 0;
     let mouseY = 0;
@@ -731,14 +585,11 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
       const deltaX = e.clientX - mouseX;
       const deltaY = e.clientY - mouseY;
 
-      const spherical = new THREE.Spherical();
-      spherical.setFromVector3(camera.position);
-      spherical.theta -= deltaX * 0.01;
-      spherical.phi += deltaY * 0.01;
-      spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+      cameraTheta -= deltaX * 0.008;
+      cameraPhi -= deltaY * 0.008;
+      cameraPhi = Math.max(MIN_PHI, Math.min(MAX_PHI, cameraPhi));
 
-      camera.position.setFromSpherical(spherical);
-      camera.lookAt(0, safeParams.height / 100 / 2, 0);
+      updateCameraPosition();
 
       mouseX = e.clientX;
       mouseY = e.clientY;
@@ -749,23 +600,23 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     renderer.domElement.addEventListener('mouseleave', onMouseUp);
     renderer.domElement.addEventListener('mousemove', onMouseMove);
 
-    // Touch controls for mobile devices
-    let touchStartX = 0;
-    let touchStartY = 0;
+    // Touch controls
     let lastTouchX = 0;
     let lastTouchY = 0;
     let isTouching = false;
+    let lastPinchDistance = 0;
 
     const onTouchStart = (e) => {
       if (e.touches.length === 1) {
         isTouching = true;
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        lastTouchX = touchStartX;
-        lastTouchY = touchStartY;
+        lastTouchX = e.touches[0].clientX;
+        lastTouchY = e.touches[0].clientY;
         e.preventDefault();
       } else if (e.touches.length === 2) {
-        // Pinch zoom - prevent default to avoid page zoom
+        lastPinchDistance = Math.hypot(
+          e.touches[1].clientX - e.touches[0].clientX,
+          e.touches[1].clientY - e.touches[0].clientY
+        );
         e.preventDefault();
       }
     };
@@ -775,39 +626,26 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
         const deltaX = e.touches[0].clientX - lastTouchX;
         const deltaY = e.touches[0].clientY - lastTouchY;
 
-        const spherical = new THREE.Spherical();
-        spherical.setFromVector3(camera.position);
-        spherical.theta -= deltaX * 0.01;
-        spherical.phi += deltaY * 0.01;
-        spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+        cameraTheta -= deltaX * 0.008;
+        cameraPhi -= deltaY * 0.008;
+        cameraPhi = Math.max(MIN_PHI, Math.min(MAX_PHI, cameraPhi));
 
-        camera.position.setFromSpherical(spherical);
-        camera.lookAt(0, safeParams.height / 100 / 2, 0);
+        updateCameraPosition();
 
         lastTouchX = e.touches[0].clientX;
         lastTouchY = e.touches[0].clientY;
         e.preventDefault();
       } else if (e.touches.length === 2) {
-        // Pinch zoom
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-        const distance = Math.hypot(
-          touch2.clientX - touch1.clientX,
-          touch2.clientY - touch1.clientY
+        const currentDistance = Math.hypot(
+          e.touches[1].clientX - e.touches[0].clientX,
+          e.touches[1].clientY - e.touches[0].clientY
         );
         
-        if (e.touches.length === 2 && e.changedTouches.length === 2) {
-          const prevDistance = Math.hypot(
-            e.changedTouches[0].clientX - e.changedTouches[1].clientX,
-            e.changedTouches[0].clientY - e.changedTouches[1].clientY
-          );
-          const scale = distance / prevDistance;
-          const currentDistance = camera.position.length();
-          const newDistance = currentDistance / scale;
-          if (newDistance > 1 && newDistance < 10) {
-            camera.position.normalize().multiplyScalar(newDistance);
-          }
-        }
+        const delta = lastPinchDistance - currentDistance;
+        targetDistance += delta * 0.01;
+        targetDistance = Math.max(MIN_DISTANCE, Math.min(MAX_DISTANCE, targetDistance));
+        
+        lastPinchDistance = currentDistance;
         e.preventDefault();
       }
     };
@@ -822,20 +660,18 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
     renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
     renderer.domElement.addEventListener('touchend', onTouchEnd);
 
-    // Wheel zoom - prevent page scroll when hovering over canvas
+    // Wheel zoom
     const onWheel = (e) => {
       e.preventDefault();
       e.stopPropagation();
       
-      const distance = camera.position.length();
-      const newDistance = distance + e.deltaY * 0.01;
-      if (newDistance > 1 && newDistance < 10) {
-        camera.position.normalize().multiplyScalar(newDistance);
-      }
+      const zoomDelta = e.deltaY * 0.002 * targetDistance;
+      targetDistance += zoomDelta;
+      targetDistance = Math.max(MIN_DISTANCE, Math.min(MAX_DISTANCE, targetDistance));
     };
     renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
 
-    // Resize handler - properly handles mobile orientation changes
+    // Resize handler
     const onResize = () => {
       if (!container) return;
       const size = getContainerSize();
@@ -845,146 +681,67 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
       renderer.setSize(size.width, size.height);
     };
     
-    // Use ResizeObserver for better mobile support
-    const resizeObserver = new ResizeObserver(() => {
-      onResize();
-    });
+    const resizeObserver = new ResizeObserver(() => onResize());
     resizeObserver.observe(container);
-    
-    // Fallback for older browsers
     window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
 
-    // Track previous products to detect changes
-    let previousProducts = [];
+    // ========== LOAD MODEL ==========
+    loadBodyModel();
 
-    // Update model when parameters change
-    const updateModel = (newParams) => {
-      if (bodyMesh && mannequinGroup) {
-        applyBodyDeformation(bodyMesh, newParams);
-        
-        // Update body position after deformation
-        const box = new THREE.Box3().setFromObject(mannequinGroup);
-        const center = box.getCenter(new THREE.Vector3());
-        const minY = box.min.y - center.y;
-        mannequinGroup.position.y = -minY;
-        bodyPosition.copy(mannequinGroup.position);
-        
-        // Update clothing deformations and positions
-        updateClothingDeformations(newParams);
-        
-        // Update camera position based on new height
-        const newHeight = newParams.height / 100;
-        camera.position.set(
-          0,
-          newHeight,
-          newHeight * 1.5
-        );
-        camera.lookAt(0, newHeight / 2, 0);
-      }
-    };
-
-    // Handle products changes (add/remove clothing)
-    const handleProductsChange = (newProducts) => {
-      const newProductIds = new Set(newProducts.map(p => p.id));
-      const previousProductIds = new Set(previousProducts.map(p => p.id));
-
-      // Remove clothing for products that are no longer selected
-      previousProductIds.forEach(productId => {
-        if (!newProductIds.has(productId)) {
-          const clothingMesh = clothingMeshes.get(productId);
-          if (clothingMesh) {
-            clothingGroup.remove(clothingMesh);
-            clothingMesh.traverse((object) => {
-              if (object.isMesh) {
-                if (object.geometry) object.geometry.dispose();
-                if (object.material) {
-                  if (Array.isArray(object.material)) {
-                    object.material.forEach((m) => m.dispose && m.dispose());
-                  } else if (object.material.dispose) {
-                    object.material.dispose();
-                  }
-                }
-              }
-            });
-            clothingMeshes.delete(productId);
-            // Clean up original vertices for all meshes in this clothing
-            clothingMesh.traverse((object) => {
-              if (object.isMesh && object.uuid) {
-                clothingOriginalVertices.delete(object.uuid);
-              }
-            });
-          }
-        }
-      });
-
-      // Load clothing for new products
-      const productsToLoad = newProducts.filter(p => !previousProductIds.has(p.id));
-      Promise.all(productsToLoad.map(loadClothingModel))
-        .then(() => {
-          updateClothingVisibility(newProducts);
-          // Apply current body params to newly loaded clothing
-          updateClothingDeformations(safeParams);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error loading new clothing:', error);
-        });
-
-      // Update visibility for all clothing
-      updateClothingVisibility(newProducts);
-      
-      previousProducts = [...newProducts];
-    };
-
-    // Animation loop
+    // ========== ANIMATION LOOP ==========
     let animationFrameId;
+    
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       
-      // Update model if parameters changed
-      const currentParams = {
-        height: bodyParams?.height || 175,
-        chest: bodyParams?.chest || 100,
-        waist: bodyParams?.waist || 85,
-        hips: bodyParams?.hips || 95,
-        shoulderWidth: bodyParams?.shoulderWidth || 45,
-      };
-      
-      // Check if parameters changed
-      if (bodyMesh && (
-        currentParams.height !== safeParams.height ||
-        currentParams.chest !== safeParams.chest ||
-        currentParams.waist !== safeParams.waist ||
-        currentParams.hips !== safeParams.hips ||
-        currentParams.shoulderWidth !== safeParams.shoulderWidth
-      )) {
-        Object.assign(safeParams, currentParams);
-        updateModel(safeParams);
+      // Smooth zoom
+      if (Math.abs(cameraDistance - targetDistance) > 0.001) {
+        cameraDistance += (targetDistance - cameraDistance) * ZOOM_SMOOTHNESS;
+        updateCameraPosition();
       }
+      
+      // Check for parameter changes
+      if (isModelLoaded) {
+        const currentParams = bodyParamsRef.current || DEFAULT_BODY_PARAMS;
+        
+        const paramsChanged = 
+          currentParams.height !== appliedParams.height ||
+          currentParams.chest !== appliedParams.chest ||
+          currentParams.waist !== appliedParams.waist ||
+          currentParams.hips !== appliedParams.hips ||
+          currentParams.shoulderWidth !== appliedParams.shoulderWidth;
+        
+        if (paramsChanged) {
+          Object.assign(appliedParams, {
+            height: currentParams.height || DEFAULT_BODY_PARAMS.height,
+            chest: currentParams.chest || DEFAULT_BODY_PARAMS.chest,
+            waist: currentParams.waist || DEFAULT_BODY_PARAMS.waist,
+            hips: currentParams.hips || DEFAULT_BODY_PARAMS.hips,
+            shoulderWidth: currentParams.shoulderWidth || DEFAULT_BODY_PARAMS.shoulderWidth,
+          });
+          applyDeformation(appliedParams);
+        }
 
-      // Check if products changed
-      const currentProducts = Array.isArray(products) ? products : [];
+        // Check for products changes
+        const currentProducts = productsRef.current || [];
       const currentProductIds = currentProducts.map(p => p.id).sort().join(',');
-      const previousProductIds = previousProducts.map(p => p.id).sort().join(',');
       
       if (currentProductIds !== previousProductIds) {
-        handleProductsChange(currentProducts);
+          updateClothingMaterial(currentProducts);
+          previousProductIds = currentProductIds;
+        }
       }
       
       renderer.render(scene, camera);
     };
     animate();
 
-    // Cleanup
+    // ========== CLEANUP ==========
     return () => {
       cancelAnimationFrame(animationFrameId);
       
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
+      resizeObserver?.disconnect();
       window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
       
       renderer.domElement.removeEventListener('mousedown', onMouseDown);
       renderer.domElement.removeEventListener('mouseup', onMouseUp);
@@ -999,19 +756,14 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
         container.removeChild(renderer.domElement);
       }
 
-      // Clear original vertices cache
-      originalVertices.clear();
-      clothingOriginalVertices.clear();
-      clothingMeshes.clear();
-
       scene.traverse((object) => {
         if (object.isMesh) {
-          if (object.geometry) object.geometry.dispose();
+          object.geometry?.dispose();
           if (object.material) {
             if (Array.isArray(object.material)) {
-              object.material.forEach((m) => m.dispose && m.dispose());
-            } else if (object.material.dispose) {
-              object.material.dispose();
+              object.material.forEach((m) => m.dispose?.());
+            } else {
+              object.material.dispose?.();
             }
           }
         }
@@ -1019,7 +771,7 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
 
       renderer.dispose();
     };
-  }, [bodyParams, products]);
+  }, []);
 
   return (
     <div
@@ -1027,13 +779,13 @@ const ThreeMannequinCanvas = ({ bodyParams, products }) => {
       style={{ 
         width: '100%', 
         height: '100%',
-        minHeight: '400px', // Ensure minimum height on mobile
+        minHeight: '400px',
         position: 'relative',
         display: 'block',
+        cursor: 'grab',
       }}
     />
   );
 };
 
 export default ThreeMannequinCanvas;
-

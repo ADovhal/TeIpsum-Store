@@ -6,6 +6,8 @@ import BodyParamsDialog from '../components/FitService/BodyParamsDialog';
 import productApi from '../services/apiProduct';
 import apiUser from '../services/apiUser';
 
+const SKIP_BODY_PARAMS = 'true';
+
 /**
  * Page for virtual fitting room service with 3D mannequin
  * Uses fitservice microservice for rendering
@@ -60,32 +62,28 @@ const FitServicePage = () => {
   // Default fallback products when API is unavailable or returns empty
   const getFallbackProducts = () => [
     {
-      id: 'demo-1',
-      name: 'Shirt (Shirt for Men)',
-      type: 'shirt',
-      color: '#3498db',
-      price: 1500,
-    },
-    {
-      id: 'demo-2',
-      name: 'Base shirt (Basic T-Shirt)',
+      id: 'tshirt-white',
+      name: 'Белая футболка',
       type: 't-shirt',
-      color: '#2c3e50',
+      meshName: 'T-Shirt_White', // ← Имя меша из GLB!
+      color: '#ffffff',
       price: 1200,
     },
     {
-      id: 'demo-3',
-      name: 'T-Shirt (T-Shirt)',
-      type: 't_shirt',
-      color: '#e74c3c',
-      price: 1100,
+      id: 'tshirt-black',
+      name: 'Черная футболка',
+      type: 't-shirt',
+      meshName: 'T-Shirt_Black',
+      color: '#000000FF',
+      price: 1200,
     },
     {
-      id: 'demo-4',
-      name: 'Slayer (Baselayer)',
-      type: 'baselayer',
-      color: '#95a5a6',
-      price: 1800,
+      id: 'tshirt-red',
+      name: 'Красная футболка',
+      type: 't-shirt',
+      meshName: 'T-Shirt_Sky',
+      color: '#0000FFFF',
+      price: 1200,
     },
   ];
 
@@ -123,14 +121,52 @@ const FitServicePage = () => {
         // Check if response has products
         if (response && response.products && Array.isArray(response.products) && response.products.length > 0) {
           // Transform products to format expected by MannequinViewer
-          const formattedProducts = response.products.map(product => ({
-            id: product.id?.toString() || product.productId?.toString(),
-            name: product.name || product.title,
-            type: mapProductCategoryToClothingType(product.category),
-            color: product.color || '#3498db',
-            price: product.price,
-            modelUrl: product.model3dUrl || product.modelUrl,
-          }));
+          const formattedProducts = response.products
+                .map(product => {
+                  // Extract product type from category or name
+                  const category = (product.category || '').toLowerCase();
+                  const name = (product.name || product.title || '').toLowerCase();
+                  
+                  let type = 'shirt'; // Default
+                  let meshName = 'T-Shirt_Black'; // Default mesh name from GLB
+                  
+                  // Determine type and corresponding mesh name
+                  if (category.includes('футболк') || name.includes('футболк') || 
+                      category.includes('t-shirt') || name.includes('t-shirt')) {
+                    type = 't-shirt';
+                      
+                    // Determine color from product
+                    if (product.color) {
+                      const colorLower = product.color.toLowerCase();
+                      if (colorLower === '#ffffff' || colorLower === 'white' || colorLower.includes('бел')) {
+                        meshName = 'T-Shirt_White';
+                      } else if (colorLower === '#000000' || colorLower === 'black' || colorLower.includes('черн')) {
+                        meshName = 'T-Shirt_Black';
+                      // } else if (colorLower.includes('red') || colorLower.includes('красн')) {
+                      //   meshName = 'TShirt_Red';
+                      } else if (colorLower.includes('blue') || colorLower.includes('син')) {
+                        meshName = 'T-Shirt_Sky';
+                      }
+                    }
+                  } else if (category.includes('рубашк') || name.includes('рубашк') || 
+                             category.includes('shirt') || name.includes('shirt')) {
+                    type = 'shirt';
+                    meshName = 'Shirt_White'; // Adjust based on your GLB
+                  }
+                  
+                  return {
+                    id: product.id?.toString() || product.productId?.toString(),
+                    name: product.name || product.title,
+                    type: type,
+                    meshName: meshName, // ← НОВОЕ ПОЛЕ!
+                    color: product.color || '#3498db',
+                    price: product.price,
+                  };
+                })
+                .filter(product => {
+                  // Only include clothing items that we have meshes for
+                  return product.type.includes('shirt') || product.type.includes('tshirt');
+                });
 
           setAvailableProducts(formattedProducts);
         } else {
@@ -175,26 +211,26 @@ const FitServicePage = () => {
   }, []);
 
   // Map product category to clothing type for ThreeJS
-  const mapProductCategoryToClothingType = (category) => {
-    if (!category) return 'shirt';
+  // const mapProductCategoryToClothingType = (category) => {
+  //   if (!category) return 'shirt';
     
-    const categoryLower = category.toLowerCase();
+  //   const categoryLower = category.toLowerCase();
     
-    if (categoryLower.includes('shirt') || categoryLower.includes('футболк') || categoryLower.includes('рубашк')) {
-      return 'shirt';
-    }
-    if (categoryLower.includes('pants') || categoryLower.includes('брюк') || categoryLower.includes('джинс')) {
-      return 'pants';
-    }
-    if (categoryLower.includes('dress') || categoryLower.includes('плать')) {
-      return 'dress';
-    }
-    if (categoryLower.includes('jacket') || categoryLower.includes('куртк') || categoryLower.includes('пиджак')) {
-      return 'jacket';
-    }
+  //   if (categoryLower.includes('shirt') || categoryLower.includes('футболк') || categoryLower.includes('рубашк')) {
+  //     return 'shirt';
+  //   }
+  //   if (categoryLower.includes('pants') || categoryLower.includes('брюк') || categoryLower.includes('джинс')) {
+  //     return 'pants';
+  //   }
+  //   if (categoryLower.includes('dress') || categoryLower.includes('плать')) {
+  //     return 'dress';
+  //   }
+  //   if (categoryLower.includes('jacket') || categoryLower.includes('куртк') || categoryLower.includes('пиджак')) {
+  //     return 'jacket';
+  //   }
     
-    return 'shirt'; // Default to shirt
-  };
+  //   return 'shirt'; // Default to shirt
+  // };
 
   // Handle body parameters save
   const handleSaveBodyParams = async (params) => {
@@ -245,30 +281,54 @@ const FitServicePage = () => {
     );
   }
 
+  // return (
+  //   <div style={{ minHeight: 'calc(100vh - 80px)' }}>
+  //     {showBodyParamsDialog && (
+  //       <BodyParamsDialog
+  //         onSave={handleSaveBodyParams}
+  //         onCancel={() => {
+  //           // Don't allow canceling - user must set parameters
+  //           if (isAuthenticated) {
+  //             // Redirect to profile or home
+  //             window.location.href = '/profile';
+  //           } else {
+  //             window.location.href = '/';
+  //           }
+  //         }}
+  //       />
+  //     )}
+  //     <MannequinViewer
+  //       fitserviceUrl={process.env.REACT_APP_FITSERVICE_URL || 'http://localhost:8087'}
+  //       availableProducts={availableProducts}
+  //       initialBodyParams={bodyParams}
+  //       onProductsChange={handleProductsChange}
+  //     />
+  //   </div>
+  // );
   return (
-    <div style={{ minHeight: 'calc(100vh - 80px)' }}>
-      {showBodyParamsDialog && (
-        <BodyParamsDialog
-          onSave={handleSaveBodyParams}
-          onCancel={() => {
-            // Don't allow canceling - user must set parameters
-            if (isAuthenticated) {
-              // Redirect to profile or home
-              window.location.href = '/profile';
-            } else {
-              window.location.href = '/';
-            }
-          }}
-        />
-      )}
-      <MannequinViewer
-        fitserviceUrl={process.env.REACT_APP_FITSERVICE_URL || 'http://localhost:8087'}
-        availableProducts={availableProducts}
-        initialBodyParams={bodyParams}
-        onProductsChange={handleProductsChange}
+  <div style={{ minHeight: 'calc(100vh - 80px)' }}>
+    {/* Показываем диалог только если НЕ стоит флаг скипа */}
+    {showBodyParamsDialog && !SKIP_BODY_PARAMS && (
+      <BodyParamsDialog
+        onSave={handleSaveBodyParams}
+        onCancel={() => {
+          if (isAuthenticated) {
+            window.location.href = '/profile';
+          } else {
+            window.location.href = '/';
+          }
+        }}
       />
-    </div>
-  );
+    )}
+
+    <MannequinViewer
+      fitserviceUrl={process.env.REACT_APP_FITSERVICE_URL || 'http://localhost:8087'}
+      availableProducts={availableProducts}
+      initialBodyParams={bodyParams}
+      onProductsChange={handleProductsChange}
+    />
+  </div>
+);
 };
 
 export default FitServicePage;
