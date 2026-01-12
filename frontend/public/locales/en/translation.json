@@ -1241,6 +1241,27 @@
     "loading": "Loading...",
     "errorLoading": "Error loading products",
     "tryAgain": "Try again",
-    "fitServiceButton": "Virtual Fitting"
+    "fitServiceButton": "Virtual Fitting",
+    "recommendedSize": "Recommended Size",
+    "currency": "£",
+    "currencyCode": "GBP",
+    "products": {
+      "tshirt-white": "White T-Shirt",
+      "tshirt-black": "Black T-Shirt",
+      "tshirt-red": "Red T-Shirt",
+      "tshirt-blue": "Blue T-Shirt",
+      "tshirt-green": "Green T-Shirt",
+      "tshirt-navy": "Navy T-Shirt",
+      "tshirt-gray": "Gray T-Shirt"
+    },
+    "colors": {
+      "white": "White",
+      "black": "Black",
+      "red": "Red",
+      "blue": "Blue",
+      "green": "Green",
+      "navy": "Navy",
+      "gray": "Gray"
+    }
   }
 }

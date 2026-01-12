@@ -60,30 +60,70 @@ const FitServicePage = () => {
   }, [isAuthenticated]);
 
   // Default fallback products when API is unavailable or returns empty
+  // Product IDs must match translation keys in fitService.products
   const getFallbackProducts = () => [
     {
       id: 'tshirt-white',
-      name: 'Белая футболка',
+      nameKey: 'fitService.products.tshirt-white',
       type: 't-shirt',
-      meshName: 'T-Shirt_White', // ← Имя меша из GLB!
+      meshName: 'T-Shirt_White',
       color: '#ffffff',
-      price: 1200,
+      colorKey: 'white',
+      basePrice: 29.99,
     },
     {
       id: 'tshirt-black',
-      name: 'Черная футболка',
+      nameKey: 'fitService.products.tshirt-black',
       type: 't-shirt',
       meshName: 'T-Shirt_Black',
-      color: '#000000FF',
-      price: 1200,
+      color: '#1a1a1a',
+      colorKey: 'black',
+      basePrice: 29.99,
     },
     {
       id: 'tshirt-red',
-      name: 'Красная футболка',
+      nameKey: 'fitService.products.tshirt-red',
       type: 't-shirt',
-      meshName: 'T-Shirt_Sky',
-      color: '#0000FFFF',
-      price: 1200,
+      meshName: 'T-Shirt_Red',
+      color: '#e74c3c',
+      colorKey: 'red',
+      basePrice: 29.99,
+    },
+    {
+      id: 'tshirt-blue',
+      nameKey: 'fitService.products.tshirt-blue',
+      type: 't-shirt',
+      meshName: 'T-Shirt_Blue',
+      color: '#3498db',
+      colorKey: 'blue',
+      basePrice: 29.99,
+    },
+    {
+      id: 'tshirt-green',
+      nameKey: 'fitService.products.tshirt-green',
+      type: 't-shirt',
+      meshName: 'T-Shirt_Green',
+      color: '#27ae60',
+      colorKey: 'green',
+      basePrice: 29.99,
+    },
+    {
+      id: 'tshirt-navy',
+      nameKey: 'fitService.products.tshirt-navy',
+      type: 't-shirt',
+      meshName: 'T-Shirt_Navy',
+      color: '#2c3e50',
+      colorKey: 'navy',
+      basePrice: 29.99,
+    },
+    {
+      id: 'tshirt-gray',
+      nameKey: 'fitService.products.tshirt-gray',
+      type: 't-shirt',
+      meshName: 'T-Shirt_Gray',
+      color: '#7f8c8d',
+      colorKey: 'gray',
+      basePrice: 29.99,
     },
   ];
 

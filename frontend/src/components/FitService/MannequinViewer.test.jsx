@@ -14,30 +14,59 @@ jest.mock('./ThreeMannequinCanvas', () => {
   };
 });
 
-// Mock i18n
+// Mock i18n with different language scenarios
+const mockTranslationsEN = {
+  'fitService.bodyParams': 'Body Parameters',
+  'fitService.height': 'Height (cm)',
+  'fitService.chest': 'Chest (cm)',
+  'fitService.waist': 'Waist (cm)',
+  'fitService.hips': 'Hips (cm)',
+  'fitService.shoulderWidth': 'Shoulder Width (cm)',
+  'fitService.selectedProducts': 'Selected Products',
+  'fitService.availableProducts': 'Available Products',
+  'fitService.noProductsSelected': 'Select products from the list below',
+  'fitService.remove': 'Remove',
+  'fitService.type': 'Type',
+  'fitService.color': 'Color',
+  'fitService.price': 'Price',
+  'fitService.recommendedSize': 'Recommended Size',
+  'fitService.currency': '£',
+  'fitService.currencyCode': 'GBP',
+  'fitService.products.tshirt-white': 'White T-Shirt',
+  'fitService.products.tshirt-black': 'Black T-Shirt',
+  'fitService.colors.white': 'White',
+  'fitService.colors.black': 'Black',
+};
+
+const mockTranslationsPL = {
+  'fitService.bodyParams': 'Parametry Ciała',
+  'fitService.height': 'Wzrost (cm)',
+  'fitService.chest': 'Obwód Klatki (cm)',
+  'fitService.waist': 'Obwód Talii (cm)',
+  'fitService.hips': 'Obwód Bioder (cm)',
+  'fitService.shoulderWidth': 'Szerokość Ramion (cm)',
+  'fitService.selectedProducts': 'Wybrane Produkty',
+  'fitService.availableProducts': 'Dostępne Produkty',
+  'fitService.noProductsSelected': 'Wybierz produkty z listy',
+  'fitService.remove': 'Usuń',
+  'fitService.type': 'Typ',
+  'fitService.color': 'Kolor',
+  'fitService.price': 'Cena',
+  'fitService.recommendedSize': 'Zalecany Rozmiar',
+  'fitService.currency': 'zł',
+  'fitService.currencyCode': 'PLN',
+  'fitService.products.tshirt-white': 'Biała Koszulka',
+  'fitService.products.tshirt-black': 'Czarna Koszulka',
+  'fitService.colors.white': 'Biały',
+  'fitService.colors.black': 'Czarny',
+};
+
+let currentTranslations = mockTranslationsEN;
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key, fallback) => {
-      const translations = {
-        'fitService.bodyParams': 'Параметры тела',
-        'fitService.height': 'Рост (см)',
-        'fitService.chest': 'Обхват груди (см)',
-        'fitService.waist': 'Обхват талии (см)',
-        'fitService.hips': 'Обхват бёдер (см)',
-        'fitService.shoulderWidth': 'Ширина плеч (см)',
-        'fitService.selectedProducts': 'Выбранные продукты',
-        'fitService.availableProducts': 'Доступные продукты',
-        'fitService.noProductsSelected': 'Выберите продукты из списка ниже',
-        'fitService.remove': 'Удалить',
-        'fitService.type': 'Тип',
-        'fitService.color': 'Цвет',
-        'fitService.price': 'Цена',
-        'fitService.recommendedSize': 'Размер',
-        'fitService.fitRegular': 'идеально',
-        'fitService.fitTight': 'в обтяжку',
-        'fitService.fitLoose': 'свободно',
-      };
-      return translations[key] || fallback || key;
+      return currentTranslations[key] || fallback || key;
     },
   }),
 }));
@@ -45,18 +74,20 @@ jest.mock('react-i18next', () => ({
 describe('MannequinViewer', () => {
   const mockProducts = [
     {
-      id: '1',
-      name: 'Синяя футболка',
+      id: 'tshirt-white',
+      nameKey: 'fitService.products.tshirt-white',
       type: 't-shirt',
-      color: '#3498db',
-      price: 1500,
+      color: '#ffffff',
+      colorKey: 'white',
+      basePrice: 29.99,
     },
     {
-      id: '2',
-      name: 'Белая футболка',
+      id: 'tshirt-black',
+      nameKey: 'fitService.products.tshirt-black',
       type: 'shirt',
-      color: '#ffffff',
-      price: 1200,
+      color: '#1a1a1a',
+      colorKey: 'black',
+      basePrice: 29.99,
     },
   ];
 
@@ -70,13 +101,14 @@ describe('MannequinViewer', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    currentTranslations = mockTranslationsEN;
   });
 
   it('renders correctly with default props', () => {
     render(<MannequinViewer />);
     
-    expect(screen.getByText('Параметры тела')).toBeInTheDocument();
-    expect(screen.getByText('Выбранные продукты')).toBeInTheDocument();
+    expect(screen.getByText('Body Parameters')).toBeInTheDocument();
+    expect(screen.getByText('Selected Products')).toBeInTheDocument();
     expect(screen.getByTestId('three-canvas')).toBeInTheDocument();
   });
 
@@ -129,12 +161,12 @@ describe('MannequinViewer', () => {
     });
   });
 
-  it('displays available products', () => {
+  it('displays available products with translated names', () => {
     render(<MannequinViewer availableProducts={mockProducts} />);
     
-    expect(screen.getByText('Синяя футболка')).toBeInTheDocument();
-    expect(screen.getByText('Белая футболка')).toBeInTheDocument();
-    expect(screen.getByText('Доступные продукты')).toBeInTheDocument();
+    expect(screen.getByText('White T-Shirt')).toBeInTheDocument();
+    expect(screen.getByText('Black T-Shirt')).toBeInTheDocument();
+    expect(screen.getByText('Available Products')).toBeInTheDocument();
   });
 
   it('selects product when clicked', async () => {
@@ -147,12 +179,12 @@ describe('MannequinViewer', () => {
     );
     
     // Click on the first product
-    const productCard = screen.getByText('Синяя футболка').closest('div[class*="ProductCard"]');
+    const productCard = screen.getByText('White T-Shirt').closest('div[class*="ProductCard"]');
     fireEvent.click(productCard);
     
     // Should show remove button for selected product
     await waitFor(() => {
-      expect(screen.getByText('Удалить')).toBeInTheDocument();
+      expect(screen.getByText('Remove')).toBeInTheDocument();
     });
     
     // Check that onProductsChange was called
@@ -169,19 +201,19 @@ describe('MannequinViewer', () => {
     );
     
     // Select a product first
-    const productCard = screen.getByText('Синяя футболка').closest('div[class*="ProductCard"]');
+    const productCard = screen.getByText('White T-Shirt').closest('div[class*="ProductCard"]');
     fireEvent.click(productCard);
     
     // Click remove
     await waitFor(() => {
-      expect(screen.getByText('Удалить')).toBeInTheDocument();
+      expect(screen.getByText('Remove')).toBeInTheDocument();
     });
     
-    fireEvent.click(screen.getByText('Удалить'));
+    fireEvent.click(screen.getByText('Remove'));
     
     // Should show empty state
     await waitFor(() => {
-      expect(screen.getByText('Выберите продукты из списка ниже')).toBeInTheDocument();
+      expect(screen.getByText('Select products from the list below')).toBeInTheDocument();
     });
   });
 
@@ -189,7 +221,7 @@ describe('MannequinViewer', () => {
     render(<MannequinViewer />);
     
     expect(
-      screen.getByText('Выберите продукты из списка ниже')
+      screen.getByText('Select products from the list below')
     ).toBeInTheDocument();
   });
 
@@ -197,25 +229,25 @@ describe('MannequinViewer', () => {
     render(<MannequinViewer availableProducts={mockProducts} />);
     
     // Select first product
-    const firstProduct = screen.getByText('Синяя футболка').closest('div[class*="ProductCard"]');
+    const firstProduct = screen.getByText('White T-Shirt').closest('div[class*="ProductCard"]');
     fireEvent.click(firstProduct);
     
     await waitFor(() => {
-      expect(screen.getByText('Удалить')).toBeInTheDocument();
+      expect(screen.getByText('Remove')).toBeInTheDocument();
     });
     
     // The selected product should be hidden from available list
     // and only shown in selected products section
-    const selectedSection = screen.getByText('Выбранные продукты').parentElement;
-    expect(selectedSection).toContainElement(screen.getByText('Синяя футболка'));
+    const selectedSection = screen.getByText('Selected Products').parentElement;
+    expect(selectedSection).toContainElement(screen.getByText('White T-Shirt'));
     
     // Select second product (should replace first)
-    const secondProduct = screen.getByText('Белая футболка').closest('div[class*="ProductCard"]');
+    const secondProduct = screen.getByText('Black T-Shirt').closest('div[class*="ProductCard"]');
     fireEvent.click(secondProduct);
     
     await waitFor(() => {
-      // Now the selected product should be "Белая футболка"
-      expect(selectedSection).toContainElement(screen.getByText('Белая футболка'));
+      // Now the selected product should be "Black T-Shirt"
+      expect(selectedSection).toContainElement(screen.getByText('Black T-Shirt'));
     });
   });
 
@@ -228,12 +260,12 @@ describe('MannequinViewer', () => {
     );
     
     // Select a product
-    const productCard = screen.getByText('Синяя футболка').closest('div[class*="ProductCard"]');
+    const productCard = screen.getByText('White T-Shirt').closest('div[class*="ProductCard"]');
     fireEvent.click(productCard);
     
-    // Should show size recommendation (text now includes "Рекомендуемый")
+    // Should show size recommendation
     await waitFor(() => {
-      expect(screen.getByText(/Рекомендуемый размер/i)).toBeInTheDocument();
+      expect(screen.getByText(/Recommended Size/i)).toBeInTheDocument();
       // Should show a size like M, L, etc.
       expect(screen.getByText(/^(XS|S|M|L|XL)$/)).toBeInTheDocument();
     });
@@ -253,13 +285,70 @@ describe('MannequinViewer', () => {
     expect(canvasParams.textContent).toContain('"chest":100');
     
     // Select a product
-    const productCard = screen.getByText('Синяя футболка').closest('div[class*="ProductCard"]');
+    const productCard = screen.getByText('White T-Shirt').closest('div[class*="ProductCard"]');
     fireEvent.click(productCard);
     
     // Check products are passed
     await waitFor(() => {
       const canvasProducts = screen.getByTestId('products');
-      expect(canvasProducts.textContent).toContain('"id":"1"');
+      expect(canvasProducts.textContent).toContain('"id":"tshirt-white"');
+    });
+  });
+
+  describe('Currency formatting', () => {
+    it('displays price in GBP format for English', async () => {
+      currentTranslations = mockTranslationsEN;
+      render(<MannequinViewer availableProducts={mockProducts} />);
+      
+      // Select a product by clicking on its title
+      fireEvent.click(screen.getByText('White T-Shirt'));
+      
+      // Should show price with £ symbol (base price 29.99 * 1 = £29.99)
+      await waitFor(() => {
+        expect(screen.getByText(/£29\.99/i)).toBeInTheDocument();
+      });
+    });
+
+    it('displays price in PLN format for Polish', async () => {
+      currentTranslations = mockTranslationsPL;
+      render(<MannequinViewer availableProducts={mockProducts} />);
+      
+      // Select a product by clicking on its title
+      fireEvent.click(screen.getByText('Biała Koszulka'));
+      
+      // Should show price with zł symbol (base price 29.99 * 5.05 ≈ 151.45 zł)
+      await waitFor(() => {
+        expect(screen.getByText(/151\.45.*zł/i)).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Translated color names', () => {
+    it('displays color name in English', async () => {
+      currentTranslations = mockTranslationsEN;
+      render(<MannequinViewer availableProducts={mockProducts} />);
+      
+      // Select a product by clicking on its title
+      fireEvent.click(screen.getByText('White T-Shirt'));
+      
+      // Should show translated color name (checking for 2 occurrences - the color label + color name)
+      await waitFor(() => {
+        const whiteElements = screen.getAllByText('White');
+        expect(whiteElements.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('displays color name in Polish', async () => {
+      currentTranslations = mockTranslationsPL;
+      render(<MannequinViewer availableProducts={mockProducts} />);
+      
+      // Select a product by clicking on its title
+      fireEvent.click(screen.getByText('Biała Koszulka'));
+      
+      // Should show translated color name
+      await waitFor(() => {
+        expect(screen.getByText('Biały')).toBeInTheDocument();
+      });
     });
   });
 });

@@ -1275,6 +1275,27 @@
     "loading": "Laden...",
     "errorLoading": "Fehler beim Laden der Produkte",
     "tryAgain": "Erneut versuchen",
-    "fitServiceButton": "Virtuelle Anprobe"
+    "fitServiceButton": "Virtuelle Anprobe",
+    "recommendedSize": "Empfohlene Größe",
+    "currency": "€",
+    "currencyCode": "EUR",
+    "products": {
+      "tshirt-white": "Weißes T-Shirt",
+      "tshirt-black": "Schwarzes T-Shirt",
+      "tshirt-red": "Rotes T-Shirt",
+      "tshirt-blue": "Blaues T-Shirt",
+      "tshirt-green": "Grünes T-Shirt",
+      "tshirt-navy": "Marineblaues T-Shirt",
+      "tshirt-gray": "Graues T-Shirt"
+    },
+    "colors": {
+      "white": "Weiß",
+      "black": "Schwarz",
+      "red": "Rot",
+      "blue": "Blau",
+      "green": "Grün",
+      "navy": "Marineblau",
+      "gray": "Grau"
+    }
   }
 }

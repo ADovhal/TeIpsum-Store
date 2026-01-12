@@ -194,6 +194,10 @@ const ColorDot = styled.span`
   border: 2px solid #ddd;
 `;
 
+const ColorName = styled.span`
+  font-weight: 500;
+`;
+
 // Body parameter ranges
 const BODY_PARAM_RANGES = {
   height: { min: 160, max: 200 },
@@ -201,6 +205,14 @@ const BODY_PARAM_RANGES = {
   waist: { min: 60, max: 100 },
   hips: { min: 80, max: 120 },
   shoulderWidth: { min: 40, max: 60 }
+};
+
+// Currency conversion rates (base: GBP)
+const CURRENCY_RATES = {
+  GBP: 1,
+  EUR: 1.17,
+  PLN: 5.05,
+  UAH: 46.5
 };
 
 // Comprehensive size chart for t-shirts (all measurements in cm)
@@ -285,6 +297,42 @@ const MannequinViewer = ({
   const [bodyParams, setBodyParams] = useState(initialBodyParams);
   const [inputValues, setInputValues] = useState(initialBodyParams);
   const [selectedProductId, setSelectedProductId] = useState(null);
+
+  // Get currency symbol and code from translations
+  const currencySymbol = t('fitService.currency', '£');
+  const currencyCode = t('fitService.currencyCode', 'GBP');
+
+  // Format price based on current language/currency
+  const formatPrice = useCallback((basePrice) => {
+    if (!basePrice) return null;
+    const rate = CURRENCY_RATES[currencyCode] || 1;
+    const convertedPrice = basePrice * rate;
+    
+    // Format based on currency
+    if (currencyCode === 'PLN') {
+      return `${convertedPrice.toFixed(2)} ${currencySymbol}`;
+    } else if (currencyCode === 'UAH') {
+      return `${convertedPrice.toFixed(2)} ${currencySymbol}`;
+    } else {
+      return `${currencySymbol}${convertedPrice.toFixed(2)}`;
+    }
+  }, [currencyCode, currencySymbol]);
+
+  // Get translated product name
+  const getProductName = useCallback((product) => {
+    if (product.nameKey) {
+      return t(product.nameKey, product.name || product.id);
+    }
+    return product.name || product.id;
+  }, [t]);
+
+  // Get translated color name
+  const getColorName = useCallback((product) => {
+    if (product.colorKey) {
+      return t(`fitService.colors.${product.colorKey}`, product.colorKey);
+    }
+    return null;
+  }, [t]);
 
   // Memoize selected product to avoid creating new object references
   const selectedProduct = useMemo(() => {
@@ -474,15 +522,21 @@ const MannequinViewer = ({
                     {/* <SizeFit>{getFitText(sizeSuggestion.fit)}</SizeFit> */}
                   </SizeBadge>
                   
-                  <ProductTitle>{selectedProduct.name}</ProductTitle>
+                  <ProductTitle>{getProductName(selectedProduct)}</ProductTitle>
                   <ProductInfo>{t('fitService.type')}: {selectedProduct.type}</ProductInfo>
                   {selectedProduct.color && (
                     <ProductInfo style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {t('fitService.color')}: <ColorDot style={{ backgroundColor: selectedProduct.color }} />
+                      {t('fitService.color')}: 
+                      <ColorDot style={{ backgroundColor: selectedProduct.color }} />
+                      {getColorName(selectedProduct) && (
+                        <ColorName>{getColorName(selectedProduct)}</ColorName>
+                      )}
                     </ProductInfo>
                   )}
-                  {selectedProduct.price && (
-                    <ProductInfo>{t('fitService.price')}: {selectedProduct.price} $</ProductInfo>
+                  {(selectedProduct.basePrice || selectedProduct.price) && (
+                    <ProductInfo>
+                      {t('fitService.price')}: {formatPrice(selectedProduct.basePrice || selectedProduct.price)}
+                    </ProductInfo>
                   )}
                   
                   <RemoveButton onClick={handleRemoveProduct}>
@@ -504,15 +558,21 @@ const MannequinViewer = ({
                   onClick={() => handleSelectProduct(product.id)}
                 >
                   <ProductContent>
-                    <ProductTitle>{product.name}</ProductTitle>
+                    <ProductTitle>{getProductName(product)}</ProductTitle>
                     <ProductInfo>{t('fitService.type')}: {product.type}</ProductInfo>
                     {product.color && (
                       <ProductInfo style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {t('fitService.color')}: <ColorDot style={{ backgroundColor: product.color }} />
+                        {t('fitService.color')}: 
+                        <ColorDot style={{ backgroundColor: product.color }} />
+                        {getColorName(product) && (
+                          <ColorName>{getColorName(product)}</ColorName>
+                        )}
                       </ProductInfo>
                     )}
-                    {product.price && (
-                      <ProductInfo>{t('fitService.price')}: {product.price} $</ProductInfo>
+                    {(product.basePrice || product.price) && (
+                      <ProductInfo>
+                        {t('fitService.price')}: {formatPrice(product.basePrice || product.price)}
+                      </ProductInfo>
                     )}
                   </ProductContent>
                 </ProductCard>

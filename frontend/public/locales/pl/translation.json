@@ -1276,6 +1276,27 @@
     "loading": "Ładowanie...",
     "errorLoading": "Błąd ładowania produktów",
     "tryAgain": "Spróbuj ponownie",
-    "fitServiceButton": "Wirtualna Przymierzalnia"
+    "fitServiceButton": "Wirtualna Przymierzalnia",
+    "recommendedSize": "Zalecany Rozmiar",
+    "currency": "zł",
+    "currencyCode": "PLN",
+    "products": {
+      "tshirt-white": "Biała Koszulka",
+      "tshirt-black": "Czarna Koszulka",
+      "tshirt-red": "Czerwona Koszulka",
+      "tshirt-blue": "Niebieska Koszulka",
+      "tshirt-green": "Zielona Koszulka",
+      "tshirt-navy": "Granatowa Koszulka",
+      "tshirt-gray": "Szara Koszulka"
+    },
+    "colors": {
+      "white": "Biały",
+      "black": "Czarny",
+      "red": "Czerwony",
+      "blue": "Niebieski",
+      "green": "Zielony",
+      "navy": "Granatowy",
+      "gray": "Szary"
+    }
   }
 }

@@ -1316,6 +1316,27 @@
     "loading": "Завантаження...",
     "errorLoading": "Помилка завантаження товарів",
     "tryAgain": "Спробувати знову",
-    "fitServiceButton": "Віртуальна Примірна"
+    "fitServiceButton": "Віртуальна Примірна",
+    "recommendedSize": "Рекомендований Розмір",
+    "currency": "₴",
+    "currencyCode": "UAH",
+    "products": {
+      "tshirt-white": "Біла Футболка",
+      "tshirt-black": "Чорна Футболка",
+      "tshirt-red": "Червона Футболка",
+      "tshirt-blue": "Синя Футболка",
+      "tshirt-green": "Зелена Футболка",
+      "tshirt-navy": "Темно-синя Футболка",
+      "tshirt-gray": "Сіра Футболка"
+    },
+    "colors": {
+      "white": "Білий",
+      "black": "Чорний",
+      "red": "Червоний",
+      "blue": "Синій",
+      "green": "Зелений",
+      "navy": "Темно-синій",
+      "gray": "Сірий"
+    }
   }
 }

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // Path to the body model
-const baseMaleBodyModel = require('../../assets/models/final_version.glb');
+const baseMaleBodyModel = require('../../assets/models/final_1.glb');
 
 // Body parameter ranges - matches Blender Shape Keys (0 = min, 1 = max)
 const BODY_PARAM_RANGES = {
