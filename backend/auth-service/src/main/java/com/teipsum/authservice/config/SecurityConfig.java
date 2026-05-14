@@ -60,6 +60,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+        
         String[] origins = allowedOrigins.split(",");
         for (String origin : origins) {
             config.addAllowedOriginPattern(origin.trim());
