@@ -452,7 +452,6 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
         type: 'application/json'
     }));
 
-    // Проверка файлов
     console.log('Images count:', images.length);
     images.forEach((img, i) => {
         console.log(`Image ${i}:`, img.file?.name, img.file?.size, img.file?.type);
@@ -472,7 +471,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
     } finally {
         setLoading(false);
     }
-};
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
