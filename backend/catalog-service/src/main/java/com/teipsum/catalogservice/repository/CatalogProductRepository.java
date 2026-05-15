@@ -11,5 +11,6 @@ import java.util.UUID;
 @Repository
 public interface CatalogProductRepository extends
         JpaRepository<CatalogProduct, UUID>,
-        JpaSpecificationExecutor<CatalogProduct> {
+        JpaSpecificationExecutor<CatalogProduct>,
+        CustomCatalogProductRepository {
 }

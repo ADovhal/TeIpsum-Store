@@ -101,6 +101,6 @@ public class CatalogService {
     @Transactional(readOnly = true)
     public Page<CatalogProduct> getFilteredProducts(ProductFilterRequest filter, Pageable pageable) {
         Specification<CatalogProduct> spec = ProductSpecifications.withFilters(filter);
-        return catalogProductRepository.findAll(spec, pageable);
+        return catalogProductRepository.findAllWithDistinctCount(spec, pageable);
     }
 }
