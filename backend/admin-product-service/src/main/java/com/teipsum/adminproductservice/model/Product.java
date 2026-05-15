@@ -21,7 +21,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
 public class Product extends ProductBase {
 

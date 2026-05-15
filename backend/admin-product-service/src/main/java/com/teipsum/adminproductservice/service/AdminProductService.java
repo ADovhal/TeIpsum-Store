@@ -106,20 +106,19 @@ public class AdminProductService {
     private Product mapToEntity(ProductRequest request) {
         String sku = skuGenerator.generateSku(request.category(), request.subcategory(), request.gender());
         
-        Product product = new Product();
-        product.setSku(sku);
-        product.setTitle(request.title());
-        product.setDescription(request.description());
-        product.setPrice(request.price());
-        product.setDiscount(request.discount());
-        product.setCategory(request.category());
-        product.setSubcategory(request.subcategory());
-        product.setGender(request.gender());
-        product.setImageUrls(List.of());
-        product.setSizes(request.sizes());
-        product.setAvailable(request.available());
-        
-        return product;
+        return Product.builder()
+                .sku(sku)
+                .title(request.title())
+                .description(request.description())
+                .price(request.price())
+                .discount(request.discount())
+                .category(request.category())
+                .subcategory(request.subcategory())
+                .gender(request.gender())
+                .imageUrls(List.of())
+                .sizes(request.sizes())
+                .available(request.available())
+                .build();
     }
 
     private void updateEntity(Product product, ProductRequest request) {
