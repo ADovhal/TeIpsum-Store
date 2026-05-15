@@ -221,7 +221,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const [selectedSizes, setSelectedSizes] = useState(product?.sizes || []);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const setLoading = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Smart filtering functions
   const getAvailableGenders = () => {
