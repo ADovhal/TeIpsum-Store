@@ -126,23 +126,26 @@ class ProductApi {
   async getProducts(params = {}) {
     try {
       const response = await this.catalogApi.get('/products', { params });
-      
-      // Handle HATEOAS response structure
-      const products = response.data._embedded?.productList || [];
-      const page = response.data.page || {};
+      const products = response.data.content || [];
+      const page = {
+        totalPages: response.data.totalPages || 0,
+        totalElements: response.data.totalElements || 0,
+        number: response.data.number || 0,
+        size: response.data.size || 10
+      };
       
       return {
         products,
-        totalPages: page.totalPages || 0,
-        totalElements: page.totalElements || 0,
-        currentPage: page.number || 0,
-        size: page.size || 10
+        totalPages: page.totalPages,
+        totalElements: page.totalElements,
+        currentPage: page.number,
+        size: page.size
       };
     } catch (error) {
       console.error('Error fetching products:', error);
       throw this.handleError(error, 'Failed to fetch products');
     }
-  }
+}
 
   /**
    * Get single product by ID from catalog service
