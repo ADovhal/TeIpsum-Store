@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { adminProductAPI } from '../apiAdmin';
+import { adminProductAPI } from '../../../services/apiAdmin';
 
 // Backend-synchronized enums
 const categories = [
