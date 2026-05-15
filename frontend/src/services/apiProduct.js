@@ -145,7 +145,7 @@ class ProductApi {
       console.error('Error fetching products:', error);
       throw this.handleError(error, 'Failed to fetch products');
     }
-}
+  }
 
   /**
    * Get single product by ID from catalog service
