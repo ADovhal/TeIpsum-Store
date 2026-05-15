@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+// @SuperBuilder
 public abstract class ProductBase {
 
     @Column(nullable = false)
