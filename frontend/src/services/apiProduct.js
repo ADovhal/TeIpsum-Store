@@ -220,16 +220,16 @@ class ProductApi {
    */
   async createProduct(productData) {
     try {
-      const config = {
-        headers: {}
-      };
+      // const config = {
+      //   headers: {}
+      // };
 
-      // If productData is FormData (contains files), set appropriate headers
-      if (productData instanceof FormData) {
-        config.headers['Content-Type'] = 'multipart/form-data';
-      }
+      // // If productData is FormData (contains files), set appropriate headers
+      // if (productData instanceof FormData) {
+      //   config.headers['Content-Type'] = 'multipart/form-data';
+      // }
 
-      const response = await this.adminApi.post('/products', productData, config);
+      const response = await this.adminApi.post('/products', productData);//, config
       return response.data;
     } catch (error) {
       console.error('Error creating product:', error);
@@ -245,16 +245,16 @@ class ProductApi {
    */
   async updateProduct(productId, productData) {
     try {
-      const config = {
-        headers: {}
-      };
+      // const config = {
+      //   headers: {}
+      // };
 
-      // If productData is FormData (contains files), set appropriate headers
-      if (productData instanceof FormData) {
-        config.headers['Content-Type'] = 'multipart/form-data';
-      }
+      // // If productData is FormData (contains files), set appropriate headers
+      // if (productData instanceof FormData) {
+      //   config.headers['Content-Type'] = 'multipart/form-data';
+      // }
 
-      const response = await this.adminApi.put(`/products/${productId}`, productData, config);
+      const response = await this.adminApi.put(`/products/${productId}`, productData);//, config
       return response.data;
     } catch (error) {
       console.error(`Error updating product ${productId}:`, error);
