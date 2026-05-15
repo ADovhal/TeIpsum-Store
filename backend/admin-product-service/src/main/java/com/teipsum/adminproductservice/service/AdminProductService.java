@@ -102,7 +102,6 @@ public class AdminProductService {
                 .map(ProductResponse::fromEntity);
     }
 
-
     private Product mapToEntity(ProductRequest request) {
         String sku = skuGenerator.generateSku(request.category(), request.subcategory(), request.gender());
         
