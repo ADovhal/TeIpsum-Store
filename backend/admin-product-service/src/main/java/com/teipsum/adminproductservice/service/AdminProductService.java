@@ -105,19 +105,27 @@ public class AdminProductService {
     private Product mapToEntity(ProductRequest request) {
         String sku = skuGenerator.generateSku(request.category(), request.subcategory(), request.gender());
         
-        return Product.builder()
-                .sku(sku)
-                .title(request.title())
-                .description(request.description())
-                .price(request.price())
-                .discount(request.discount())
-                .category(request.category())
-                .subcategory(request.subcategory())
-                .gender(request.gender())
-                .imageUrls(List.of())
-                .sizes(request.sizes())
-                .available(request.available())
-                .build();
+        Product product = Product.builder()
+            .sku(sku)
+            .title(request.title())
+            .description(request.description())
+            .price(request.price())
+            .discount(request.discount())
+            .category(request.category())
+            .subcategory(request.subcategory())
+            .gender(request.gender())
+            .imageUrls(List.of())
+            .sizes(request.sizes())
+            .available(request.available())
+            .build();
+    
+        System.out.println("=== AFTER BUILD ===");
+        System.out.println("category from request: " + request.category());
+        System.out.println("category in product: " + product.getCategory());
+        System.out.println("subcategory in product: " + product.getSubcategory());
+        System.out.println("gender in product: " + product.getGender());
+        
+        return product;
     }
 
     private void updateEntity(Product product, ProductRequest request) {
