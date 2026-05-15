@@ -16,8 +16,8 @@ import java.util.List;
 @MappedSuperclass
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 @SuperBuilder
 public abstract class ProductBase {
 

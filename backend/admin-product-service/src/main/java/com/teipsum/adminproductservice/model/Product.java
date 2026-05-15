@@ -19,8 +19,8 @@ import java.util.UUID;
 @Table(name = "products")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 @SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
 public class Product extends ProductBase {
