@@ -31,7 +31,7 @@ public record ProductRequest(
 
         Gender gender,
 
-        List<@URL(message = "Image URL must be valid") MultipartFile> imageUrls,
+        List<String> imageUrls,
 
         List<String> sizes,
 

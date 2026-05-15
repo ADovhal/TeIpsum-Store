@@ -39,7 +39,13 @@ public class AdminProductService {
 
         Product product = mapToEntity(dto);
 
+        System.out.println("=== BEFORE SAVE ===");
+        System.out.println("product category: " + product.getCategory());
+        System.out.println("product class: " + product.getClass().getName());
+
         product = repository.save(product);
+        
+        System.out.println("sizes after save: " + product.getSizes());
 
         if (images != null && !images.isEmpty()) {
             try {
