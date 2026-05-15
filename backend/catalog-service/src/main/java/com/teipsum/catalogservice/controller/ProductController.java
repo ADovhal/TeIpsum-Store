@@ -11,9 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,26 +26,25 @@ import java.util.Map;
 public class ProductController {
 
     private final CatalogService catalogService;
-    private final PagedResourcesAssembler<CatalogProduct> pagedResourcesAssembler;
     private static final Logger logger = LogManager.getLogger(ProductController.class);
     private final ProductDtoConverter dtoConverter;
 
     @GetMapping
     @Operation(
-        summary = "Get all products",
-        description = "Retrieves a list of products with optional filtering",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Products found",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Page.class)
-                )
-            )
-        }
+            summary = "Get all products",
+            description = "Retrieves a list of products with optional filtering",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Products found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class)
+                            )
+                    )
+            }
     )
-    public ResponseEntity<PagedModel<EntityModel<CatalogProductDTO>>> getFilteredProducts(
+    public ResponseEntity<Page<CatalogProductDTO>> getFilteredProducts(
             ProductFilterRequest filter,
             @PageableDefault(size = 10) Pageable pageable
     ) {
@@ -57,11 +53,9 @@ public class ProductController {
             Page<CatalogProduct> products = catalogService.getFilteredProducts(filter, pageable);
             logger.trace("Found {} matching products", products.getTotalElements());
 
-            PagedModel<EntityModel<CatalogProductDTO>> pagedModel = pagedResourcesAssembler.toModel(
-                    products,
-                    product -> EntityModel.of(dtoConverter.convertToDto(product))
-            );
-            return ResponseEntity.ok(pagedModel);
+            Page<CatalogProductDTO> dtoPage = products.map(dtoConverter::convertToDto);
+
+            return ResponseEntity.ok(dtoPage);
         } catch (Exception e) {
             logger.error("Failed to fetch filtered products: {}", e.getMessage());
             throw e;
