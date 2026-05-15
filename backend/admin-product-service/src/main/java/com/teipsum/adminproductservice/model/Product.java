@@ -19,7 +19,7 @@ import java.util.UUID;
 @Table(name = "products")
 @Getter
 @Setter
-// @NoArgsConstructor
+@NoArgsConstructor
 // @AllArgsConstructor
 @SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
