@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { adminProductAPI } from '../../../services/apiAdmin';
+import { createAdminProduct } from '../adminSlice';
 
 // Backend-synchronized enums
 const categories = [
@@ -221,7 +221,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const [selectedSizes, setSelectedSizes] = useState(product?.sizes || []);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   // Smart filtering functions
   const getAvailableGenders = () => {
@@ -430,47 +430,31 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.title?.trim()) return alert('Title required');
-    if (!form.price || parseFloat(form.price) <= 0) return alert('Valid price required');
-    if (!form.category) return alert('Category required');
+    if (!form.title?.trim()) return alert(t('titleRequired') || 'Title required');
+    if (!form.price || parseFloat(form.price) <= 0) return alert(t('validPriceRequired') || 'Valid price required');
+    if (!form.category) return alert(t('categoryRequired') || 'Category required');
 
     const productPayload = {
-        title: form.title.trim(),
-        description: form.description?.trim() || '',
-        price: parseFloat(form.price),
-        discount: form.discount ? parseFloat(form.discount) : null,
-        category: form.category,
-        subcategory: form.subcategory || null,
-        gender: form.gender || null,
-        available: form.available !== undefined ? form.available : true,
-        sizes: selectedSizes.length ? selectedSizes : null,
-        imageUrls: []
+      title: form.title.trim(),
+      description: form.description?.trim() || '',
+      price: parseFloat(form.price),
+      discount: form.discount ? parseFloat(form.discount) : null,
+      category: form.category,
+      subcategory: form.subcategory || null,
+      gender: form.gender || null,
+      available: form.available !== undefined ? form.available : true,
+      sizes: selectedSizes.length ? selectedSizes : null,
+      imageUrls: []
     };
 
     const formData = new FormData();
     formData.append('product', new Blob([JSON.stringify(productPayload)], {
-        type: 'application/json'
+      type: 'application/json'
     }));
 
-    console.log('Images count:', images.length);
-    images.forEach((img, i) => {
-        console.log(`Image ${i}:`, img.file?.name, img.file?.size, img.file?.type);
-        if (img.file) {
-            formData.append('images', img.file);
-        }
-    });
+    images.forEach(img => formData.append('images', img.file));
 
-    try {
-        setLoading(true);
-        const response = await adminProductAPI.createProduct(formData);
-        console.log('Success:', response);
-        navigate('/admin/products');
-    } catch (error) {
-        console.error('Error:', error);
-        alert(error.response?.data?.message || error.message || 'Failed to create product');
-    } finally {
-        setLoading(false);
-    }
+    dispatch(createAdminProduct(formData));
   };
 
   return (

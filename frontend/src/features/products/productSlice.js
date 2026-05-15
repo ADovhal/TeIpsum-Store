@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getProductsFiltered, getProductById } from './ProductService';
-import apiAdmin from '../../services/apiAdmin';
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
@@ -26,27 +25,6 @@ export const fetchProductById = createAsyncThunk(
   }
 );
 
-export const updateProduct = createAsyncThunk(
-  'products/updateProduct',
-  async ({ id, data }, { rejectWithValue }) => {
-    try {
-      return await apiAdmin.updateProduct(id, data);
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const createProduct = createAsyncThunk(
-  'products/createProduct',
-  async (data, { rejectWithValue }) => {
-    try {
-      return await apiAdmin.createProduct(data);
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
 const productSlice = createSlice({
   name: 'products',

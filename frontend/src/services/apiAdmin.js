@@ -121,11 +121,8 @@ export const adminProductAPI = {
   // Create a new product
   createProduct: async (productData) => {
     try {
-      const isFormData = productData instanceof FormData;
-      const response = await apiAdmin.post('/admin/products', productData, {
-        headers: isFormData ? undefined : { 'Content-Type': 'application/json' }
-    });
-    return response.data;
+      const response = await apiAdmin.post('/admin/products', productData);
+      return response.data;
     } catch (error) {
       throw error.response?.data || error;
     }
