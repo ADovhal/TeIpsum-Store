@@ -35,7 +35,7 @@ export const getProductsFiltered = async (params) => {
       });
   
       return {
-        products: result.products,
+        products: result.content,
         totalPages: result.totalPages
       };
     } catch (error) {
