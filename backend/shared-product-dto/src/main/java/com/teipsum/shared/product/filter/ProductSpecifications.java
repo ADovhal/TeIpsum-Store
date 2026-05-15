@@ -6,6 +6,8 @@ import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
+
 
 public class ProductSpecifications {
 
@@ -36,11 +38,19 @@ public class ProductSpecifications {
             if (filter.maxPrice() != null)
                 predicate = cb.and(predicate, cb.le(root.get("price"), filter.maxPrice()));
 
-            if (filter.minDiscount() != null)
-                predicate = cb.and(predicate, cb.ge(root.get("discount"), filter.minDiscount()));
+            if (filter.minDiscount() != null) {
+                predicate = cb.and(predicate, cb.ge(
+                        cb.coalesce(root.get("discount"), BigDecimal.ZERO),
+                        filter.minDiscount()
+                ));
+            }
 
-            if (filter.maxDiscount() != null)
-                predicate = cb.and(predicate, cb.le(root.get("discount"), filter.maxDiscount()));
+            if (filter.maxDiscount() != null) {
+                predicate = cb.and(predicate, cb.le(
+                        cb.coalesce(root.get("discount"), BigDecimal.ZERO),
+                        filter.maxDiscount()
+                ));
+            }
 
             if (filter.available() != null)
                 predicate = cb.and(predicate, cb.equal(root.get("available"), filter.available()));
