@@ -372,7 +372,7 @@ const AdminFieldValue = styled.div`
 `;
 
 const SingleProductPage = () => {
-  const { productId } = useParams();
+  const { id } = useParams();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -384,10 +384,10 @@ const SingleProductPage = () => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    if (productId) {
-      dispatch(fetchProductById(productId));
+    if (id) {
+      dispatch(fetchProductById(id));
     }
-  }, [productId, dispatch]);
+  }, [id, dispatch]);
 
   const handleAddToCart = () => {
     // Only require size selection if sizes are available
