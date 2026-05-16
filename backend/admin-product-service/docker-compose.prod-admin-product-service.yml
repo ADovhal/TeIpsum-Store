@@ -9,6 +9,8 @@ services:
     ports: ['22095:${SERVICE_SERVER_PORT}']
     image: prod-admin-product-service:latest
     env_file: .env
+    volumes:
+      - /var/www/teipsum/static/products:/var/www/teipsum/static/products
     networks:
       - prod-net
 
