@@ -142,7 +142,6 @@ public class AdminProductService {
         product.setCategory(request.category());
         product.setSubcategory(request.subcategory());
         product.setGender(request.gender());
-        product.setImageUrls(null);
         product.setSizes(request.sizes());
         product.setAvailable(request.available());
     }
